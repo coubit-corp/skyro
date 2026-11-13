@@ -1,0 +1,95 @@
+Etapa 1 — Problema e público
+[ ] Escrever o problema em uma frase, sem mencionar a Skyro.
+[ ] Definir o público inicial de testes, mantendo a visão de atender todas as idades.
+[ ] Entrevistar pelo menos 15 pessoas que procuraram profissionais recentemente.
+[ ] Descobrir como encontraram o profissional, quanto tempo levaram e quais dificuldades enfrentaram.
+[ ] Registrar falas e comportamentos reais, sem inventar depoimentos.
+[ ] Selecionar as três dificuldades mais frequentes e relevantes.
+
+Etapa 2 — Concorrentes
+[ ] Testar pessoalmente a busca da Doctoralia.
+[ ] Testar a busca da Zenklub e da PsicoBrasil.
+[ ] Examinar a proposta da NuFit e identificar o que está anunciado versus disponível.
+[ ] Comparar filtros, perfis, avaliações, preço, contato e agendamento.
+[ ] Identificar pelo menos uma dificuldade que os concorrentes não resolvam satisfatoriamente.
+
+Etapa 3 — Validação com profissionais
+[ ] Entrevistar pelo menos 3 psicólogos, 3 nutricionistas e 3 personal trainers.
+[ ] Descobrir como conseguem clientes hoje e quais canais utilizam.
+[ ] Perguntar quanto tempo gastam respondendo a contatos sem contratação.
+[ ] Investigar se aceitariam cadastrar e manter o perfil atualizado.
+[ ] Testar disposição real para pagar por divulgação ou ferramentas.
+[ ] Verificar regras profissionais sobre publicidade, preços, avaliações e credenciais.
+
+Etapa 4 — Produto e diferencial
+[ ] Definir a principal promessa da Skyro em uma frase.
+[ ] Escolher no máximo três diferenciais para testar.
+[ ] Desenhar o fluxo: buscar → filtrar → comparar → ver perfil → solicitar contato.
+[ ] Definir quais informações dos perfis serão verificadas.
+[ ] Estabelecer o que fica fora do MVP.
+[ ] Criar protótipo navegável antes de programar tudo.
+
+Etapa 5 — Testes do MVP
+[ ] Construir catálogo funcional com dados demonstrativos identificados.
+[ ] Implementar filtros, perfil completo e comparação.
+[ ] Adicionar fluxo de contato ou solicitação de agendamento simulada.
+[ ] Pedir que pelo menos 10 pessoas realizem tarefas sem ajuda.
+[ ] Medir conclusão, tempo, erros e confiança na escolha.
+[ ] Corrigir os três principais problemas identificados.
+
+Etapa 6 — Negócio, segurança e pitch
+[ ] Escolher quem paga: profissional, usuário ou ambos.
+[ ] Testar uma proposta de preço com profissionais reais.
+[ ] Definir critérios transparentes de ordenação e divulgação.
+[ ] Documentar privacidade, credenciais e cuidados com avaliações.
+[ ] Preparar demonstração funcional, landing page e vídeo de 3 minutos.
+[ ] Registrar testes, resultados, decisões e contribuições no GitHub.
+[ ] Conferir regulamento, elegibilidade, entregáveis e prazo da edição.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+erguntas para potenciais clientes:
+Quando foi a última vez que você procurou um psicólogo, nutricionista ou personal?
+Onde você pesquisou primeiro?
+Quantos profissionais considerou antes de escolher?
+O que foi mais difícil de descobrir?
+Alguma informação importante estava faltando?
+Você desistiu ou adiou a contratação? Por quê?
+O que fez você confiar no profissional escolhido?
+O que teria facilitado sua decisão?
+Perguntas para os profissionais:
+Como seus últimos cinco clientes chegaram até você?
+Quanto tempo você dedica a responder dúvidas antes da contratação?
+Quais informações os interessados mais perguntam?
+Você já pagou para divulgar seus serviços? Qual foi o resultado?
+O que faria você manter um perfil atualizado em outra plataforma?
+Que valor concreto precisaria receber para considerar uma assinatura?
+perguntas para potenciais clientes:
+Quando foi a última vez que você procurou um psicólogo, nutricionista ou personal?
+Onde você pesquisou primeiro?
+Quantos profissionais considerou antes de escolher?
+O que foi mais difícil de descobrir?
+Alguma informação importante estava faltando?
+Você desistiu ou adiou a contratação? Por quê?
+O que fez você confiar no profissional escolhido?
+O que teria facilitado sua decisão?
+O que devemos fazer antes do video: Definir a Skyro em uma frase clara
+[ ] Explicar o problema que queremos resolver
+[ ] Apresentar os três pilares: psicólogos, nutricionistas e personal trainers
+[ ] Mostrar a conexão entre profissionais e estabelecimentos
+[ ] Criar uma busca funcional com filtros
+[ ] Mostrar pelo menos um perfil profissional completo
+[ ] Demonstrar o contato ou agendamento fictício
+[ ] Gravar um vídeo de até 3 minutos explicando e demonstrando o MVP
+[ ] Conferir o regulamento e os requisitos de elegibilidade da equipe
