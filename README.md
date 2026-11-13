@@ -12,6 +12,8 @@ Projeto do **Hack Brasil 2026**, trilha 04 (Saúde & bem-estar). A especificaç�
 
 ## Como rodar
 
+> **No Mac, do zero?** Siga o passo a passo completo em [`docs/SETUP-MAC.md`](docs/SETUP-MAC.md).
+
 Pré-requisito: Node.js 20 ou mais novo.
 
 1. Instale as dependências:
