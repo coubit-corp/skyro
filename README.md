@@ -30,7 +30,9 @@ Pré-requisito: Node.js 20 ou mais novo.
 
 3. Crie as tabelas: no painel do Supabase, abra o **SQL Editor**, cole o conteúdo de cada arquivo de `supabase/migrations/` (em ordem) e clique em **Run**.
 
-4. Suba o app:
+4. Crie as contas demo: no mesmo SQL Editor, rode `supabase/seed/01_contas_demo.sql`. Pessoa: `demo.pessoa@skyro.app`; profissional: `demo.nutri@skyro.app`. A senha das duas é `skyro-demo-2026`.
+
+5. Suba o app:
 
    ```bash
    npm run dev
@@ -57,6 +59,7 @@ src/
     profissional/  telas do painel do profissional
 supabase/
   migrations/    SQL do banco (tabelas + regras de acesso)
+  seed/          dados de demonstração (contas demo)
   tests/         teste das regras de acesso num Postgres local
 docs/            especificação, pitch, análise de mercado e mockups
 ```
@@ -74,6 +77,7 @@ Com um Postgres local (não use o Supabase de verdade para isso):
 ```bash
 createdb skyro_teste
 psql -d skyro_teste -f supabase/tests/00_stub_supabase.sql -f supabase/migrations/20261113000001_schema_inicial.sql
+psql -d skyro_teste -f supabase/seed/01_contas_demo.sql
 psql -d skyro_teste -f supabase/tests/01_rls.sql
 ```
 
