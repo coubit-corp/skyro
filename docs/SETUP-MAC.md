@@ -102,7 +102,24 @@ EOF
 
 > Se rodar duas vezes, dá erro de "already exists". Não é problema: as tabelas já foram criadas.
 
-### 3.3 Liberar o login sem confirmação de e-mail (para desenvolver)
+### 3.3 Criar as contas demo (só uma vez)
+
+Copie o script:
+
+```bash
+pbcopy < supabase/seed/01_contas_demo.sql
+```
+
+No **SQL Editor**, abra uma **New query**, cole e clique em **Run**. No final aparece uma tabela com **Lucas Martins** e **Ana Lima**.
+
+| Conta | E-mail | Senha |
+|---|---|---|
+| Cliente (Lucas Martins) | `demo.pessoa@skyro.app` | `skyro-demo-2026` |
+| Profissional (Ana Lima, nutricionista) | `demo.nutri@skyro.app` | `skyro-demo-2026` |
+
+Os botões "Entrar como … (demo)" da tela de login já usam essas contas. O Lucas já compartilha a rotina com a Ana e tem 14 dias de registros. Se os dados ficarem bagunçados depois de testes, é só rodar o script de novo: ele apaga as contas demo e recria tudo, com as datas atualizadas para hoje.
+
+### 3.4 Liberar o login sem confirmação de e-mail (para desenvolver)
 
 Por padrão o Supabase exige clicar num link no e-mail antes do primeiro login. Para testar mais rápido:
 
@@ -123,8 +140,9 @@ Abra **http://localhost:5173** no navegador. Para parar o servidor: **Ctrl + C**
 
 Teste rápido:
 
-1. **Criar conta** como **Pessoa**: você cai em `/inicio`.
-2. Clique em **Sair** e crie outra conta como **Profissional**: você cai em `/pro`.
+1. Clique em **Entrar como pessoa (demo)**: você cai em `/inicio` como Lucas. Clique em **Sair** e teste **Entrar como profissional (demo)**: você cai em `/pro` como Ana.
+2. **Criar conta** como **Pessoa**: você cai em `/inicio`.
+3. Clique em **Sair** e crie outra conta como **Profissional**: você cai em `/pro`.
 
 ### Ver no iPhone (mesma rede Wi-Fi)
 
@@ -163,7 +181,7 @@ npm run dev
 | `command not found: brew` depois de instalar | Rode os comandos de "Next steps" que o instalador mostrou e reabra o Terminal |
 | `command not found: npm` | Rode `brew install node` e reabra o Terminal |
 | Tela "Falta configurar o Supabase" | O `.env` não existe ou está com nome errado. Repita o passo 3.1 e reinicie o `npm run dev` |
-| "E-mail ou senha incorretos" nos botões demo | Normal por enquanto: as contas demo chegam na próxima etapa |
+| "E-mail ou senha incorretos" nos botões demo | O script das contas demo não foi rodado. Faça o passo 3.3 |
 | "Não conseguimos carregar sua conta" depois de cadastrar | As tabelas não foram criadas. Faça o passo 3.2 e crie uma conta nova |
-| "Confirme seu e-mail…" | Faça o passo 3.3 ou clique no link que chegou no e-mail |
+| "Confirme seu e-mail…" | Faça o passo 3.4 ou clique no link que chegou no e-mail |
 | `Port 5173 is in use` | Já tem um `npm run dev` aberto em outra janela: feche-o com Ctrl + C |
