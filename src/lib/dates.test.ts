@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { addDays, formatHours, formatMinutes, toISODate, weekOf } from './dates'
+import { addDays, formatDateTimeBR, formatHours, formatMinutes, toISODate, weekOf } from './dates'
 
 describe('datas', () => {
   it('toISODate usa o dia local, não UTC (23h em São Paulo continua sendo o mesmo dia)', () => {
@@ -25,5 +25,10 @@ describe('datas', () => {
     expect(formatMinutes(100)).toBe('1h 40min')
     expect(formatMinutes(40)).toBe('40min')
     expect(formatMinutes(120)).toBe('2h')
+  })
+  it('formatDateTimeBR mostra o horário de Brasília, qualquer que seja o fuso do aparelho', () => {
+    // 01h30 em UTC do dia 15 ainda é 22h30 do dia 14 em Brasília
+    expect(formatDateTimeBR('2026-11-15T01:30:00Z')).toBe('14/11 às 22:30')
+    expect(formatDateTimeBR('2026-11-14T12:05:00-03:00')).toBe('14/11 às 12:05')
   })
 })

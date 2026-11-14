@@ -1,7 +1,8 @@
 // Tipos das tabelas do Supabase, espelhando supabase/migrations.
 // Ao mudar uma migration, atualize aqui também (ou gere com `supabase gen types`).
 
-export type Role = 'person' | 'professional'
+/** admin = equipe Skyro (só criado por SQL; aprova os registros de conselho) */
+export type Role = 'person' | 'professional' | 'admin'
 export type Specialty = 'nutricionista' | 'psicologo' | 'personal' | 'fisioterapeuta'
 export type Modality = 'presencial' | 'online' | 'ambos'
 export type HabitKind = 'treino' | 'agua' | 'foco' | 'sono' | 'outro'
@@ -30,6 +31,21 @@ export interface Professional {
   rating: number | null
   reviews_count: number
   is_demo: boolean
+  created_at: string
+  /** Motivo da recusa do registro, escrito pela equipe. Nulo = pendente ou aprovado. */
+  rejection_reason: string | null
+  /** Quando a equipe decidiu pela última vez. Nulo = nunca revisado. */
+  reviewed_at: string | null
+}
+
+export interface RegistryReview {
+  id: string
+  professional_id: string
+  reviewer_id: string | null
+  decision: 'aprovado' | 'recusado'
+  reason: string | null
+  registry: string | null
+  specialty: Specialty
   created_at: string
 }
 
