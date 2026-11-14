@@ -85,14 +85,15 @@ begin
   -- 4. Perfil profissional da Ana (dados fictícios, como no mockup)
   insert into public.professionals (
     id, specialty, bio, registry, verified, tags, city, neighborhood, lat, lng,
-    modality, rating, reviews_count, is_demo
+    modality, rating, reviews_count, is_demo, availability
   ) values (
     v_pro, 'nutricionista',
     'Trabalho com alimentação para quem treina e tem rotina corrida. Monto planos simples, que cabem no seu dia, e acompanho pelo app o seu sono, treinos e água para ajustar quando precisar.',
     'CRN-3 00000 (fictício)', true,
     array['Nutrição esportiva', 'Ganho de massa', 'Reeducação alimentar'],
     'São Paulo', 'Pinheiros', -23.5614, -46.6819,
-    'ambos', 4.9, 128, true
+    'ambos', 4.9, 128, true,
+    '{"1":["08:00","18:00"],"2":["08:00","18:00"],"3":["08:00","18:00"],"4":["08:00","18:00"],"5":["08:00","17:00"],"6":["09:00","12:00"]}'
   );
 
   -- 5. Rotina do Lucas (mockup "Rotina de hoje")

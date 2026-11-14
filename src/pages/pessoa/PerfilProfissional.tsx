@@ -8,6 +8,7 @@ import { ErrorState, Modal, Skeleton } from '../../components/ui'
 import { useGeolocation } from '../../hooks/useGeolocation'
 import { useMyTeam, useProfessional, useRevokeShare, useShareRoutine } from '../../hooks/usePersonData'
 import { distanceKm, formatDistance } from '../../lib/geo'
+import { availabilityLines } from '../../lib/profile'
 import { MODALITY_LABEL, SHARED_DATA, specialtyLabel } from '../../lib/specialties'
 
 export function PerfilProfissional() {
@@ -45,6 +46,7 @@ export function PerfilProfissional() {
   const activeShare = team.data?.find((s) => s.professional_id === p.id)
   const km = p.lat != null && p.lng != null ? distanceKm(geo.position, { lat: p.lat, lng: p.lng }) : null
   const firstName = p.profiles.full_name.split(' ')[0]
+  const hours = availabilityLines(p.availability)
 
   return (
     <section className="space-y-4">
@@ -54,7 +56,7 @@ export function PerfilProfissional() {
           <ChevronLeft className="h-4 w-4" aria-hidden="true" /> Voltar
         </button>
         <div className="mx-auto mt-2 w-fit rounded-full border-4 border-lavender">
-          <Avatar seed={p.profiles.avatar_seed} name={p.profiles.full_name} size={104} />
+          <Avatar seed={p.profiles.avatar_seed} photo={p.profiles.avatar_path} name={p.profiles.full_name} size={104} />
         </div>
         <h1 className="mt-3 text-2xl font-bold">{p.profiles.full_name}</h1>
         <p className="mt-1 inline-flex items-center gap-1 text-sm text-white/80">
@@ -95,6 +97,20 @@ export function PerfilProfissional() {
         )}
         {p.neighborhood && <p className="text-xs text-muted">{p.neighborhood}, {p.city}</p>}
       </div>
+
+      {hours.length > 0 && (
+        <div className="card space-y-2">
+          <h2 className="eyebrow">Horários de atendimento</h2>
+          <ul className="space-y-1 text-sm">
+            {hours.map((h) => (
+              <li key={h.days} className="flex justify-between gap-3">
+                <span className="font-semibold">{h.days}</span>
+                <span className="text-muted">{h.hours}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {/* Compartilhar rotina: o coração do MVP */}
       <div className="card space-y-3 border border-lavender">

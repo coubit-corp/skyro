@@ -5,6 +5,8 @@ import { isNavActive, type NavMatch } from '../lib/nav'
 export interface NavItem extends NavMatch {
   label: string
   icon: LucideIcon
+  /** Só aparece na barra lateral do desktop (no celular não cabe mais uma aba) */
+  desktopOnly?: boolean
 }
 
 /**
@@ -24,7 +26,7 @@ export function BottomNav({ items }: { items: NavItem[] }) {
           const { to, label, icon: Icon } = item
           const active = isNavActive(pathname, item)
           return (
-            <li key={to} className="flex-1 lg:flex-none">
+            <li key={to} className={item.desktopOnly ? 'hidden lg:block' : 'flex-1 lg:flex-none'}>
               <Link
                 to={to}
                 aria-current={active ? 'page' : undefined}

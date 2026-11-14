@@ -34,6 +34,7 @@ const PerfilProfissional = lazy(() =>
   import('./pages/pessoa/PerfilProfissional').then((m) => ({ default: m.PerfilProfissional })),
 )
 const PertoDeVoce = lazy(() => import('./pages/pessoa/PertoDeVoce').then((m) => ({ default: m.PertoDeVoce })))
+const Perfil = lazy(() => import('./pages/pessoa/Perfil').then((m) => ({ default: m.Perfil })))
 const Plano = lazy(() => import('./pages/pessoa/Plano').then((m) => ({ default: m.Plano })))
 const Rotina = lazy(() => import('./pages/pessoa/Rotina').then((m) => ({ default: m.Rotina })))
 const Saude = lazy(() => import('./pages/pessoa/Saude').then((m) => ({ default: m.Saude })))
@@ -52,6 +53,8 @@ const PERSON_NAV: NavItem[] = [
   { to: '/plano', label: 'Plano', icon: ClipboardList },
   { to: '/rotina', label: 'Rotina', icon: CalendarDays },
   { to: '/progresso', label: 'Progresso', icon: ChartNoAxesColumn },
+  // No celular, o perfil abre pelo avatar no topo do Início (como nos mockups, são 5 abas).
+  { to: '/perfil', label: 'Meu perfil', icon: User, desktopOnly: true },
 ]
 
 const PRO_NAV: NavItem[] = [
@@ -107,6 +110,7 @@ export default function App() {
                 <Route path="/saude/profissional/:id" element={<PerfilProfissional />} />
                 <Route path="/rotina" element={<Rotina />} />
                 <Route path="/plano" element={<Plano />} />
+                <Route path="/perfil" element={<Perfil />} />
                 <Route path="/progresso" element={<ComingSoon title="Seu progresso" />} />
               </Route>
 

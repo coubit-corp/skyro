@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { avatarTraits, type HairStyle } from '../lib/avatar'
+import { avatarUrl } from '../lib/supabase'
 
 /** Cabelo desenhado atrás da cabeça (cabelo longo e cacheado). */
 function HairBack({ style, color }: { style: HairStyle; color: string }) {
@@ -36,10 +38,45 @@ function HairFront({ style, color }: { style: HairStyle; color: string }) {
 }
 
 /**
- * Avatar ilustrado, desenhado no próprio app a partir de uma semente:
- * não usa foto de ninguém e não depende de serviço externo (a demo funciona offline).
+ * Imagem de perfil. Se a pessoa enviou uma foto, mostra a foto; senão (ou se a
+ * foto não carregar), mostra o avatar ilustrado, desenhado no próprio app a
+ * partir de uma semente, sem depender de serviço externo.
  */
-export function Avatar({ seed, name, size = 48 }: { seed: string | null | undefined; name: string; size?: number }) {
+export function Avatar({
+  seed,
+  name,
+  size = 48,
+  photo,
+  src,
+}: {
+  seed: string | null | undefined
+  name: string
+  size?: number
+  /** Caminho da foto no bucket (profiles.avatar_path) */
+  photo?: string | null
+  /** Link direto, para a prévia de uma foto ainda não enviada */
+  src?: string | null
+}) {
+  const url = src ?? avatarUrl(photo)
+  const [failed, setFailed] = useState<string | null>(null)
+  if (url && failed !== url) {
+    return (
+      <img
+        src={url}
+        alt={`Foto de ${name}`}
+        width={size}
+        height={size}
+        loading="lazy"
+        onError={() => setFailed(url)}
+        className="shrink-0 rounded-full bg-lavender-soft object-cover"
+        style={{ width: size, height: size }}
+      />
+    )
+  }
+  return <IllustratedAvatar seed={seed} name={name} size={size} />
+}
+
+function IllustratedAvatar({ seed, name, size }: { seed: string | null | undefined; name: string; size: number }) {
   const t = avatarTraits(seed || name)
   return (
     <svg

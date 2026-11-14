@@ -1,9 +1,9 @@
-import { LogOut } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../auth/auth-context'
 import { Avatar } from '../../components/Avatar'
 import { DemoBanner } from '../../components/DemoBanner'
+import { useGreeting } from '../../hooks/useAccount'
 import { Logo } from '../../components/Logo'
 import { CheckButton, ErrorState, Modal, Skeleton } from '../../components/ui'
 import {
@@ -14,12 +14,13 @@ import {
   useMarkTipRead,
   useToggleHabit,
 } from '../../hooks/usePersonData'
-import { addDays, formatHours, formatMinutes, formatTime, greeting, today } from '../../lib/dates'
+import { addDays, formatHours, formatMinutes, formatTime, today } from '../../lib/dates'
 import { specialtyLabel } from '../../lib/specialties'
 import { bestStreak, currentStreak } from '../../lib/streak'
 
 export function Inicio() {
-  const { profile, signOut } = useAuth()
+  const { profile } = useAuth()
+  const hello = useGreeting(profile?.full_name)
   const todayIso = today()
 
   const habits = useHabits()
@@ -50,18 +51,19 @@ export function Inicio() {
     <section className="space-y-4">
       <header className="flex items-center justify-between lg:hidden">
         <Logo />
-        <button
-          onClick={signOut}
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-lavender-soft font-display font-bold text-navy"
-          title="Sair"
-          aria-label="Sair da conta"
+        <Link
+          to="/perfil"
+          className="flex h-11 w-11 items-center justify-center rounded-full ring-lavender transition hover:ring-2"
+          aria-label="Meu perfil"
         >
-          {profile?.full_name.charAt(0).toUpperCase() || <LogOut className="h-4 w-4" />}
-        </button>
+          <Avatar seed={profile?.avatar_seed} photo={profile?.avatar_path} name={profile?.full_name || 'você'} size={40} />
+        </Link>
       </header>
 
       <div>
-        <h1 className="text-[28px] font-bold">{greeting()}!</h1>
+        <h1 className="text-[28px] leading-tight font-bold" aria-live="polite">
+          {hello}
+        </h1>
         <p className="text-sm text-muted">
           {habits.isLoading
             ? 'Carregando seu dia…'
@@ -121,6 +123,7 @@ export function Inicio() {
         <div className="card flex items-center gap-3 border border-line">
           <Avatar
             seed={tip.data.professionals.profiles.avatar_seed}
+            photo={tip.data.professionals.profiles.avatar_path}
             name={tip.data.professionals.profiles.full_name}
             size={44}
           />

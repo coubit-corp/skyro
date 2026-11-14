@@ -3,19 +3,19 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../auth/auth-context'
-import type { DailyLog, Habit, HabitKind, Professional, Share, Tip } from '../lib/database.types'
+import type { DailyLog, Habit, HabitKind, Professional, ProfileBrief, Share, Tip } from '../lib/database.types'
 import { addDays, today } from '../lib/dates'
 import { PRO_PROFILE, supabase } from '../lib/supabase'
 
 /** Profissional com nome e avatar (join com profiles). */
 export type ProfessionalWithProfile = Professional & {
-  profiles: { full_name: string; avatar_seed: string | null }
+  profiles: ProfileBrief
 }
 
 export type ShareWithProfessional = Share & { professionals: ProfessionalWithProfile }
 
 export type TipWithAuthor = Tip & {
-  professionals: { specialty: Professional['specialty']; profiles: { full_name: string; avatar_seed: string | null } }
+  professionals: { specialty: Professional['specialty']; profiles: ProfileBrief }
 }
 
 const PRO_SELECT = `*, ${PRO_PROFILE}`
