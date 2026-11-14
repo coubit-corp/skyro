@@ -162,6 +162,9 @@ begin
 
     -- Marcações dos últimos 6 dias (hoje fica em aberto). Treino e fisio
     -- acompanham as faltas ao treino registradas no 01; o resto falha às vezes.
+    -- Começa do zero: rodando este arquivo de novo, sem o 01, as marcações do
+    -- plano da Ana ainda existem e dariam erro de duplicidade.
+    delete from public.plan_checks where person_id = v_lucas;
     insert into public.plan_checks (item_id, person_id, check_date)
     select i.id, v_lucas, d.day
     from public.plan_items i
