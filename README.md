@@ -8,7 +8,7 @@ Projeto do **Hack Brasil 2026**, trilha 04 (Saúde & bem-estar).
 
 > **Demo:** _link da Vercel aqui_ · **Vídeo:** _link do vídeo aqui_ · **Pitch:** [`docs/Skyro-Pitch-v2.pdf`](docs/Skyro-Pitch-v2.pdf)
 >
-> Para testar sem cadastro, use os botões **"Entrar como pessoa (demo)"** e **"Entrar como profissional (demo)"** na tela de login.
+> Para testar sem cadastro, use os botões **"Entrar como pessoa (demo)"**, **"Entrar como profissional (demo)"** e **"Entrar como equipe (demo)"** na tela de login.
 
 ---
 
@@ -72,7 +72,7 @@ _Pesquisa rápida da equipe, sem acesso aos apps por dentro. Detalhes em [`docs/
 
 - **Consentimento explícito e por profissional**, com a lista do que ele vai ver. A pessoa **revoga quando quiser**, e o acesso cai na hora.
 - **Garantido pelo banco, não só pela tela:** o profissional não consegue ler a rotina de quem não compartilhou com ele.
-- **Ninguém se dá selo de "verificado":** o registro do conselho fica "em verificação" até a equipe conferir.
+- **Ninguém se dá selo de "verificado":** o registro do conselho fica "em verificação" até a equipe Skyro conferir na consulta do conselho e aprovar. Se recusar, o profissional vê o motivo e sai da busca até corrigir. Cada decisão fica registrada (quem, quando e o quê).
 - **Nenhuma foto de pessoa:** os avatares são ilustrações geradas no próprio app.
 
 ## Arquitetura
@@ -123,7 +123,6 @@ Passo a passo completo: [`docs/SETUP-MAC.md`](docs/SETUP-MAC.md). Guia técnico:
 ## Próximos passos
 
 - **Validar com pessoas e profissionais reais:** entrevistas e preço da assinatura para profissionais.
-- **Tela da equipe** para conferir registros de conselho.
 - **Avisos pelo WhatsApp**, treino em grupo, recompensas e integração com relógios.
 - **Mais especialidades** com o mesmo quadro compartilhado.
 
