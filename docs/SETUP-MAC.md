@@ -147,6 +147,11 @@ No **SQL Editor**, abra uma **New query**, cole e clique em **Run**. No final ap
 | Cliente (Lucas Martins) | `demo.pessoa@skyro.app` | `skyro-demo-2026` |
 | Profissional (Ana Lima, nutricionista) | `demo.nutri@skyro.app` | `skyro-demo-2026` |
 | Equipe Skyro (aprova registros; só mexe em perfis demo) | `demo.equipe@skyro.app` | `skyro-demo-2026` |
+| Personal do Lucas (Pedro Alves) | `demo.catalogo.3@skyro.app` | `skyro-demo-2026` |
+| Psicólogo do Lucas (Carlos Souza) | `demo.catalogo.1@skyro.app` | `skyro-demo-2026` |
+| Fisio do Lucas (Fernanda Dias) | `demo.catalogo.8@skyro.app` | `skyro-demo-2026` |
+
+As três últimas são criadas pelo `02_catalogo_demo.sql`, logo abaixo.
 
 Depois, do mesmo jeito, rode o catálogo de profissionais fictícios do "Perto de você":
 
