@@ -78,6 +78,8 @@ export interface DailyLog {
   workout_planned: boolean
   workout_done: boolean
   mood: string | null
+  /** Dor do dia, de 0 a 10 (fisioterapia). */
+  pain_level: number | null
   created_at: string
   updated_at: string
 }
@@ -97,4 +99,43 @@ export interface Tip {
   body: string
   created_at: string
   read_at: string | null
+}
+
+/** Tipo de item do plano: cada especialidade monta o seu. */
+export type PlanKind = 'treino' | 'refeicao' | 'respiracao' | 'fisio'
+
+export interface PlanItem {
+  id: string
+  professional_id: string
+  person_id: string
+  kind: PlanKind
+  title: string
+  /** 1 = segunda … 7 = domingo */
+  weekdays: number[]
+  sets: number | null
+  reps: string | null
+  load: string | null
+  /** "07:30:00" */
+  meal_time: string | null
+  foods: string | null
+  duration_min: number | null
+  notes: string | null
+  video_url: string | null
+  position: number
+  created_at: string
+  updated_at: string
+}
+
+export interface PlanNote {
+  professional_id: string
+  person_id: string
+  note: string
+  updated_at: string
+}
+
+export interface PlanCheck {
+  item_id: string
+  person_id: string
+  check_date: string
+  created_at: string
 }

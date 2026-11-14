@@ -7,7 +7,7 @@ import { buildWeekSummary } from './weekSummary'
 const T = '2026-11-14'
 const log = (ago: number, over: Partial<DailyLog> = {}): DailyLog => ({
   id: String(ago), user_id: 'u', log_date: addDays(T, -ago), sleep_hours: 7.5, water_liters: 2, water_goal_liters: 2,
-  focus_minutes: 60, workout_planned: true, workout_done: true, mood: null, created_at: '', updated_at: '', ...over,
+  focus_minutes: 60, workout_planned: true, workout_done: true, mood: null, pain_level: null, created_at: '', updated_at: '', ...over,
 })
 
 describe('buildWeekSummary', () => {
