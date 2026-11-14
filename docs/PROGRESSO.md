@@ -70,6 +70,12 @@ Tudo está no código, com 40 testes automáticos, regras de acesso testadas no 
 - **Testado em 5 tamanhos de aparelho:** iPhone SE, Android 360 px, Pixel 7, iPhone 15 Pro Max e iPad, sem rolagem horizontal
 - **IA desligada** deixou de aparecer como erro no console
 
+### Etapa 8: material da submissão
+- **README para os jurados:** problema, solução, prints reais, diferenciais, IA responsável, privacidade e arquitetura
+- **Roteiro do vídeo de 3 minutos** (`docs/ROTEIRO-VIDEO.md`): falas cronometradas por cena e checklist de gravação
+- **Pitch v2** (`docs/Skyro-Pitch-v2.pdf`) com o novo posicionamento: "sua rotina, seus dados, todos os seus profissionais vendo o mesmo quadro"
+- Dados demo ajustados para o resumo mostrar o cruzamento sono × treino ("nos dias em que dormiu menos de 6h30, faltou a 2 de 3 treinos")
+
 ### Qualidade
 | O quê | Situação |
 |---|---|
@@ -140,7 +146,7 @@ Falta só o **teste em aparelho real** (iPhone com Safari e Android com Chrome, 
 ### 5. Publicar · meio dia · quando quiserem
 Seguir `docs/DEPLOY-VERCEL.md`. Precisa estar no ar **antes de gravar o vídeo**. Se a IA for ligada, fazer o deploy da função `resumo-semanal` (passo 3.5 do `SETUP-MAC.md`).
 
-### 6. Material da submissão · 2 dias · até 28/11
+### 6. Material da submissão · feito na etapa 8 (falta preencher links, equipe e gravar o vídeo)
 - **README para os jurados:** problema, solução, prints, link da demo, contas demo, arquitetura, como a IA é usada com segurança e próximos passos
 - **Roteiro do vídeo de 3 min**, com falas cronometradas seguindo a seção 11 da especificação, e uma lista de cenas para gravar a tela
 - **Pitch atualizado:** a especificação marca como pendente que o slide do MVP "deixa os profissionais para depois", e agora eles são o centro
