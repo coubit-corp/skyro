@@ -6,7 +6,8 @@
 //   o profissional só consegue resumir quem compartilha a rotina com ele.
 // - Vai para a IA apenas o primeiro nome e os números dos registros.
 //
-// Sem chave configurada, responde 503 e o app mostra o resumo por regras.
+// Sem chave configurada, responde 200 com { source: 'desligada' } (é um estado
+// normal, não um erro) e o app mostra o resumo por regras.
 
 import Anthropic from 'npm:@anthropic-ai/sdk@1.8.0'
 import { createClient } from 'npm:@supabase/supabase-js@2.119.0'
@@ -93,7 +94,7 @@ Deno.serve(async (req) => {
   if (cached) return json(200, { source: 'cache', lines: cached.lines, attention: cached.attention, model: cached.model })
 
   const apiKey = Deno.env.get('ANTHROPIC_API_KEY')
-  if (!apiKey) return json(503, { error: 'ia_desligada' })
+  if (!apiKey) return json(200, { source: 'desligada' })
 
   const fullName = (share.profiles as unknown as { full_name: string } | null)?.full_name ?? ''
   const userMessage = buildUserMessage({

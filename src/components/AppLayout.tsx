@@ -1,7 +1,9 @@
+import { Suspense } from 'react'
 import { Outlet } from 'react-router-dom'
 import { BottomNav, type NavItem } from './BottomNav'
 import { Logo } from './Logo'
 import { SignOutButton } from './SignOutButton'
+import { Skeleton } from './ui'
 
 /**
  * Casca das telas logadas: conteúdo centralizado (largura de celular no mobile,
@@ -19,9 +21,21 @@ export function AppLayout({ nav, wide = false }: { nav: NavItem[]; wide?: boolea
       <main
         className={`mx-auto px-4 pt-6 pb-28 sm:px-6 lg:pt-10 lg:pb-12 ${wide ? 'max-w-5xl' : 'max-w-xl'}`}
       >
-        <Outlet />
+        <Suspense fallback={<PageLoading />}>
+          <Outlet />
+        </Suspense>
       </main>
       <BottomNav items={nav} />
+    </div>
+  )
+}
+
+function PageLoading() {
+  return (
+    <div className="space-y-4" role="status" aria-label="Carregando">
+      <Skeleton className="h-10 w-2/3" />
+      <Skeleton className="h-32" />
+      <Skeleton className="h-48" />
     </div>
   )
 }

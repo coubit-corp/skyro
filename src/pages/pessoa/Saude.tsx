@@ -14,7 +14,7 @@ export function Saude() {
 
       <SectionTitle
         action={
-          <Link to="/saude/perto" className="text-sm font-semibold text-primary">
+          <Link to="/saude/perto" className="tap text-sm font-semibold text-primary">
             Ver mapa
           </Link>
         }

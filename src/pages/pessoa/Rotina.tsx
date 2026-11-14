@@ -49,7 +49,6 @@ export function Rotina() {
               key={d}
               role="tab"
               aria-selected={active}
-              aria-label={longDate(d)}
               onClick={() => setSelected(d)}
               className={`flex flex-col items-center rounded-2xl py-2 transition ${
                 active ? 'bg-navy text-white' : 'bg-card text-ink hover:bg-lavender-soft'
@@ -57,6 +56,7 @@ export function Rotina() {
             >
               <span className={`text-[11px] ${active ? 'text-white/80' : 'text-muted'}`}>{weekdayShort(d)}</span>
               <span className="font-display text-lg font-bold">{dayOfMonth(d)}</span>
+              <span className="sr-only">, {longDate(d)}</span>
             </button>
           )
         })}

@@ -63,10 +63,17 @@ Tudo está no código, com 40 testes automáticos, regras de acesso testadas no 
 - O profissional aparece no "Perto de você" **assim que publica**; quem atende só online aparece numa lista própria
 - Aba **Meu perfil**, com edição
 
+### Etapa 7: polimento
+- **Avatares desenhados no próprio app** (sem serviço externo): a demo funciona mesmo com internet ruim
+- **Carregamento sob demanda:** cada tela e o mapa só são baixados quando abertos. O pacote inicial caiu de 755 kB para 530 kB (de 219 para 155 kB compactado)
+- **Acessibilidade WCAG 2.1 AA:** as 13 telas passam na auditoria automática (axe). Contraste corrigido, rótulos ligados aos campos e áreas de toque de no mínimo 44 px
+- **Testado em 5 tamanhos de aparelho:** iPhone SE, Android 360 px, Pixel 7, iPhone 15 Pro Max e iPad, sem rolagem horizontal
+- **IA desligada** deixou de aparecer como erro no console
+
 ### Qualidade
 | O quê | Situação |
 |---|---|
-| Testes automáticos (`npm test`) | 53 passando, com relógio em São Paulo e em UTC |
+| Testes automáticos (`npm test`) | 56 passando, com relógio em São Paulo e em UTC |
 | Regras de acesso do banco | Testadas num Postgres local (`supabase/tests/`) |
 | Tipos e lint | Sem erros nem avisos |
 | Telas | Conferidas no navegador, no celular e no desktop, sem erros no console |
@@ -127,12 +134,8 @@ O checklist do projeto pede **15 entrevistas com pessoas** e **9 com profissiona
 ### 3. ~~Cadastro de profissional~~ · feito na etapa 6
 Falta só um jeito de a equipe aprovar registros (por enquanto, marcar `verified = true` direto no banco).
 
-### 4. Polimento · 1 a 2 dias
-- **Mapa sob demanda:** carregar o mapa só quando a tela abre. Hoje o app baixa cerca de 720 kB de uma vez; o mapa sai desse pacote inicial e o app abre mais rápido no 4G
-- **Avatares:** desenhar no próprio app, sem depender de serviço externo, para a demo não quebrar sem internet boa
-- **Acessibilidade:** contraste, leitor de tela e tamanho de toque (auditoria WCAG AA)
-- **Teste em aparelho real:** iPhone (Safari) e Android (Chrome), incluindo instalar o app
-- **Revisão de textos** e dos estados vazios
+### 4. ~~Polimento~~ · feito na etapa 7
+Falta só o **teste em aparelho real** (iPhone com Safari e Android com Chrome, incluindo instalar o app), que precisa ser feito por vocês.
 
 ### 5. Publicar · meio dia · quando quiserem
 Seguir `docs/DEPLOY-VERCEL.md`. Precisa estar no ar **antes de gravar o vídeo**. Se a IA for ligada, fazer o deploy da função `resumo-semanal` (passo 3.5 do `SETUP-MAC.md`).
