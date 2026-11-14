@@ -118,6 +118,12 @@ EOF
    pbcopy < supabase/migrations/20261115000001_aprovacao_registros.sql
    ```
 
+8. E com a quinta, que cria o "Meu plano" (treino, nutrição, respiração e fisio):
+
+   ```bash
+   pbcopy < supabase/migrations/20261115000002_planos.sql
+   ```
+
 > Se rodar duas vezes, dá erro de "already exists". Não é problema: as tabelas já foram criadas.
 
 ### 3.3 Criar as contas demo (só uma vez)

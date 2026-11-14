@@ -36,12 +36,16 @@ A Skyro é a **ponte entre a rotina que a pessoa registra no dia a dia e os prof
 | ![Início](docs/screenshots/pessoa-inicio.png) | ![Rotina](docs/screenshots/pessoa-rotina.png) | ![Saúde](docs/screenshots/pessoa-saude.png) | ![Consentimento](docs/screenshots/pessoa-consentimento.png) |
 | Strike, sono, foco e checklist do dia | Hábitos e registro de sono, água, foco e treino | Os profissionais que acompanham a rotina | Consentimento explícito, por profissional |
 
+**Meu plano:** tudo o que a equipe preparou, em quatro abas (Treino, Nutrição, Mente e Fisio). A pessoa marca o que fez no dia e, na fisioterapia, registra a dor de 0 a 10.
+
 ### Para o profissional
 
 | Pacientes | Ficha do paciente | Dica para a pessoa | Cadastro |
 |---|---|---|---|
 | ![Pacientes](docs/screenshots/profissional-pacientes.png) | ![Ficha](docs/screenshots/profissional-ficha.png) | ![Dica](docs/screenshots/pessoa-dica.png) | ![Cadastro](docs/screenshots/profissional-completar-perfil.png) |
 | Quem precisa de atenção aparece primeiro, com o motivo | Semana, alertas e o resumo que cruza sono e treino | A dica chega no Início da pessoa | Perfil com local no mapa e registro do conselho |
+
+**Plano na ficha do paciente:** cada profissional monta a parte dele (treino, plano alimentar, respiração ou exercícios de fisio), com os dias da semana, e vê quanto foi feito nos últimos 7 dias.
 
 ## O que nos diferencia
 
