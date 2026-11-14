@@ -80,10 +80,3 @@ export function formatMinutes(minutes: number | null | undefined): string {
 export function formatTime(time: string | null): string | null {
   return time ? time.slice(0, 5) : null
 }
-
-export function greeting(now = new Date()): string {
-  const h = now.getHours()
-  if (h < 12) return 'Bom dia'
-  if (h < 18) return 'Boa tarde'
-  return 'Boa noite'
-}
