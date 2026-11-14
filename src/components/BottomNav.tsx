@@ -5,6 +5,8 @@ export interface NavItem {
   to: string
   label: string
   icon: LucideIcon
+  /** Só fica ativo no caminho exato (não nas subpáginas). */
+  end?: boolean
 }
 
 /**
@@ -19,10 +21,11 @@ export function BottomNav({ items }: { items: NavItem[] }) {
         lg:inset-y-0 lg:right-auto lg:w-56 lg:border-t-0 lg:border-r lg:pt-24 lg:pb-0"
     >
       <ul className="mx-auto flex max-w-xl justify-around lg:flex-col lg:gap-1 lg:px-3">
-        {items.map(({ to, label, icon: Icon }) => (
+        {items.map(({ to, label, icon: Icon, end }) => (
           <li key={to} className="flex-1 lg:flex-none">
             <NavLink
               to={to}
+              end={end}
               className={({ isActive }) =>
                 `flex flex-col items-center gap-1 py-2.5 text-[11px] font-medium transition lg:flex-row lg:gap-3 lg:rounded-xl lg:px-3 lg:text-sm ${
                   isActive ? 'text-primary lg:bg-lavender-soft' : 'text-muted hover:text-ink'
