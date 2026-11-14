@@ -2,8 +2,13 @@
 -- Skyro · catálogo demonstrativo do "Perto de você"
 --
 -- Cria 12 profissionais FICTÍCIOS em bairros de São Paulo (perto de Pinheiros),
--- de todas as especialidades. Eles não têm senha: só aparecem no catálogo,
--- ninguém entra com essas contas.
+-- de todas as especialidades. Quase todos não têm senha: só aparecem no catálogo.
+--
+-- Três deles são a equipe do Lucas e têm login demo (senha skyro-demo-2026),
+-- para dar para montar treino, respiração e fisio com um clique:
+--   Personal:   demo.catalogo.3@skyro.app  → Pedro Alves
+--   Psicólogo:  demo.catalogo.1@skyro.app  → Carlos Souza
+--   Fisio:      demo.catalogo.8@skyro.app  → Fernanda Dias
 --
 -- Também monta a equipe do Lucas: Pedro (personal), como no mockup "Sua saúde",
 -- e Carlos (psicólogo) e Fernanda (fisio), para as 4 abas do "Meu plano"
@@ -29,6 +34,8 @@ declare
   v_pedro    constant uuid := 'c0000000-0000-4000-8000-000000000003';
   v_carlos   constant uuid := 'c0000000-0000-4000-8000-000000000001';
   v_fernanda constant uuid := 'c0000000-0000-4000-8000-000000000008';
+  v_password constant text := 'skyro-demo-2026';
+  v_login    boolean;
 begin
   -- Limpa o catálogo anterior (só as contas de catálogo, não as duas contas demo de login)
   delete from auth.users where email like 'demo.catalogo.%@skyro.app';
@@ -76,16 +83,30 @@ begin
   loop
     v_id := ('c0000000-0000-4000-8000-' || lpad(r.n::text, 12, '0'))::uuid;
 
+    -- Só a equipe do Lucas (Carlos, Pedro e Fernanda) tem senha.
+    v_login := v_id in (v_carlos, v_pedro, v_fernanda);
+
     insert into auth.users (
-      instance_id, id, aud, role, email, raw_app_meta_data, raw_user_meta_data,
+      instance_id, id, aud, role, email, encrypted_password, email_confirmed_at,
+      raw_app_meta_data, raw_user_meta_data,
       created_at, updated_at, confirmation_token, email_change, email_change_token_new, recovery_token
     ) values (
       '00000000-0000-0000-0000-000000000000', v_id, 'authenticated', 'authenticated',
       'demo.catalogo.' || r.n || '@skyro.app',
+      case when v_login then extensions.crypt(v_password, extensions.gen_salt('bf')) end,
+      case when v_login then now() end,
       '{"provider":"email","providers":["email"]}',
       jsonb_build_object('full_name', r.nome, 'role', 'professional'),
       now(), now(), '', '', '', ''
     );
+
+    -- Identidade de e-mail (necessária para o login por senha funcionar)
+    if v_login then
+      insert into auth.identities (id, user_id, provider_id, provider, identity_data, last_sign_in_at, created_at, updated_at)
+      values (gen_random_uuid(), v_id, v_id::text, 'email',
+              jsonb_build_object('sub', v_id::text, 'email', 'demo.catalogo.' || r.n || '@skyro.app', 'email_verified', true),
+              now(), now(), now());
+    end if;
 
     update public.profiles
        set is_demo = true, avatar_seed = lower(replace(r.nome, ' ', '-'))
