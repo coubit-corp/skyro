@@ -117,7 +117,15 @@ No **SQL Editor**, abra uma **New query**, cole e clique em **Run**. No final ap
 | Cliente (Lucas Martins) | `demo.pessoa@skyro.app` | `skyro-demo-2026` |
 | Profissional (Ana Lima, nutricionista) | `demo.nutri@skyro.app` | `skyro-demo-2026` |
 
-Os botões "Entrar como … (demo)" da tela de login já usam essas contas. O Lucas já compartilha a rotina com a Ana e tem 14 dias de registros. Se os dados ficarem bagunçados depois de testes, é só rodar o script de novo: ele apaga as contas demo e recria tudo, com as datas atualizadas para hoje.
+Depois, do mesmo jeito, rode o catálogo de profissionais fictícios do "Perto de você":
+
+```bash
+pbcopy < supabase/seed/02_catalogo_demo.sql
+```
+
+Cole numa **New query** e clique em **Run**. Aparece a contagem por especialidade (12 no total).
+
+Os botões "Entrar como … (demo)" da tela de login já usam essas contas. O Lucas já compartilha a rotina com a Ana e tem 14 dias de registros. Se os dados ficarem bagunçados depois de testes, é só rodar os dois scripts de novo, nessa ordem (`01` e depois `02`): eles apagam os dados demo e recriam tudo, com as datas atualizadas para hoje.
 
 ### 3.4 Liberar o login sem confirmação de e-mail (para desenvolver)
 
