@@ -64,6 +64,9 @@ export function PerfilProfissional() {
               {' · '}
               <BadgeCheck className="h-4 w-4 text-lavender" aria-hidden="true" /> registro verificado
             </>
+          ) : p.rejection_reason ? (
+            // Só quem já tem vínculo enxerga um perfil recusado (a busca esconde).
+            <>{' · '}registro não confirmado pela equipe</>
           ) : (
             p.registry && <>{' · '}registro em verificação</>
           )}
