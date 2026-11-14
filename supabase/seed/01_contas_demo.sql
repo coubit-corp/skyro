@@ -93,6 +93,8 @@ begin
   --    Até ~1 semana atrás: tudo bem. Esta semana: piorando.
   --    Hoje: dormiu 5h30 e ainda não treinou; faltou ao treino ontem e há 3 dias
   --    (2 faltas na semana) → o Lucas aparece em "Atenção" para a Ana.
+  --    As duas faltas vêm depois de noites curtas (6h12 e 5h54): é o padrão que o
+  --    resumo da semana aponta ("nos dias em que dormiu menos de 6h30, faltou…").
   for v_offset in 0..13 loop
     v_day := v_today - v_offset;
     insert into public.daily_logs (
@@ -100,7 +102,7 @@ begin
       focus_minutes, workout_planned, workout_done, mood
     ) values (
       v_person, v_day,
-      case v_offset when 0 then 5.5 when 1 then 6.2 when 2 then 5.8 when 3 then 7.0 when 4 then 6.5 when 5 then 7.2
+      case v_offset when 0 then 5.5 when 1 then 6.2 when 2 then 5.8 when 3 then 5.9 when 4 then 6.5 when 5 then 7.2
                     else 7.0 + (v_offset % 3) * 0.4 end,
       case v_offset when 0 then 0.8 when 1 then 1.6 when 2 then 1.4 when 3 then 1.9 else 2.1 end,
       2,
