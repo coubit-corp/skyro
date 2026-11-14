@@ -5,7 +5,12 @@
 -- de todas as especialidades. Eles não têm senha: só aparecem no catálogo,
 -- ninguém entra com essas contas.
 --
--- Também coloca o Pedro (personal) na equipe do Lucas, como no mockup "Sua saúde".
+-- Também monta a equipe do Lucas: Pedro (personal), como no mockup "Sua saúde",
+-- e Carlos (psicólogo) e Fernanda (fisio), para as 4 abas do "Meu plano"
+-- terem conteúdo. Cada um deixa um plano fictício, e a semana do Lucas ganha
+-- marcações de "feito" e a dor do dia.
+--
+-- Pré-requisito: todas as migrations, inclusive a 20261115000002_planos.sql.
 --
 -- Como rodar: SQL Editor → colar → Run, DEPOIS do 01_contas_demo.sql.
 -- Se rodar o 01 de novo, rode este também (o 01 recria o Lucas do zero).
@@ -20,6 +25,10 @@ declare
   r record;
   v_id uuid;
   v_lucas constant uuid := 'd0000000-0000-4000-8000-000000000001';
+  v_today constant date := (now() at time zone 'America/Sao_Paulo')::date;
+  v_pedro    constant uuid := 'c0000000-0000-4000-8000-000000000003';
+  v_carlos   constant uuid := 'c0000000-0000-4000-8000-000000000001';
+  v_fernanda constant uuid := 'c0000000-0000-4000-8000-000000000008';
 begin
   -- Limpa o catálogo anterior (só as contas de catálogo, não as duas contas demo de login)
   delete from auth.users where email like 'demo.catalogo.%@skyro.app';
@@ -91,10 +100,59 @@ begin
     );
   end loop;
 
-  -- Pedro (personal) entra na equipe do Lucas, se o Lucas existir
+  -- Equipe do Lucas e os planos de cada um, se o Lucas existir
   if exists (select 1 from public.profiles where id = v_lucas) then
-    insert into public.shares (person_id, professional_id, created_at)
-    values (v_lucas, 'c0000000-0000-4000-8000-000000000003', now() - interval '60 days');
+    insert into public.shares (person_id, professional_id, created_at) values
+      (v_lucas, v_pedro,    now() - interval '60 days'),
+      (v_lucas, v_carlos,   now() - interval '45 days'),
+      (v_lucas, v_fernanda, now() - interval '30 days');
+
+    -- Treino (Pedro): A na segunda, quarta e sexta; B na terça e quinta.
+    insert into public.plan_items (professional_id, person_id, kind, title, weekdays, sets, reps, load, notes, position) values
+      (v_pedro, v_lucas, 'treino', 'Agachamento livre',          '{1,3,5}', 4, '10',   '40 kg', null, 1),
+      (v_pedro, v_lucas, 'treino', 'Supino reto',                '{1,3,5}', 4, '10',   '30 kg', null, 2),
+      (v_pedro, v_lucas, 'treino', 'Remada curvada',             '{2,4}',   3, '12',   '25 kg', null, 3),
+      (v_pedro, v_lucas, 'treino', 'Desenvolvimento de ombros',  '{2,4}',   3, '12',   '10 kg', 'Depois dos exercícios da fisio', 4),
+      (v_pedro, v_lucas, 'treino', 'Prancha',                    '{1,2,3,4,5}', 3, '40 s', null, null, 5);
+    insert into public.plan_notes (professional_id, person_id, note)
+    values (v_pedro, v_lucas, 'Se dormir menos de 6h, faça metade das séries. Melhor um treino leve do que faltar.');
+
+    -- Mente (Carlos): respiração.
+    insert into public.plan_items (professional_id, person_id, kind, title, weekdays, duration_min, notes, position) values
+      (v_carlos, v_lucas, 'respiracao', 'Respiração 4-7-8 antes de dormir', '{1,2,3,4,5,6,7}', 5,
+       'Inspire em 4 s, segure por 7 s e solte em 8 s', 1),
+      (v_carlos, v_lucas, 'respiracao', 'Respiração quadrada no trabalho', '{1,2,3,4,5}', 4,
+       '4 s para inspirar, segurar, soltar e esperar', 2);
+    insert into public.plan_notes (professional_id, person_id, note)
+    values (v_carlos, v_lucas, 'Faça a 4-7-8 já deitado, com a luz apagada. Na próxima sessão, conversamos sobre como foi o sono.');
+
+    -- Fisio (Fernanda): ombro, como no mockup.
+    insert into public.plan_items (professional_id, person_id, kind, title, weekdays, sets, reps, notes, position) values
+      (v_fernanda, v_lucas, 'fisio', 'Rotação externa com elástico',      '{1,3,5}',           3, '15',   null, 1),
+      (v_fernanda, v_lucas, 'fisio', 'Alongamento de peitoral na parede', '{1,2,3,4,5,6,7}',   3, '30 s', null, 2),
+      (v_fernanda, v_lucas, 'fisio', 'Mobilidade de ombro com bastão',    '{1,2,3,4,5,6,7}',   2, '10',   null, 3);
+    insert into public.plan_notes (professional_id, person_id, note)
+    values (v_fernanda, v_lucas, 'Faça antes do treino de ombros. Combinei com seu personal.');
+
+    -- Marcações dos últimos 6 dias (hoje fica em aberto). Treino e fisio
+    -- acompanham as faltas ao treino registradas no 01; o resto falha às vezes.
+    insert into public.plan_checks (item_id, person_id, check_date)
+    select i.id, v_lucas, d.day
+    from public.plan_items i
+    cross join lateral (select (v_today - o)::date as day, o from generate_series(1, 6) as o) d
+    left join public.daily_logs l on l.user_id = v_lucas and l.log_date = d.day
+    where i.person_id = v_lucas
+      and extract(isodow from d.day)::smallint = any (i.weekdays)
+      and case
+            when i.kind in ('treino', 'fisio') then coalesce(l.workout_done, false)
+            else (d.o + i.position) % 4 <> 0
+          end;
+
+    -- Dor no ombro (0 a 10) da última semana: melhorando aos poucos.
+    update public.daily_logs
+       set pain_level = case (v_today - log_date) when 0 then 2 when 1 then 3 when 2 then 3 when 3 then 4
+                                                  when 4 then 4 when 5 then 5 when 6 then 5 end
+     where user_id = v_lucas and log_date between v_today - 6 and v_today;
   end if;
 end $$;
 
