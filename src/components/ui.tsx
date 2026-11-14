@@ -17,7 +17,7 @@ export function PageHeader({
   return (
     <header className="mb-5 space-y-3">
       {back && (
-        <Link to={back.to} className="inline-flex items-center gap-1 text-sm font-semibold text-primary">
+        <Link to={back.to} className="tap gap-1 text-sm font-semibold text-primary">
           <ChevronLeft className="h-4 w-4" aria-hidden="true" /> {back.label}
         </Link>
       )}
