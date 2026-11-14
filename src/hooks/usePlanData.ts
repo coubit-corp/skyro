@@ -6,7 +6,7 @@ import { useAuth } from '../auth/auth-context'
 import type { PlanCheck, PlanItem, PlanNote, Share, Specialty } from '../lib/database.types'
 import { addDays, today } from '../lib/dates'
 import type { toPlanItemRow } from '../lib/plan'
-import { supabase } from '../lib/supabase'
+import { PRO_PROFILE, supabase } from '../lib/supabase'
 
 type PlanItemRow = ReturnType<typeof toPlanItemRow>
 
@@ -46,14 +46,14 @@ export function useMyPlan() {
       const [items, notes, checks, shares, log] = await Promise.all([
         supabase
           .from('plan_items')
-          .select('*, professionals(specialty, profiles(full_name, avatar_seed))')
+          .select(`*, professionals(specialty, ${PRO_PROFILE})`)
           .eq('person_id', userId)
           .order('position'),
         supabase.from('plan_notes').select('*').eq('person_id', userId),
         supabase.from('plan_checks').select('item_id').eq('person_id', userId).eq('check_date', todayIso),
         supabase
           .from('shares')
-          .select('*, professionals(specialty, profiles(full_name, avatar_seed))')
+          .select(`*, professionals(specialty, ${PRO_PROFILE})`)
           .eq('person_id', userId)
           .order('created_at', { ascending: false }),
         supabase.from('daily_logs').select('pain_level').eq('user_id', userId).eq('log_date', todayIso).maybeSingle(),

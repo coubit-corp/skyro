@@ -4,7 +4,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { Professional } from '../lib/database.types'
 import { reviewErrorMessage } from '../lib/registry'
-import { supabase } from '../lib/supabase'
+import { PRO_PROFILE, supabase } from '../lib/supabase'
 
 export type RegistryRow = Professional & { profiles: { full_name: string; avatar_seed: string | null } }
 
@@ -17,7 +17,7 @@ export function useRegistries() {
     queryFn: async (): Promise<RegistryRow[]> => {
       const { data, error } = await supabase
         .from('professionals')
-        .select('*, profiles(full_name, avatar_seed)')
+        .select(`*, ${PRO_PROFILE}`)
         .not('registry', 'is', null)
       if (error) throw new Error(error.message)
       return data as RegistryRow[]
