@@ -1,9 +1,13 @@
 -- =============================================================================
 -- Skyro · contas de demonstração
 --
--- Cria (ou recria do zero) as duas contas dos botões "Entrar como ... (demo)":
+-- Cria (ou recria do zero) as três contas dos botões "Entrar como ... (demo)":
 --   Pessoa:        demo.pessoa@skyro.app  / skyro-demo-2026   → Lucas Martins
 --   Profissional:  demo.nutri@skyro.app   / skyro-demo-2026   → Ana Lima, nutricionista
+--   Equipe:        demo.equipe@skyro.app  / skyro-demo-2026   → Equipe Skyro (admin demo)
+--
+-- A conta da equipe só aprova ou recusa registros de perfis de demonstração
+-- (garantido pela migration 20261115000001_aprovacao_registros.sql).
 --
 -- O Lucas já compartilha a rotina com a Ana e tem registros de hoje e dos 13 dias
 -- anteriores, com esta semana em "Atenção" (dormiu pouco, faltou treino, pouca água),
@@ -11,7 +15,7 @@
 -- é só rodar este arquivo de novo.
 --
 -- Como rodar: painel do Supabase → SQL Editor → New query → colar → Run.
--- Pré-requisito: a migration 20261113000001_schema_inicial.sql já aplicada.
+-- Pré-requisito: todas as migrations de supabase/migrations/ já aplicadas.
 -- Pode rodar quantas vezes quiser: apaga as contas demo e cria de novo.
 -- =============================================================================
 
@@ -22,6 +26,7 @@ declare
   v_password  constant text := 'skyro-demo-2026';
   v_person    uuid := 'd0000000-0000-4000-8000-000000000001';
   v_pro       uuid := 'd0000000-0000-4000-8000-000000000002';
+  v_admin     uuid := 'd0000000-0000-4000-8000-000000000003';
   v_day       date;
   v_offset    int;
   h_wake      uuid := gen_random_uuid();
@@ -32,8 +37,8 @@ declare
   h_sleep     uuid := gen_random_uuid();
 begin
   -- 1. Limpa as contas demo anteriores (o "on delete cascade" leva perfil, registros, etc.)
-  delete from auth.users where id in (v_person, v_pro)
-     or email in ('demo.pessoa@skyro.app', 'demo.nutri@skyro.app');
+  delete from auth.users where id in (v_person, v_pro, v_admin)
+     or email in ('demo.pessoa@skyro.app', 'demo.nutri@skyro.app', 'demo.equipe@skyro.app');
 
   -- 2. Cria os usuários no Supabase Auth, já com e-mail confirmado.
   --    O gatilho on_auth_user_created cria o perfil (profiles) automaticamente.
@@ -51,6 +56,11 @@ begin
      'demo.nutri@skyro.app', extensions.crypt(v_password, extensions.gen_salt('bf')), now(),
      '{"provider":"email","providers":["email"]}',
      '{"full_name":"Ana Lima","role":"professional"}',
+     now(), now(), '', '', '', ''),
+    ('00000000-0000-0000-0000-000000000000', v_admin, 'authenticated', 'authenticated',
+     'demo.equipe@skyro.app', extensions.crypt(v_password, extensions.gen_salt('bf')), now(),
+     '{"provider":"email","providers":["email"]}',
+     '{"full_name":"Equipe Skyro"}',
      now(), now(), '', '', '', '');
 
   -- Identidade de e-mail (necessária para o login por senha funcionar)
@@ -61,11 +71,16 @@ begin
      now(), now(), now()),
     (gen_random_uuid(), v_pro, v_pro::text, 'email',
      jsonb_build_object('sub', v_pro::text, 'email', 'demo.nutri@skyro.app', 'email_verified', true),
+     now(), now(), now()),
+    (gen_random_uuid(), v_admin, v_admin::text, 'email',
+     jsonb_build_object('sub', v_admin::text, 'email', 'demo.equipe@skyro.app', 'email_verified', true),
      now(), now(), now());
 
   -- 3. Marca os perfis como demo e fixa os avatares
   update public.profiles set is_demo = true, avatar_seed = 'lucas-martins' where id = v_person;
   update public.profiles set is_demo = true, avatar_seed = 'ana-lima'      where id = v_pro;
+  -- O papel admin só é dado aqui, por SQL: o cadastro pelo app nunca cria admin.
+  update public.profiles set is_demo = true, avatar_seed = 'equipe-skyro', role = 'admin' where id = v_admin;
 
   -- 4. Perfil profissional da Ana (dados fictícios, como no mockup)
   insert into public.professionals (
