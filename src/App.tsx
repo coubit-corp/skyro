@@ -36,6 +36,8 @@ const PerfilProfissional = lazy(() =>
 const PertoDeVoce = lazy(() => import('./pages/pessoa/PertoDeVoce').then((m) => ({ default: m.PertoDeVoce })))
 const Perfil = lazy(() => import('./pages/pessoa/Perfil').then((m) => ({ default: m.Perfil })))
 const Plano = lazy(() => import('./pages/pessoa/Plano').then((m) => ({ default: m.Plano })))
+const Progresso = lazy(() => import('./pages/pessoa/Progresso').then((m) => ({ default: m.Progresso })))
+const ResumoSemana = lazy(() => import('./pages/pessoa/ResumoSemana').then((m) => ({ default: m.ResumoSemana })))
 const Rotina = lazy(() => import('./pages/pessoa/Rotina').then((m) => ({ default: m.Rotina })))
 const Saude = lazy(() => import('./pages/pessoa/Saude').then((m) => ({ default: m.Saude })))
 const Paciente = lazy(() => import('./pages/profissional/Paciente').then((m) => ({ default: m.Paciente })))
@@ -111,7 +113,8 @@ export default function App() {
                 <Route path="/rotina" element={<Rotina />} />
                 <Route path="/plano" element={<Plano />} />
                 <Route path="/perfil" element={<Perfil />} />
-                <Route path="/progresso" element={<ComingSoon title="Seu progresso" />} />
+                <Route path="/progresso" element={<Progresso />} />
+                <Route path="/progresso/semana" element={<ResumoSemana />} />
               </Route>
 
               {/* App do profissional */}
