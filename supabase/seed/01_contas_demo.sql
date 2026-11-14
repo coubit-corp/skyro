@@ -155,7 +155,7 @@ begin
           now() - interval '2 hours');
 end $$;
 
--- Conferência: deve listar as duas contas
+-- Conferência: deve listar as três contas
 select p.full_name, p.role, u.email, p.is_demo
 from public.profiles p join auth.users u on u.id = p.id
 where p.is_demo

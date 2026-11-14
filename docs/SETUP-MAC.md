@@ -112,6 +112,12 @@ EOF
    pbcopy < supabase/migrations/20261114000002_cadastro_profissional.sql
    ```
 
+7. E com a quarta, que cria a área da equipe para aprovar os registros de conselho:
+
+   ```bash
+   pbcopy < supabase/migrations/20261115000001_aprovacao_registros.sql
+   ```
+
 > Se rodar duas vezes, dá erro de "already exists". Não é problema: as tabelas já foram criadas.
 
 ### 3.3 Criar as contas demo (só uma vez)
@@ -122,12 +128,13 @@ Copie o script:
 pbcopy < supabase/seed/01_contas_demo.sql
 ```
 
-No **SQL Editor**, abra uma **New query**, cole e clique em **Run**. No final aparece uma tabela com **Lucas Martins** e **Ana Lima**.
+No **SQL Editor**, abra uma **New query**, cole e clique em **Run**. No final aparece uma tabela com **Lucas Martins**, **Ana Lima** e **Equipe Skyro**.
 
 | Conta | E-mail | Senha |
 |---|---|---|
 | Cliente (Lucas Martins) | `demo.pessoa@skyro.app` | `skyro-demo-2026` |
 | Profissional (Ana Lima, nutricionista) | `demo.nutri@skyro.app` | `skyro-demo-2026` |
+| Equipe Skyro (aprova registros; só mexe em perfis demo) | `demo.equipe@skyro.app` | `skyro-demo-2026` |
 
 Depois, do mesmo jeito, rode o catálogo de profissionais fictícios do "Perto de você":
 
@@ -202,7 +209,7 @@ Abra **http://localhost:5173** no navegador. Para parar o servidor: **Ctrl + C**
 
 Teste rápido:
 
-1. Clique em **Entrar como pessoa (demo)**: você cai em `/inicio` como Lucas. Clique em **Sair** e teste **Entrar como profissional (demo)**: você cai em `/pro` como Ana.
+1. Clique em **Entrar como pessoa (demo)**: você cai em `/inicio` como Lucas. Clique em **Sair** e teste **Entrar como profissional (demo)**: você cai em `/pro` como Ana. Depois, **Entrar como equipe (demo)**: você cai em `/equipe`, com o Rafael e o Bruno esperando aprovação.
 2. **Criar conta** como **Pessoa**: você cai em `/inicio`.
 3. Clique em **Sair** e crie outra conta como **Profissional**: você cai em `/pro`.
 
