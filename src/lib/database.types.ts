@@ -14,6 +14,17 @@ export interface Profile {
   avatar_seed: string | null
   is_demo: boolean
   created_at: string
+  /** Apresentação curta da pessoa (o profissional usa a bio de Professional). */
+  bio: string
+  /** Caminho da foto no bucket "avatars"; nulo = avatar ilustrado. */
+  avatar_path: string | null
+}
+
+/** Nome e imagem de alguém, como vêm nos joins com profiles. */
+export interface ProfileBrief {
+  full_name: string
+  avatar_seed: string | null
+  avatar_path: string | null
 }
 
 export interface Professional {
@@ -32,6 +43,8 @@ export interface Professional {
   reviews_count: number
   is_demo: boolean
   created_at: string
+  /** Horários por dia: {"1": ["08:00", "18:00"]} (1 = segunda … 7 = domingo). */
+  availability: Record<string, [string, string]>
   /** Motivo da recusa do registro, escrito pela equipe. Nulo = pendente ou aprovado. */
   rejection_reason: string | null
   /** Quando a equipe decidiu pela última vez. Nulo = nunca revisado. */
