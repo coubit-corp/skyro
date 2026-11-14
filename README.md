@@ -30,7 +30,7 @@ Pré-requisito: Node.js 20 ou mais novo.
 
 3. Crie as tabelas: no painel do Supabase, abra o **SQL Editor**, cole o conteúdo de cada arquivo de `supabase/migrations/` (em ordem) e clique em **Run**.
 
-4. Crie as contas demo: no mesmo SQL Editor, rode `supabase/seed/01_contas_demo.sql`. Pessoa: `demo.pessoa@skyro.app`; profissional: `demo.nutri@skyro.app`. A senha das duas é `skyro-demo-2026`.
+4. Crie os dados demo: no mesmo SQL Editor, rode `supabase/seed/01_contas_demo.sql` e depois `supabase/seed/02_catalogo_demo.sql`. Pessoa: `demo.pessoa@skyro.app`; profissional: `demo.nutri@skyro.app`. A senha das duas é `skyro-demo-2026`.
 
 5. Suba o app:
 
