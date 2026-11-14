@@ -8,7 +8,7 @@ Projeto do **Hack Brasil 2026**, trilha 04 (Saúde & bem-estar).
 
 > **Demo:** _link da Vercel aqui_ · **Vídeo:** _link do vídeo aqui_ · **Pitch:** [`docs/Skyro-Pitch-v2.pdf`](docs/Skyro-Pitch-v2.pdf)
 >
-> Para testar sem cadastro, use os botões **"Entrar como pessoa (demo)"**, **"Entrar como profissional (demo)"** e **"Entrar como equipe (demo)"** na tela de login.
+> Para testar sem cadastro, use os botões **"Entrar como pessoa (demo)"**, **"Entrar como profissional (demo)"** e **"Entrar como equipe (demo)"** na tela de login. Logo abaixo ficam os outros profissionais da equipe do Lucas (personal, psicólogo e fisio), cada um montando a própria parte do plano.
 
 ---
 
