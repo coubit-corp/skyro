@@ -76,14 +76,26 @@ Tudo está no código, com 40 testes automáticos, regras de acesso testadas no 
 - **Pitch v2** (`docs/Skyro-Pitch-v2.pdf`) com o novo posicionamento: "sua rotina, seus dados, todos os seus profissionais vendo o mesmo quadro"
 - Dados demo ajustados para o resumo mostrar o cruzamento sono × treino ("nos dias em que dormiu menos de 6h30, faltou a 2 de 3 treinos")
 
+### Etapa 9: aprovação dos registros de conselho
+- **Área da equipe** (`/equipe`), com abas **Pendentes** e **Decididos**, no mesmo visual do painel do profissional
+- Cada registro tem um link para a **consulta do conselho**: CFP e CFN abrem a consulta nacional; CONFEF e COFFITO abrem o site do conselho
+- **Aprovar** pede confirmação. **Recusar** pede o motivo, com 4 motivos prontos. Dá para rever uma decisão depois
+- **Recusado sai da busca** e vê o motivo em **Meu perfil**, com o botão "Corrigir registro". Ao trocar o registro, volta para "em verificação" e reaparece na busca
+- **Garantido pelo banco:** novo papel `admin`, dado só por SQL. O selo só muda pela função `review_professional()`, e cada decisão fica num histórico com quem decidiu e quando
+- Se o profissional trocar o registro enquanto a equipe confere, a aprovação é barrada
+- **Conta demo da equipe** (`demo.equipe@skyro.app`) e botão **"Entrar como equipe (demo)"**. Ela só decide sobre perfis demo: um jurado não consegue dar selo a um profissional real
+- Corrigido o teste de banco `01_rls.sql`, que tinha quebrado na etapa 6
+- Corrigido o menu do profissional, que deixava "Pacientes" ativa junto com Perfil, Agenda e Mensagens
+
 ### Qualidade
 | O quê | Situação |
 |---|---|
-| Testes automáticos (`npm test`) | 56 passando, com relógio em São Paulo e em UTC |
-| Regras de acesso do banco | Testadas num Postgres local (`supabase/tests/`) |
+| Testes automáticos (`npm test`) | 69 passando, com relógio em São Paulo e em UTC |
+| Regras de acesso do banco | Testadas num Postgres local (`supabase/tests/`, 4 arquivos) |
 | Tipos e lint | Sem erros nem avisos |
 | Telas | Conferidas no navegador, no celular e no desktop, sem erros no console |
-| **Ainda não testado** | Supabase real com as etapas 2 a 5, IA real (precisa de chave) e deploy na Vercel |
+| Supabase real | Roteiros das etapas 1 a 8 conferidos pela equipe. **A etapa 9 ainda precisa ser rodada lá** (veja o passo 1 abaixo) |
+| **Ainda não testado** | Etapa 9 no Supabase real, IA real (desligada por decisão da equipe), deploy na Vercel e aparelho real |
 
 ### Bugs que pegamos antes de chegar até você
 - Fuso horário: à noite no Brasil, "hoje" virava amanhã (no app e nos seeds)
@@ -96,12 +108,12 @@ Tudo está no código, com 40 testes automáticos, regras de acesso testadas no 
 
 ## Como rodar tudo localmente
 
-Todo o trabalho está na branch `claude/etapa-5-deploy-vercel`, que já contém as etapas 1 a 5 (ou no `.zip` que acompanha este documento).
+Todo o trabalho está na branch `etapa-9-aprovacao-registros`, que já contém as etapas 1 a 9.
 
 1. Baixe o projeto (ou descompacte o `.zip` em `~/Documents/skyro`):
 
    ```bash
-   cd ~/Documents && git clone -b claude/etapa-5-deploy-vercel https://github.com/coubit-corp/skyro.git
+   cd ~/Documents && git clone -b etapa-9-aprovacao-registros https://github.com/coubit-corp/skyro.git
    ```
 
 2. Instale as dependências e crie o `.env`, conforme os passos 2 e 3.1 de `docs/SETUP-MAC.md`.
@@ -109,9 +121,10 @@ Todo o trabalho está na branch `claude/etapa-5-deploy-vercel`, que já contém 
    1. `supabase/migrations/20261113000001_schema_inicial.sql` (se ainda não rodou)
    2. `supabase/migrations/20261114000001_resumos_ia.sql`
    3. `supabase/migrations/20261114000002_cadastro_profissional.sql`
-   4. `supabase/seed/01_contas_demo.sql`
-   5. `supabase/seed/02_catalogo_demo.sql`
-   6. `supabase/seed/03_pacientes_demo.sql`
+   4. `supabase/migrations/20261115000001_aprovacao_registros.sql`
+   5. `supabase/seed/01_contas_demo.sql`
+   6. `supabase/seed/02_catalogo_demo.sql`
+   7. `supabase/seed/03_pacientes_demo.sql`
 4. Confira e suba o app:
 
    ```bash
@@ -122,6 +135,7 @@ Todo o trabalho está na branch `claude/etapa-5-deploy-vercel`, que já contém 
    1. **Entrar como pessoa (demo)**: Início → Rotina → Saúde → Ver mapa → um perfil → Compartilhar
    2. Sair → **Entrar como profissional (demo)**: 3 em Atenção → abrir o Lucas → enviar uma dica
    3. Sair → entrar como pessoa: a dica aparece no Início
+   4. Sair → **Entrar como equipe (demo)**: aprovar o Rafael → recusar o Bruno com um motivo → ver os dois em Decididos
 
 ---
 
@@ -129,16 +143,16 @@ Todo o trabalho está na branch `claude/etapa-5-deploy-vercel`, que já contém 
 
 Restam cerca de 16 dias. A ordem abaixo prioriza o que os jurados exigem e veem primeiro.
 
-### 1. Validar no Supabase real · 1 dia · **urgente**
-Rodar o roteiro acima no seu Mac. É o único ponto que eu não consegui testar daqui. Se algo falhar, me mande o print ou o texto do erro.
+### 1. Rodar a etapa 9 no Supabase real · 15 minutos · **urgente**
+Os roteiros das etapas 1 a 8 já foram conferidos no Supabase real. Falta a etapa 9: no SQL Editor, rode a migration `20261115000001_aprovacao_registros.sql` e depois os seeds 01, 02 e 03 de novo, nessa ordem. O 01 cria a conta da equipe, e o 02 e o 03 precisam vir depois dele. Em seguida, siga o passo 4 do roteiro acima. Se algo falhar, me mande o print ou o texto do erro.
 
 ### 2. Validação com pessoas reais · em paralelo, até 21/11
 O checklist do projeto pede **15 entrevistas com pessoas** e **9 com profissionais**, e isso vale ponto no pitch. Os roteiros estão em `docs/checklist-e-entrevistas.txt`.
 - **Pode começar já.** Não depende de código.
 - **Como eu ajudo:** monto um formulário (Google Forms ou página) e uma planilha para registrar as respostas e tirar as 3 dificuldades mais citadas.
 
-### 3. ~~Cadastro de profissional~~ · feito na etapa 6
-Falta só um jeito de a equipe aprovar registros (por enquanto, marcar `verified = true` direto no banco).
+### 3. ~~Cadastro de profissional~~ · feito nas etapas 6 e 9
+A equipe aprova ou recusa os registros pela área `/equipe`. Para dar o papel de equipe a uma conta real, rode no SQL Editor: `update profiles set role = 'admin' where id = '<id da conta>';`
 
 ### 4. ~~Polimento~~ · feito na etapa 7
 Falta só o **teste em aparelho real** (iPhone com Safari e Android com Chrome, incluindo instalar o app), que precisa ser feito por vocês.
@@ -164,11 +178,11 @@ Seguir `docs/DEPLOY-VERCEL.md`. Precisa estar no ar **antes de gravar o vídeo**
 
 | Decisão | Por que importa |
 |---|---|
-| **Trocar a secret key do Supabase** | Ela foi colada no chat. Troque em Settings → API Keys |
-| **Ligar a IA real?** | Precisa de uma chave da Anthropic; cada resumo novo custa centavos |
+| ~~Ligar a IA real?~~ | **Decidido: fica desligada por enquanto.** O app mostra o resumo por regras. Para ligar depois, veja o passo 3.5 do `SETUP-MAC.md` |
+| **Quem da equipe vira admin** | O papel é dado por SQL (passo 3 acima). Só quem for conferir registros de verdade |
 | **Notas e estrelas para psicólogos** | A especificação pede para checar as regras do CFP; hoje eles aparecem sem nota |
 | **Preço para profissionais** | Testar com os 9 profissionais entrevistados |
-| **Merge dos PRs** (#6 → #7 → #8 → #9 → #5) | O deploy publica a `main` |
+| **Merge dos PRs** (#6 → #7 → #8 → #9 → #5 → #10 → #11 → #12 → #13) | O deploy publica a `main` |
 
 ---
 
@@ -181,6 +195,8 @@ Seguir `docs/DEPLOY-VERCEL.md`. Precisa estar no ar **antes de gravar o vídeo**
 | `docs/SKYRO-MVP.md` | Especificação original do MVP |
 | `README.md` | Visão técnica do projeto |
 | `src/lib/alerts.ts` | Regras de alerta (Atenção / Em dia) |
+| `src/lib/registry.ts` | Regras da verificação de registro (conselhos, motivos, listas da equipe) |
+| `src/pages/equipe/` | Área da equipe para aprovar ou recusar registros |
 | `supabase/migrations/` | Banco e regras de acesso |
 | `supabase/seed/` | Dados de demonstração |
 | `supabase/functions/resumo-semanal/` | Resumo por IA |
@@ -191,5 +207,9 @@ Seguir `docs/DEPLOY-VERCEL.md`. Precisa estar no ar **antes de gravar o vídeo**
 3. [#8 Painel do profissional](https://github.com/coubit-corp/skyro/pull/8)
 4. [#9 Resumo por IA](https://github.com/coubit-corp/skyro/pull/9)
 5. [#5 Deploy na Vercel](https://github.com/coubit-corp/skyro/pull/5)
+6. [#10 Cadastro e perfil do profissional](https://github.com/coubit-corp/skyro/pull/10)
+7. [#11 Polimento](https://github.com/coubit-corp/skyro/pull/11)
+8. [#12 Material da submissão](https://github.com/coubit-corp/skyro/pull/12)
+9. [#13 Aprovação dos registros de conselho](https://github.com/coubit-corp/skyro/pull/13)
 
 Os PRs #1 a #4 foram fechados pelo GitHub quando os commits passaram para o nome do autor e foram substituídos pelos #6 a #9, com o mesmo código.
