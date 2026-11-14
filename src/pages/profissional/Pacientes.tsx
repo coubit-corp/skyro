@@ -51,14 +51,6 @@ export function Pacientes() {
           {patients.data && ` · ${patients.data.length} ${patients.data.length === 1 ? 'paciente ativo' : 'pacientes ativos'}`}
         </p>
       </div>
-
-      {me.data === null && (
-        <div className="card border border-lavender text-sm text-muted">
-          Seu perfil profissional ainda não está completo, então você não aparece no "Perto de você". O cadastro do perfil
-          chega numa próxima etapa; por enquanto, use a conta demo para ver o painel com pacientes.
-        </div>
-      )}
-
       <label className="relative block">
         <Search className="pointer-events-none absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-muted" aria-hidden="true" />
         <input

@@ -4,11 +4,13 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../auth/auth-context'
 import { evaluatePatient, type PatientStatus } from '../lib/alerts'
+import type { toProfessionalRow } from '../lib/professionalForm'
 import type { DailyLog, Habit, Professional, Share, Tip } from '../lib/database.types'
 import { addDays, today } from '../lib/dates'
 import { currentStreak } from '../lib/streak'
 import { supabase } from '../lib/supabase'
 
+type ProfessionalRow = ReturnType<typeof toProfessionalRow>
 type PersonProfile = { full_name: string; avatar_seed: string | null }
 export type PatientShare = Share & { profiles: PersonProfile }
 
@@ -172,6 +174,34 @@ export function useAiSummary(personId: string | undefined, alerts: string[], ena
       const d = data as { source: 'ia' | 'cache'; lines: string[]; attention: string; model: string }
       if (!Array.isArray(d?.lines) || typeof d.attention !== 'string') return { ok: false, reason: 'ia_formato_invalido' }
       return { ok: true, ...d }
+    },
+  })
+}
+
+/**
+ * Cria ou atualiza o perfil profissional (e o nome no perfil da conta).
+ * Insert e update são separados de propósito: o banco só deixa o profissional
+ * alterar algumas colunas, e um "upsert" tentaria regravar todas.
+ */
+export function useSaveProfessional() {
+  const proId = useProId()
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async ({
+      fullName,
+      row,
+      exists,
+    }: {
+      fullName: string
+      row: ProfessionalRow
+      exists: boolean
+    }) => {
+      unwrap(await supabase.from('profiles').update({ full_name: fullName.trim() }).eq('id', proId))
+      if (exists) unwrap(await supabase.from('professionals').update(row).eq('id', proId))
+      else unwrap(await supabase.from('professionals').insert({ id: proId, ...row }))
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['professionals', proId] })
     },
   })
 }

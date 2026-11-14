@@ -4,6 +4,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './auth/AuthProvider'
 import { useAuth } from './auth/auth-context'
 import { homeFor } from './auth/home'
+import { RequireProProfile } from './auth/RequireProProfile'
 import { RequireRole } from './auth/RequireRole'
 import { AppLayout } from './components/AppLayout'
 import type { NavItem } from './components/BottomNav'
@@ -19,6 +20,8 @@ import { PertoDeVoce } from './pages/pessoa/PertoDeVoce'
 import { Rotina } from './pages/pessoa/Rotina'
 import { Saude } from './pages/pessoa/Saude'
 import { Paciente } from './pages/profissional/Paciente'
+import { CompletarPerfil } from './pages/profissional/CompletarPerfil'
+import { MeuPerfil } from './pages/profissional/MeuPerfil'
 import { Pacientes } from './pages/profissional/Pacientes'
 
 // Mesma ordem de abas dos mockups.
@@ -83,7 +86,9 @@ export default function App() {
             <Route
               element={
                 <RequireRole role="professional">
-                  <AppLayout nav={PRO_NAV} wide />
+                  <RequireProProfile>
+                    <AppLayout nav={PRO_NAV} wide />
+                  </RequireProProfile>
                 </RequireRole>
               }
             >
@@ -91,8 +96,18 @@ export default function App() {
               <Route path="/pro/pacientes/:id" element={<Paciente />} />
               <Route path="/pro/agenda" element={<ComingSoon title="Agenda" />} />
               <Route path="/pro/mensagens" element={<ComingSoon title="Mensagens" />} />
-              <Route path="/pro/perfil" element={<ComingSoon title="Meu perfil" />} />
+              <Route path="/pro/perfil" element={<MeuPerfil />} />
             </Route>
+
+            {/* Fora do painel: quem ainda não tem perfil profissional completo */}
+            <Route
+              path="/pro/completar-perfil"
+              element={
+                <RequireRole role="professional">
+                  <CompletarPerfil />
+                </RequireRole>
+              }
+            />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
