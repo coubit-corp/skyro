@@ -114,10 +114,15 @@ Tudo está no código, com 40 testes automáticos, regras de acesso testadas no 
 - **Saudação no Início:** "Bom dia, Lucas!", "Boa tarde" ou "Boa noite", pelo horário do aparelho. Ela muda sozinha às 5h, 12h e 18h, sem recarregar, e aparece sem nome quando o nome não está preenchido
 - O avatar do topo do Início agora abre o perfil. Antes, tocar nele saía da conta
 
+### Etapa 12: logins demo da equipe do Lucas
+- O **personal** (Pedro), o **psicólogo** (Carlos) e a **fisio** (Fernanda) do Lucas ganharam login, com a mesma senha das outras contas demo. Assim dá para montar **treino**, **respiração** e **exercícios de fisio** no plano do Lucas sem criar conta. Antes, só a Ana (nutri) tinha login, e ela só adiciona refeições
+- **Sem botão no login**, por decisão da equipe: a tela continua com os três botões de sempre. Para entrar, digite o e-mail (`demo.catalogo.3@skyro.app` para o personal, `.1` para o psicólogo e `.8` para a fisio) e a senha `skyro-demo-2026`
+- Corrigido o seed 02, que falhava quando era rodado de novo sozinho, sem o 01 antes
+
 ### Qualidade
 | O quê | Situação |
 |---|---|
-| Testes automáticos (`npm test`) | 102 passando, com relógio em São Paulo e em UTC |
+| Testes automáticos (`npm test`) | 105 passando, com relógio em São Paulo e em UTC |
 | Regras de acesso do banco | Testadas num Postgres local (`supabase/tests/`, 6 arquivos) |
 | Tipos e lint | Sem erros nem avisos |
 | Telas | Conferidas no navegador, no celular e no desktop, sem erros no console |
@@ -137,12 +142,12 @@ Tudo está no código, com 40 testes automáticos, regras de acesso testadas no 
 
 ## Como rodar tudo localmente
 
-Todo o trabalho está na branch `etapa-11-perfil`, que já contém as etapas 1 a 11.
+Todo o trabalho está na branch `etapa-12-logins-demo`, que já contém as etapas 1 a 12.
 
 1. Baixe o projeto (ou descompacte o `.zip` em `~/Documents/skyro`):
 
    ```bash
-   cd ~/Documents && git clone -b etapa-11-perfil https://github.com/coubit-corp/skyro.git
+   cd ~/Documents && git clone -b etapa-12-logins-demo https://github.com/coubit-corp/skyro.git
    ```
 
 2. Instale as dependências e crie o `.env`, conforme os passos 2 e 3.1 de `docs/SETUP-MAC.md`.
@@ -166,6 +171,7 @@ Todo o trabalho está na branch `etapa-11-perfil`, que já contém as etapas 1 a
    1. **Entrar como pessoa (demo)**: Início → Rotina → **Plano** (as 4 abas; marcar um item e a dor na Fisio) → Saúde → Ver mapa → um perfil → Compartilhar
    2. Sair → **Entrar como profissional (demo)**: 3 em Atenção → abrir o Lucas → ver o **Plano de Lucas** no fim da ficha, adicionar uma refeição → enviar uma dica
    3. Sair → entrar como pessoa: a dica aparece no Início
+   3b. Sair → entrar com `demo.catalogo.3@skyro.app` e a senha demo (personal): abrir o Lucas → no **Plano de Lucas**, adicionar um exercício com séries, repetições e carga
    4. Sair → **Entrar como equipe (demo)**: aprovar o Rafael → recusar o Bruno com um motivo → ver os dois em Decididos
 
 ---
@@ -218,7 +224,7 @@ Seguir `docs/DEPLOY-VERCEL.md`. Precisa estar no ar **antes de gravar o vídeo**
 | **Quem da equipe vira admin** | O papel é dado por SQL (passo 3 acima). Só quem for conferir registros de verdade |
 | **Notas e estrelas para psicólogos** | A especificação pede para checar as regras do CFP; hoje eles aparecem sem nota |
 | **Preço para profissionais** | Testar com os 9 profissionais entrevistados |
-| **Merge dos PRs** (#6 → #7 → #8 → #9 → #5 → #10 → #11 → #12 → #13 → #14 → #15) | O deploy publica a `main` |
+| **Merge dos PRs** (#6 → #7 → #8 → #9 → #5 → #10 → #11 → #12 → #13 → #14 → #15 → #16) | O deploy publica a `main` |
 
 ---
 
@@ -253,5 +259,6 @@ Seguir `docs/DEPLOY-VERCEL.md`. Precisa estar no ar **antes de gravar o vídeo**
 9. [#13 Aprovação dos registros de conselho](https://github.com/coubit-corp/skyro/pull/13)
 10. [#14 Meu plano](https://github.com/coubit-corp/skyro/pull/14)
 11. [#15 Configurações de perfil e saudação](https://github.com/coubit-corp/skyro/pull/15)
+12. [#16 Logins demo da equipe do Lucas](https://github.com/coubit-corp/skyro/pull/16)
 
 Os PRs #1 a #4 foram fechados pelo GitHub quando os commits passaram para o nome do autor e foram substituídos pelos #6 a #9, com o mesmo código.
