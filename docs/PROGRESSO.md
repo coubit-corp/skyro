@@ -56,10 +56,17 @@ Tudo está no código, com 40 testes automáticos, regras de acesso testadas no 
 - `npm run smoke -- <link>` confere se o app publicado está certo
 - Guia `docs/DEPLOY-VERCEL.md`
 
+### Etapa 6: cadastro de profissional
+- Quem cria conta como profissional cai em **"Complete seu perfil"** e só entra no painel depois de preencher: especialidade, registro no conselho, bio, especialidades, modalidade e local
+- **Local de atendimento:** buscar o endereço **ou** tocar e arrastar o pino no mapa; o bairro é preenchido sozinho. Quem atende só online não precisa de local
+- O registro fica **"em verificação"** até a equipe aprovar. Trocar registro ou especialidade tira o selo, e o banco garante isso
+- O profissional aparece no "Perto de você" **assim que publica**; quem atende só online aparece numa lista própria
+- Aba **Meu perfil**, com edição
+
 ### Qualidade
 | O quê | Situação |
 |---|---|
-| Testes automáticos (`npm test`) | 40 passando, com relógio em São Paulo e em UTC |
+| Testes automáticos (`npm test`) | 53 passando, com relógio em São Paulo e em UTC |
 | Regras de acesso do banco | Testadas num Postgres local (`supabase/tests/`) |
 | Tipos e lint | Sem erros nem avisos |
 | Telas | Conferidas no navegador, no celular e no desktop, sem erros no console |
@@ -88,9 +95,10 @@ Todo o trabalho está na branch `claude/etapa-5-deploy-vercel`, que já contém 
 3. No **SQL Editor** do Supabase, rode **nesta ordem**:
    1. `supabase/migrations/20261113000001_schema_inicial.sql` (se ainda não rodou)
    2. `supabase/migrations/20261114000001_resumos_ia.sql`
-   3. `supabase/seed/01_contas_demo.sql`
-   4. `supabase/seed/02_catalogo_demo.sql`
-   5. `supabase/seed/03_pacientes_demo.sql`
+   3. `supabase/migrations/20261114000002_cadastro_profissional.sql`
+   4. `supabase/seed/01_contas_demo.sql`
+   5. `supabase/seed/02_catalogo_demo.sql`
+   6. `supabase/seed/03_pacientes_demo.sql`
 4. Confira e suba o app:
 
    ```bash
@@ -116,12 +124,8 @@ O checklist do projeto pede **15 entrevistas com pessoas** e **9 com profissiona
 - **Pode começar já.** Não depende de código.
 - **Como eu ajudo:** monto um formulário (Google Forms ou página) e uma planilha para registrar as respostas e tirar as 3 dificuldades mais citadas.
 
-### 3. Cadastro de profissional · 1 a 2 dias
-Hoje só as contas demo têm perfil profissional. Faltam:
-- uma tela de **"Complete seu perfil"**: especialidade, registro do conselho, bio, bairro (com o ponto no mapa) e modalidade
-- a aba **Perfil** do profissional (mockup "Meu perfil")
-
-Isso mostra que o produto funciona além da demo, e é o lado que paga a conta no modelo de negócio.
+### 3. ~~Cadastro de profissional~~ · feito na etapa 6
+Falta só um jeito de a equipe aprovar registros (por enquanto, marcar `verified = true` direto no banco).
 
 ### 4. Polimento · 1 a 2 dias
 - **Mapa sob demanda:** carregar o mapa só quando a tela abre. Hoje o app baixa cerca de 720 kB de uma vez; o mapa sai desse pacote inicial e o app abre mais rápido no 4G
