@@ -50,7 +50,7 @@ export function PerfilProfissional() {
     <section className="space-y-4">
       {/* Cabeçalho azul-marinho, como no mockup */}
       <div className="-mx-4 -mt-6 bg-navy px-4 pt-6 pb-8 text-center text-white sm:mx-0 sm:mt-0 sm:rounded-card">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-sm font-semibold text-lavender">
+        <button onClick={() => navigate(-1)} className="tap gap-1 text-sm font-semibold text-lavender">
           <ChevronLeft className="h-4 w-4" aria-hidden="true" /> Voltar
         </button>
         <div className="mx-auto mt-2 w-fit rounded-full border-4 border-lavender">

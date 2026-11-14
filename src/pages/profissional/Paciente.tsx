@@ -82,7 +82,7 @@ export function Paciente() {
 
   return (
     <section className="space-y-4">
-      <Link to="/pro" className="inline-flex items-center gap-1 text-sm font-semibold text-primary">
+      <Link to="/pro" className="tap gap-1 text-sm font-semibold text-primary">
         <ChevronLeft className="h-4 w-4" aria-hidden="true" /> Pacientes
       </Link>
 

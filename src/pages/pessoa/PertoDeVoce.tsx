@@ -1,15 +1,16 @@
 import { MapPin } from 'lucide-react'
-import { useMemo } from 'react'
+import { lazy, Suspense, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { DemoBanner } from '../../components/DemoBanner'
 import { ProCard } from '../../components/ProCard'
-import { ProMap } from '../../components/ProMap'
 import { ChipTabs, ErrorState, PageHeader, SectionTitle, Skeleton } from '../../components/ui'
 import { useGeolocation } from '../../hooks/useGeolocation'
 import { useProfessionals } from '../../hooks/usePersonData'
 import type { Specialty } from '../../lib/database.types'
 import { distanceKm } from '../../lib/geo'
 import { SPECIALTIES } from '../../lib/specialties'
+
+const ProMap = lazy(() => import('../../components/ProMap').then((m) => ({ default: m.ProMap })))
 
 type Filter = Specialty | 'todos'
 const MAX_KM = 5
@@ -68,7 +69,9 @@ export function PertoDeVoce() {
       {pros.isLoading ? (
         <Skeleton className="h-56" />
       ) : (
-        <ProMap center={geo.position} pros={shown.map((x) => x.pro)} />
+        <Suspense fallback={<Skeleton className="h-56" />}>
+          <ProMap center={geo.position} pros={shown.map((x) => x.pro)} />
+        </Suspense>
       )}
 
       {pros.error ? (
