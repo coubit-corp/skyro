@@ -103,14 +103,26 @@ Tudo está no código, com 40 testes automáticos, regras de acesso testadas no 
 - A tela de consentimento passou a avisar que o profissional também vê os itens do plano feitos e a dor do dia
 - **Demo:** o Carlos (psicólogo) e a Fernanda (fisio) entram na equipe do Lucas, com o Pedro e a Ana. Cada um deixou um plano fictício, e a semana do Lucas já tem marcações e dor
 
+### Etapa 11: configurações de perfil e saudação
+- **Pessoa:** tela **Meu perfil** (`/perfil`), aberta pelo avatar no topo do Início ou pela barra lateral. Edita foto, e-mail, telefone, nome completo e bio
+- **Profissional:** o **Perfil** ganhou foto profissional, e-mail, telefone e **horários de atendimento** por dia da semana, além do que já editava (nome, especialidade, registro, bio, especialidades e local)
+- **Foto:** enviar, trocar ou remover, com confirmação antes de remover. Ela é recortada num quadrado e reduzida no próprio aparelho, e aparece em todas as telas no lugar do avatar ilustrado
+- **Salvar alterações** e **Cancelar**, aviso de sucesso depois de salvar e erro escrito em cada campo inválido
+- **E-mail:** trocar manda um link de confirmação para o endereço novo; até confirmar, a pessoa continua entrando com o atual
+- **Telefone sempre privado** (decisão da equipe): só a própria conta vê
+- **Contas demo** não enviam foto, não trocam e-mail e não guardam telefone, porque são usadas por várias pessoas
+- **Saudação no Início:** "Bom dia, Lucas!", "Boa tarde" ou "Boa noite", pelo horário do aparelho. Ela muda sozinha às 5h, 12h e 18h, sem recarregar, e aparece sem nome quando o nome não está preenchido
+- O avatar do topo do Início agora abre o perfil. Antes, tocar nele saía da conta
+
 ### Qualidade
 | O quê | Situação |
 |---|---|
-| Testes automáticos (`npm test`) | 83 passando, com relógio em São Paulo e em UTC |
-| Regras de acesso do banco | Testadas num Postgres local (`supabase/tests/`, 5 arquivos) |
+| Testes automáticos (`npm test`) | 102 passando, com relógio em São Paulo e em UTC |
+| Regras de acesso do banco | Testadas num Postgres local (`supabase/tests/`, 6 arquivos) |
 | Tipos e lint | Sem erros nem avisos |
 | Telas | Conferidas no navegador, no celular e no desktop, sem erros no console |
 | Supabase real | Roteiros das etapas 1 a 8 conferidos pela equipe. Etapas 9 e 10 rodadas pela equipe em 14/11. Navegando com as contas demo, sem alterar dados, abriram sem erro: Plano, Saúde, Perto de você, Início, a ficha do Lucas com o plano e a área da equipe |
+| **Etapa 11 no Supabase real** | **Ainda não rodada lá.** Falta a migration `20261116000001_perfil.sql` (veja o passo 1 abaixo). O envio de foto só foi testado com respostas simuladas e contra uma tabela que imita o Storage |
 | **Ainda não testado** | No Supabase real: aprovar ou recusar pela equipe, marcar itens, registrar dor e montar o plano (testados só no Postgres local e com respostas simuladas). Também a IA real (desligada por decisão da equipe), o deploy na Vercel e o aparelho real |
 
 ### Bugs que pegamos antes de chegar até você
@@ -125,12 +137,12 @@ Tudo está no código, com 40 testes automáticos, regras de acesso testadas no 
 
 ## Como rodar tudo localmente
 
-Todo o trabalho está na branch `etapa-10-meu-plano`, que já contém as etapas 1 a 10.
+Todo o trabalho está na branch `etapa-11-perfil`, que já contém as etapas 1 a 11.
 
 1. Baixe o projeto (ou descompacte o `.zip` em `~/Documents/skyro`):
 
    ```bash
-   cd ~/Documents && git clone -b etapa-10-meu-plano https://github.com/coubit-corp/skyro.git
+   cd ~/Documents && git clone -b etapa-11-perfil https://github.com/coubit-corp/skyro.git
    ```
 
 2. Instale as dependências e crie o `.env`, conforme os passos 2 e 3.1 de `docs/SETUP-MAC.md`.
@@ -140,9 +152,10 @@ Todo o trabalho está na branch `etapa-10-meu-plano`, que já contém as etapas 
    3. `supabase/migrations/20261114000002_cadastro_profissional.sql`
    4. `supabase/migrations/20261115000001_aprovacao_registros.sql`
    5. `supabase/migrations/20261115000002_planos.sql`
-   6. `supabase/seed/01_contas_demo.sql`
-   7. `supabase/seed/02_catalogo_demo.sql`
-   8. `supabase/seed/03_pacientes_demo.sql`
+   6. `supabase/migrations/20261116000001_perfil.sql`
+   7. `supabase/seed/01_contas_demo.sql`
+   8. `supabase/seed/02_catalogo_demo.sql`
+   9. `supabase/seed/03_pacientes_demo.sql`
 4. Confira e suba o app:
 
    ```bash
@@ -161,7 +174,12 @@ Todo o trabalho está na branch `etapa-10-meu-plano`, que já contém as etapas 
 
 Restam cerca de 16 dias. A ordem abaixo prioriza o que os jurados exigem e veem primeiro.
 
-### 1. ~~Rodar as etapas 9 e 10 no Supabase real~~ · feito em 14/11
+### 1. Rodar a etapa 11 no Supabase real · 10 minutos · **urgente**
+No SQL Editor, rode a migration `20261116000001_perfil.sql` e depois os seeds 01, 02 e 03 de novo, nessa ordem (eles dão horários de atendimento aos profissionais demo). Depois, crie uma conta nova, abra **Meu perfil**, envie uma foto e salve: é o único jeito de conferir o envio de fotos de verdade, porque as contas demo não enviam. Se der erro, me mande o texto.
+
+As etapas 9 e 10 já foram rodadas em 14/11.
+
+### 1b. ~~Rodar as etapas 9 e 10 no Supabase real~~ · feito em 14/11
 Os roteiros das etapas 1 a 8 já foram conferidos no Supabase real. Faltam as etapas 9 e 10. No SQL Editor, rode as migrations `20261115000001_aprovacao_registros.sql` e `20261115000002_planos.sql`, e depois os seeds 01, 02 e 03 de novo, nessa ordem. O 01 cria a conta da equipe, e o 02 monta a equipe e os planos do Lucas. Rodar os seeds também traz os dados demo para a data de hoje. Em seguida, siga o roteiro acima. Se algo falhar, me mande o print ou o texto do erro.
 
 ### 2. Validação com pessoas reais · em paralelo, até 21/11
@@ -200,7 +218,7 @@ Seguir `docs/DEPLOY-VERCEL.md`. Precisa estar no ar **antes de gravar o vídeo**
 | **Quem da equipe vira admin** | O papel é dado por SQL (passo 3 acima). Só quem for conferir registros de verdade |
 | **Notas e estrelas para psicólogos** | A especificação pede para checar as regras do CFP; hoje eles aparecem sem nota |
 | **Preço para profissionais** | Testar com os 9 profissionais entrevistados |
-| **Merge dos PRs** (#6 → #7 → #8 → #9 → #5 → #10 → #11 → #12 → #13 → #14) | O deploy publica a `main` |
+| **Merge dos PRs** (#6 → #7 → #8 → #9 → #5 → #10 → #11 → #12 → #13 → #14 → #15) | O deploy publica a `main` |
 
 ---
 
@@ -215,6 +233,8 @@ Seguir `docs/DEPLOY-VERCEL.md`. Precisa estar no ar **antes de gravar o vídeo**
 | `src/lib/alerts.ts` | Regras de alerta (Atenção / Em dia) |
 | `src/lib/registry.ts` | Regras da verificação de registro (conselhos, motivos, listas da equipe) |
 | `src/pages/equipe/` | Área da equipe para aprovar ou recusar registros |
+| `src/lib/profile.ts` | Regras do perfil (saudação, telefone, foto, horários) |
+| `src/pages/pessoa/Perfil.tsx` e `src/pages/profissional/MeuPerfil.tsx` | Configurações de perfil da pessoa e do profissional |
 | `src/lib/plan.ts` | Regras do "Meu plano" (abas, dias, adesão, formulário) |
 | `src/pages/pessoa/Plano.tsx` e `src/components/PlanEditor.tsx` | "Meu plano" da pessoa e o plano na ficha do paciente |
 | `supabase/migrations/` | Banco e regras de acesso |
@@ -232,5 +252,6 @@ Seguir `docs/DEPLOY-VERCEL.md`. Precisa estar no ar **antes de gravar o vídeo**
 8. [#12 Material da submissão](https://github.com/coubit-corp/skyro/pull/12)
 9. [#13 Aprovação dos registros de conselho](https://github.com/coubit-corp/skyro/pull/13)
 10. [#14 Meu plano](https://github.com/coubit-corp/skyro/pull/14)
+11. [#15 Configurações de perfil e saudação](https://github.com/coubit-corp/skyro/pull/15)
 
 Os PRs #1 a #4 foram fechados pelo GitHub quando os commits passaram para o nome do autor e foram substituídos pelos #6 a #9, com o mesmo código.

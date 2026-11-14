@@ -124,6 +124,12 @@ EOF
    pbcopy < supabase/migrations/20261115000002_planos.sql
    ```
 
+9. E com a sexta, que cria as configurações de perfil (foto, telefone e horários):
+
+   ```bash
+   pbcopy < supabase/migrations/20261116000001_perfil.sql
+   ```
+
 > Se rodar duas vezes, dá erro de "already exists". Não é problema: as tabelas já foram criadas.
 
 ### 3.3 Criar as contas demo (só uma vez)
