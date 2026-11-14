@@ -72,6 +72,9 @@ export function ProfessionalForm({
   saveError,
   onSubmit,
   onCancel,
+  top,
+  bottom,
+  validateExtra,
 }: {
   initial: ProfessionalFormValues
   submitLabel: string
@@ -79,6 +82,11 @@ export function ProfessionalForm({
   saveError?: string | null
   onSubmit: (v: ProfessionalFormValues) => void
   onCancel?: () => void
+  /** Blocos extras no começo e no fim do formulário (foto, contato, horários) */
+  top?: ReactNode
+  bottom?: ReactNode
+  /** Valida os blocos extras; devolve false para impedir o envio */
+  validateExtra?: () => boolean
 }) {
   const [v, setV] = useState(initial)
   const [errors, setErrors] = useState<FormErrors>({})
@@ -100,8 +108,13 @@ export function ProfessionalForm({
     e.preventDefault()
     const found = validateProfessional(v)
     setErrors(found)
-    if (Object.keys(found).length === 0) onSubmit(v)
-    else document.querySelector('[role="alert"]')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    const extraOk = validateExtra?.() ?? true
+    if (Object.keys(found).length === 0 && extraOk) onSubmit(v)
+    else
+      // espera a tela mostrar os erros antes de rolar até o primeiro
+      requestAnimationFrame(() =>
+        document.querySelector('[role="alert"]')?.scrollIntoView({ behavior: 'smooth', block: 'center' }),
+      )
   }
 
   function commitTag() {
@@ -112,6 +125,7 @@ export function ProfessionalForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+      {top}
       <div className="card space-y-4">
         <Field label="Seu nome" error={errors.fullName}>
           {({ id, describedBy }) => (
@@ -324,6 +338,8 @@ export function ProfessionalForm({
           </p>
         )}
       </div>
+
+      {bottom}
 
       {saveError && (
         <p role="alert" className="rounded-xl bg-attention-soft px-3 py-2 text-sm text-attention">
