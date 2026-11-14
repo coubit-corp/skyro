@@ -3,8 +3,9 @@ import { useMemo, useState, type FormEvent } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Avatar } from '../../components/Avatar'
 import { DemoBanner } from '../../components/DemoBanner'
+import { PlanEditor } from '../../components/PlanEditor'
 import { ErrorState, SectionTitle, Skeleton } from '../../components/ui'
-import { useAiSummary, usePatient, useSendTip } from '../../hooks/useProData'
+import { useAiSummary, useMyProfessional, usePatient, useSendTip } from '../../hooks/useProData'
 import { evaluatePatient } from '../../lib/alerts'
 import { addDays, formatHours, formatMinutes, today, weekdayShort } from '../../lib/dates'
 import { SHARED_DATA } from '../../lib/specialties'
@@ -22,6 +23,7 @@ function monthsSince(iso: string): string {
 export function Paciente() {
   const { id } = useParams()
   const patient = usePatient(id)
+  const me = useMyProfessional()
   const sendTip = useSendTip()
   const [tip, setTip] = useState('')
   const [sent, setSent] = useState(false)
@@ -252,6 +254,10 @@ export function Paciente() {
           )}
         </div>
       </div>
+
+      {me.data && (
+        <PlanEditor personId={share.person_id} firstName={firstName} specialty={me.data.specialty} logs={patient.data.logs} />
+      )}
 
       <DemoBanner />
     </section>
