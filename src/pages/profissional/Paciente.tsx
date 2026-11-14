@@ -4,7 +4,7 @@ import { Link, useParams } from 'react-router-dom'
 import { Avatar } from '../../components/Avatar'
 import { DemoBanner } from '../../components/DemoBanner'
 import { ErrorState, SectionTitle, Skeleton } from '../../components/ui'
-import { usePatient, useSendTip } from '../../hooks/useProData'
+import { useAiSummary, usePatient, useSendTip } from '../../hooks/useProData'
 import { evaluatePatient } from '../../lib/alerts'
 import { addDays, formatHours, formatMinutes, today, weekdayShort } from '../../lib/dates'
 import { SHARED_DATA } from '../../lib/specialties'
@@ -43,6 +43,9 @@ export function Paciente() {
       byDate,
     }
   }, [patient.data, todayIso])
+
+  const alertMessages = useMemo(() => derived?.evaluation.alerts.map((a) => a.message) ?? [], [derived])
+  const ai = useAiSummary(id, alertMessages, Boolean(patient.data))
 
   if (patient.isLoading) {
     return (
@@ -129,19 +132,29 @@ export function Paciente() {
             </div>
           )}
 
-          {/* Resumo da semana */}
+          {/* Resumo da semana: IA quando disponível; senão, o resumo por regras */}
           <div className="card space-y-2 border border-lavender">
-            <p className="flex items-center gap-2 text-sm font-semibold text-primary">
-              <Sparkles className="h-4 w-4" aria-hidden="true" /> Resumo da semana
-            </p>
-            <ul className="space-y-1.5 text-sm leading-relaxed">
-              {derived.summary.lines.map((l) => (
+            <div className="flex items-center justify-between gap-2">
+              <p className="flex items-center gap-2 text-sm font-semibold text-primary">
+                <Sparkles className="h-4 w-4" aria-hidden="true" /> Resumo da semana
+              </p>
+              <span className="chip">
+                {ai.isLoading ? 'Gerando com IA…' : ai.data?.ok ? 'Escrito por IA' : 'Automático'}
+              </span>
+            </div>
+            <ul className={`space-y-1.5 text-sm leading-relaxed ${ai.isLoading ? 'animate-pulse' : ''}`}>
+              {(ai.data?.ok ? ai.data.lines : derived.summary.lines).map((l) => (
                 <li key={l}>{l}</li>
               ))}
             </ul>
-            <p className="text-sm font-semibold">{derived.summary.attention}</p>
+            <p className="text-sm font-semibold">{ai.data?.ok ? ai.data.attention : derived.summary.attention}</p>
             <p className="text-[11px] text-muted">
-              Gerado automaticamente a partir dos registros. Não é diagnóstico: use como apoio à sua avaliação.
+              {ai.data?.ok
+                ? 'Escrito por IA a partir dos registros; os alertas vêm das regras do app. '
+                : ai.data && ai.data.reason === 'ia_desligada'
+                  ? 'Montado pelas regras do app (a IA ainda não foi ligada). '
+                  : 'Montado pelas regras do app. '}
+              Não é diagnóstico: use como apoio à sua avaliação.
             </p>
           </div>
         </div>

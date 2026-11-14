@@ -9,6 +9,7 @@ Projeto do **Hack Brasil 2026**, trilha 04 (Saúde & bem-estar). A especificaç�
 - **Frontend:** React 19 + TypeScript + Vite, Tailwind CSS v4 e React Router
 - **Banco, login e regras de acesso:** Supabase (Postgres + Auth + Row Level Security)
 - **App:** web responsivo e instalável (PWA), pensado primeiro para o celular
+- **IA:** resumo semanal do paciente escrito pelo Claude (Anthropic) numa Supabase Edge Function. Sem chave configurada, o app usa o resumo por regras
 
 ## Como rodar
 
@@ -59,6 +60,7 @@ src/
     pessoa/        telas do app da pessoa
     profissional/  telas do painel do profissional
 supabase/
+  functions/     Edge Functions (resumo-semanal: resumo por IA)
   migrations/    SQL do banco (tabelas + regras de acesso)
   seed/          dados de demonstração (contas demo)
   tests/         teste das regras de acesso num Postgres local
@@ -71,13 +73,23 @@ docs/            especificação, pitch, análise de mercado e mockups
 - O arquivo `.env` está no `.gitignore`.
 - O profissional só enxerga os dados de quem compartilhou a rotina com ele, e a pessoa pode revogar quando quiser. Essa regra é garantida pelo banco (RLS), não só pela tela.
 
+## Como a IA entra
+
+- **Quem está em "Atenção" é decidido por regras fixas** (`src/lib/alerts.ts`), nunca pela IA. Assim o comportamento é previsível e explicável.
+- **A IA só escreve o texto do resumo para o profissional.** Ela não fala com o paciente, não diagnostica e não prescreve (`supabase/functions/resumo-semanal/prompt.ts`).
+- **O que vai para a IA:** apenas o primeiro nome e os números dos registros dos últimos 14 dias.
+- **Cache:** o resumo fica guardado (`ai_summaries`) e só é refeito quando chegam registros novos ou o dia vira.
+- **Reserva:** sem chave, ou se a IA falhar ou recusar, a ficha mostra o resumo por regras (`src/lib/weekSummary.ts`).
+
+Como ligar: veja o passo 3.5 de [`docs/SETUP-MAC.md`](docs/SETUP-MAC.md).
+
 ## Testar as regras de acesso (opcional)
 
 Com um Postgres local (não use o Supabase de verdade para isso):
 
 ```bash
 createdb skyro_teste
-psql -d skyro_teste -f supabase/tests/00_stub_supabase.sql -f supabase/migrations/20261113000001_schema_inicial.sql
+psql -d skyro_teste -f supabase/tests/00_stub_supabase.sql -f supabase/migrations/20261113000001_schema_inicial.sql -f supabase/migrations/20261114000001_resumos_ia.sql
 psql -d skyro_teste -f supabase/seed/01_contas_demo.sql -f supabase/seed/02_catalogo_demo.sql -f supabase/seed/03_pacientes_demo.sql
 psql -d skyro_teste -f supabase/tests/01_rls.sql
 ```

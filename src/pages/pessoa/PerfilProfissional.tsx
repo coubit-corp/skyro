@@ -135,8 +135,9 @@ export function PerfilProfissional() {
           ))}
         </ul>
         <p className="text-xs text-muted">
-          Inclui os registros que você já fez. Seus dados não são mostrados para mais ninguém, e você pode revogar o acesso a
-          qualquer momento neste mesmo perfil.
+          Inclui os registros que você já fez. Para montar o resumo semanal do profissional, seus registros (só com o seu
+          primeiro nome) podem ser processados por um serviço de IA. Ninguém mais vê seus dados, e você pode revogar o acesso
+          a qualquer momento neste mesmo perfil.
         </p>
         <label className="flex items-start gap-2 text-sm">
           <input type="checkbox" className="mt-0.5 h-4 w-4 accent-primary" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} />

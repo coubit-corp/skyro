@@ -139,3 +139,39 @@ export function useSendTip() {
     onSuccess: (_d, v) => qc.invalidateQueries({ queryKey: ['patient', proId, v.personId] }),
   })
 }
+
+export type AiSummaryResult =
+  | { ok: true; source: 'ia' | 'cache'; lines: string[]; attention: string; model: string }
+  | { ok: false; reason: string }
+
+/**
+ * Resumo da semana escrito por IA (Edge Function "resumo-semanal").
+ * Nunca lança erro: se a IA estiver desligada ou falhar, devolve ok=false
+ * e a tela continua mostrando o resumo por regras.
+ */
+export function useAiSummary(personId: string | undefined, alerts: string[], enabled: boolean) {
+  const proId = useProId()
+  return useQuery({
+    queryKey: ['ai_summary', proId, personId, alerts],
+    enabled: Boolean(personId) && enabled,
+    staleTime: 10 * 60 * 1000,
+    retry: false,
+    queryFn: async (): Promise<AiSummaryResult> => {
+      const { data, error } = await supabase.functions.invoke('resumo-semanal', { body: { personId, alerts } })
+      if (error) {
+        // O corpo do erro traz o motivo (ex.: "ia_desligada"); se não der para ler, segue genérico.
+        let reason = 'ia_indisponivel'
+        try {
+          const ctx = (error as { context?: Response }).context
+          if (ctx) reason = ((await ctx.json()) as { error?: string }).error ?? reason
+        } catch {
+          /* mantém o motivo genérico */
+        }
+        return { ok: false, reason }
+      }
+      const d = data as { source: 'ia' | 'cache'; lines: string[]; attention: string; model: string }
+      if (!Array.isArray(d?.lines) || typeof d.attention !== 'string') return { ok: false, reason: 'ia_formato_invalido' }
+      return { ok: true, ...d }
+    },
+  })
+}

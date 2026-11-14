@@ -100,6 +100,12 @@ EOF
 
 4. Cole no editor (Cmd + V) e clique em **Run**. Deve aparecer "Success. No rows returned".
 
+5. Faça o mesmo com a segunda migration, que cria o cache dos resumos por IA:
+
+   ```bash
+   pbcopy < supabase/migrations/20261114000001_resumos_ia.sql
+   ```
+
 > Se rodar duas vezes, dá erro de "already exists". Não é problema: as tabelas já foram criadas.
 
 ### 3.3 Criar as contas demo (só uma vez)
@@ -143,6 +149,40 @@ Por padrão o Supabase exige clicar num link no e-mail antes do primeiro login. 
 2. Desligue **Confirm email** → **Save**
 
 Ainda em **Authentication** → **URL Configuration**, coloque `http://localhost:5173` em **Site URL**.
+
+### 3.5 Ligar o resumo por IA (opcional)
+
+Sem este passo o app funciona normalmente: a ficha do paciente mostra o resumo **montado por regras**. Com ele, o resumo passa a ser **escrito pelo Claude**. A chave da IA fica guardada no Supabase e nunca vai para o navegador.
+
+1. Crie uma chave de API no Console da Anthropic (seção **API Keys**). Ela começa com `sk-ant-`.
+2. No painel do Supabase: **Edge Functions** → **Secrets** → adicione `ANTHROPIC_API_KEY` com a chave → **Save**.
+3. Instale a ferramenta do Supabase (só na primeira vez):
+
+   ```bash
+   brew install supabase/tap/supabase
+   ```
+
+4. Entre na sua conta do Supabase (abre o navegador):
+
+   ```bash
+   supabase login
+   ```
+
+5. Ligue a pasta do projeto ao seu projeto no Supabase:
+
+   ```bash
+   cd ~/Documents/skyro && supabase link --project-ref zbiksoitegfzgoaaynrn
+   ```
+
+6. Publique a função:
+
+   ```bash
+   supabase functions deploy resumo-semanal
+   ```
+
+Pronto: abra um paciente no painel e o selo do resumo muda de **Automático** para **Escrito por IA**. O resumo fica guardado e só é gerado de novo quando o paciente registrar algo novo ou o dia virar, então abrir a ficha várias vezes não gera custo a mais.
+
+> Cada resumo novo é uma chamada paga à API da Anthropic (centavos de dólar por resumo). Para desligar, apague o secret `ANTHROPIC_API_KEY`: o app volta para o resumo por regras sozinho.
 
 ---
 
@@ -200,4 +240,5 @@ npm run dev
 | "E-mail ou senha incorretos" nos botões demo | O script das contas demo não foi rodado. Faça o passo 3.3 |
 | "Não conseguimos carregar sua conta" depois de cadastrar | As tabelas não foram criadas. Faça o passo 3.2 e crie uma conta nova |
 | "Confirme seu e-mail…" | Faça o passo 3.4 ou clique no link que chegou no e-mail |
+| Resumo continua "Automático" depois de ligar a IA | Confira o nome do secret (`ANTHROPIC_API_KEY`), se o deploy terminou sem erro e se a migration `20261114000001_resumos_ia.sql` foi rodada |
 | `Port 5173 is in use` | Já tem um `npm run dev` aberto em outra janela: feche-o com Ctrl + C |
