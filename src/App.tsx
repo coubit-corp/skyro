@@ -1,4 +1,15 @@
-import { CalendarDays, ChartNoAxesColumn, ClipboardList, Heart, House, MessageSquare, User, Users } from 'lucide-react'
+import {
+  BadgeCheck,
+  CalendarDays,
+  ChartNoAxesColumn,
+  ClipboardList,
+  Heart,
+  History,
+  House,
+  MessageSquare,
+  User,
+  Users,
+} from 'lucide-react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
@@ -31,6 +42,7 @@ const CompletarPerfil = lazy(() =>
 )
 const MeuPerfil = lazy(() => import('./pages/profissional/MeuPerfil').then((m) => ({ default: m.MeuPerfil })))
 const Pacientes = lazy(() => import('./pages/profissional/Pacientes').then((m) => ({ default: m.Pacientes })))
+const Registros = lazy(() => import('./pages/equipe/Registros').then((m) => ({ default: m.Registros })))
 
 // Mesma ordem de abas dos mockups.
 const PERSON_NAV: NavItem[] = [
@@ -46,6 +58,12 @@ const PRO_NAV: NavItem[] = [
   { to: '/pro/agenda', label: 'Agenda', icon: CalendarDays },
   { to: '/pro/mensagens', label: 'Mensagens', icon: MessageSquare },
   { to: '/pro/perfil', label: 'Perfil', icon: User },
+]
+
+// Equipe Skyro: só quem tem papel admin (dado por SQL).
+const TEAM_NAV: NavItem[] = [
+  { to: '/equipe', label: 'Pendentes', icon: BadgeCheck, end: true },
+  { to: '/equipe/decididos', label: 'Decididos', icon: History },
 ]
 
 const queryClient = new QueryClient({
@@ -106,6 +124,18 @@ export default function App() {
                 <Route path="/pro/agenda" element={<ComingSoon title="Agenda" />} />
                 <Route path="/pro/mensagens" element={<ComingSoon title="Mensagens" />} />
                 <Route path="/pro/perfil" element={<MeuPerfil />} />
+              </Route>
+
+              {/* Área da equipe: aprovar ou recusar registros de conselho */}
+              <Route
+                element={
+                  <RequireRole role="admin">
+                    <AppLayout nav={TEAM_NAV} wide />
+                  </RequireRole>
+                }
+              >
+                <Route path="/equipe" element={<Registros view="pendentes" />} />
+                <Route path="/equipe/decididos" element={<Registros view="decididos" />} />
               </Route>
 
               {/* Fora do painel: quem ainda não tem perfil profissional completo */}
