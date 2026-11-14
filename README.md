@@ -30,7 +30,7 @@ Pré-requisito: Node.js 20 ou mais novo.
 
 3. Crie as tabelas: no painel do Supabase, abra o **SQL Editor**, cole o conteúdo de cada arquivo de `supabase/migrations/` (em ordem) e clique em **Run**.
 
-4. Crie os dados demo: no mesmo SQL Editor, rode `supabase/seed/01_contas_demo.sql` e depois `supabase/seed/02_catalogo_demo.sql`. Pessoa: `demo.pessoa@skyro.app`; profissional: `demo.nutri@skyro.app`. A senha das duas é `skyro-demo-2026`.
+4. Crie os dados demo: no mesmo SQL Editor, rode, nessa ordem, `supabase/seed/01_contas_demo.sql`, `02_catalogo_demo.sql` e `03_pacientes_demo.sql`. Pessoa: `demo.pessoa@skyro.app`; profissional: `demo.nutri@skyro.app`. A senha das duas é `skyro-demo-2026`.
 
 5. Suba o app:
 
@@ -46,6 +46,7 @@ Pré-requisito: Node.js 20 ou mais novo.
 | `npm run build` | Checa os tipos e gera a versão de produção em `dist/` |
 | `npm run preview` | Serve a versão de produção localmente |
 | `npm run lint` | Procura problemas no código (oxlint) |
+| `npm test` | Roda os testes automáticos (regras de alerta, strike, datas e resumo) |
 
 ## Estrutura
 
@@ -77,7 +78,7 @@ Com um Postgres local (não use o Supabase de verdade para isso):
 ```bash
 createdb skyro_teste
 psql -d skyro_teste -f supabase/tests/00_stub_supabase.sql -f supabase/migrations/20261113000001_schema_inicial.sql
-psql -d skyro_teste -f supabase/seed/01_contas_demo.sql
+psql -d skyro_teste -f supabase/seed/01_contas_demo.sql -f supabase/seed/02_catalogo_demo.sql -f supabase/seed/03_pacientes_demo.sql
 psql -d skyro_teste -f supabase/tests/01_rls.sql
 ```
 
