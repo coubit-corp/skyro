@@ -1,0 +1,187 @@
+# Rodando a Skyro no Mac
+
+Passo a passo do zero, para quem nunca configurou nada. Cada bloco é um comando para colar no **Terminal** (Cmd + Espaço → digite "Terminal" → Enter). Copie um bloco, cole, aperte Enter e espere terminar antes do próximo.
+
+Tempo total: uns 20 minutos na primeira vez.
+
+---
+
+## 1. Ferramentas (só na primeira vez)
+
+### 1.1 Ferramentas de desenvolvedor da Apple (traz o `git`)
+
+```bash
+xcode-select --install
+```
+
+Se abrir uma janela, clique em **Instalar** e espere. Se aparecer "already installed", está tudo certo.
+
+### 1.2 Homebrew (instalador de programas)
+
+Confira se já tem:
+
+```bash
+brew -v
+```
+
+Se aparecer "command not found", instale:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+Ele pede a senha do Mac (a senha não aparece enquanto você digita, é normal). **No final, ele mostra 2 ou 3 comandos em "Next steps"**: copie e rode esses também. Depois feche e abra o Terminal de novo.
+
+### 1.3 Node.js (precisa ser versão 20 ou mais nova)
+
+```bash
+brew install node
+```
+
+Confira:
+
+```bash
+node -v
+```
+
+Tem que aparecer `v20` ou um número maior.
+
+---
+
+## 2. Baixar o projeto
+
+Isto cria a pasta `skyro` dentro de `Documentos`:
+
+```bash
+cd ~/Documents && git clone https://github.com/coubit-corp/skyro.git
+```
+
+Se pedir login do GitHub e o repositório for privado, use o GitHub Desktop (desktop.github.com) para clonar, ou crie um token em GitHub → Settings → Developer settings → Personal access tokens e use como senha.
+
+Entre na pasta e vá para a branch de desenvolvimento (enquanto o PR não entra na `main`):
+
+```bash
+cd ~/Documents/skyro && git checkout claude/modest-keller-iiuk7s
+```
+
+Instale as dependências:
+
+```bash
+npm install
+```
+
+---
+
+## 3. Configurar o Supabase
+
+### 3.1 Arquivo `.env`
+
+O comando abaixo cria o arquivo com os dados do projeto (só a chave **publishable**, que é pública por natureza):
+
+```bash
+cat > .env <<'EOF'
+VITE_SUPABASE_URL=https://zbiksoitegfzgoaaynrn.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_rPrbGdc7B9x278pAHUR9BQ_rc32EKIw
+EOF
+```
+
+> O Finder esconde arquivos que começam com ponto. Para vê-lo, aperte **Cmd + Shift + .** dentro da pasta.
+> Nunca coloque a **secret key** nesse arquivo.
+
+### 3.2 Criar as tabelas (só uma vez)
+
+1. Abra o painel: https://supabase.com/dashboard/project/zbiksoitegfzgoaaynrn
+2. Menu lateral → **SQL Editor** → **New query**
+3. Abra o arquivo `supabase/migrations/20261113000001_schema_inicial.sql` (no VS Code ou com o comando abaixo, que copia o conteúdo para a área de transferência):
+
+   ```bash
+   pbcopy < supabase/migrations/20261113000001_schema_inicial.sql
+   ```
+
+4. Cole no editor (Cmd + V) e clique em **Run**. Deve aparecer "Success. No rows returned".
+
+> Se rodar duas vezes, dá erro de "already exists". Não é problema: as tabelas já foram criadas.
+
+### 3.3 Criar as contas demo (só uma vez)
+
+Copie o script:
+
+```bash
+pbcopy < supabase/seed/01_contas_demo.sql
+```
+
+No **SQL Editor**, abra uma **New query**, cole e clique em **Run**. No final aparece uma tabela com **Lucas Martins** e **Ana Lima**.
+
+| Conta | E-mail | Senha |
+|---|---|---|
+| Cliente (Lucas Martins) | `demo.pessoa@skyro.app` | `skyro-demo-2026` |
+| Profissional (Ana Lima, nutricionista) | `demo.nutri@skyro.app` | `skyro-demo-2026` |
+
+Os botões "Entrar como … (demo)" da tela de login já usam essas contas. O Lucas já compartilha a rotina com a Ana e tem 14 dias de registros. Se os dados ficarem bagunçados depois de testes, é só rodar o script de novo: ele apaga as contas demo e recria tudo, com as datas atualizadas para hoje.
+
+### 3.4 Liberar o login sem confirmação de e-mail (para desenvolver)
+
+Por padrão o Supabase exige clicar num link no e-mail antes do primeiro login. Para testar mais rápido:
+
+1. Painel → **Authentication** → **Sign In / Providers** → **Email**
+2. Desligue **Confirm email** → **Save**
+
+Ainda em **Authentication** → **URL Configuration**, coloque `http://localhost:5173` em **Site URL**.
+
+---
+
+## 4. Rodar
+
+```bash
+npm run dev
+```
+
+Abra **http://localhost:5173** no navegador. Para parar o servidor: **Ctrl + C** no Terminal.
+
+Teste rápido:
+
+1. Clique em **Entrar como pessoa (demo)**: você cai em `/inicio` como Lucas. Clique em **Sair** e teste **Entrar como profissional (demo)**: você cai em `/pro` como Ana.
+2. **Criar conta** como **Pessoa**: você cai em `/inicio`.
+3. Clique em **Sair** e crie outra conta como **Profissional**: você cai em `/pro`.
+
+### Ver no iPhone (mesma rede Wi-Fi)
+
+```bash
+npm run dev -- --host
+```
+
+Descubra o IP do Mac:
+
+```bash
+ipconfig getifaddr en0
+```
+
+No Safari do iPhone, abra `http://SEU-IP:5173` (ex.: `http://192.168.0.12:5173`).
+
+---
+
+## 5. No dia a dia
+
+Pegar as novidades antes de começar:
+
+```bash
+cd ~/Documents/skyro && git pull && npm install
+```
+
+```bash
+npm run dev
+```
+
+---
+
+## Problemas comuns
+
+| Sintoma | Solução |
+|---|---|
+| `command not found: brew` depois de instalar | Rode os comandos de "Next steps" que o instalador mostrou e reabra o Terminal |
+| `command not found: npm` | Rode `brew install node` e reabra o Terminal |
+| Tela "Falta configurar o Supabase" | O `.env` não existe ou está com nome errado. Repita o passo 3.1 e reinicie o `npm run dev` |
+| "E-mail ou senha incorretos" nos botões demo | O script das contas demo não foi rodado. Faça o passo 3.3 |
+| "Não conseguimos carregar sua conta" depois de cadastrar | As tabelas não foram criadas. Faça o passo 3.2 e crie uma conta nova |
+| "Confirme seu e-mail…" | Faça o passo 3.4 ou clique no link que chegou no e-mail |
+| `Port 5173 is in use` | Já tem um `npm run dev` aberto em outra janela: feche-o com Ctrl + C |

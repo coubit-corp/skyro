@@ -1,0 +1,84 @@
+// Tipos das tabelas do Supabase, espelhando supabase/migrations.
+// Ao mudar uma migration, atualize aqui também (ou gere com `supabase gen types`).
+
+export type Role = 'person' | 'professional'
+export type Specialty = 'nutricionista' | 'psicologo' | 'personal' | 'fisioterapeuta'
+export type Modality = 'presencial' | 'online' | 'ambos'
+export type HabitKind = 'treino' | 'agua' | 'foco' | 'sono' | 'outro'
+
+export interface Profile {
+  id: string
+  full_name: string
+  role: Role
+  avatar_seed: string | null
+  is_demo: boolean
+  created_at: string
+}
+
+export interface Professional {
+  id: string
+  specialty: Specialty
+  bio: string
+  registry: string | null
+  verified: boolean
+  tags: string[]
+  city: string
+  neighborhood: string | null
+  lat: number | null
+  lng: number | null
+  modality: Modality
+  rating: number | null
+  reviews_count: number
+  is_demo: boolean
+  created_at: string
+}
+
+export interface Habit {
+  id: string
+  user_id: string
+  name: string
+  kind: HabitKind
+  scheduled_time: string | null
+  goal: string | null
+  active: boolean
+  created_at: string
+}
+
+export interface HabitCheck {
+  habit_id: string
+  user_id: string
+  check_date: string
+  created_at: string
+}
+
+export interface DailyLog {
+  id: string
+  user_id: string
+  log_date: string
+  sleep_hours: number | null
+  water_liters: number | null
+  water_goal_liters: number
+  focus_minutes: number | null
+  workout_planned: boolean
+  workout_done: boolean
+  mood: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface Share {
+  id: string
+  person_id: string
+  professional_id: string
+  created_at: string
+  revoked_at: string | null
+}
+
+export interface Tip {
+  id: string
+  professional_id: string
+  person_id: string
+  body: string
+  created_at: string
+  read_at: string | null
+}
