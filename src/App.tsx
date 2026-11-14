@@ -34,6 +34,7 @@ const PerfilProfissional = lazy(() =>
   import('./pages/pessoa/PerfilProfissional').then((m) => ({ default: m.PerfilProfissional })),
 )
 const PertoDeVoce = lazy(() => import('./pages/pessoa/PertoDeVoce').then((m) => ({ default: m.PertoDeVoce })))
+const Plano = lazy(() => import('./pages/pessoa/Plano').then((m) => ({ default: m.Plano })))
 const Rotina = lazy(() => import('./pages/pessoa/Rotina').then((m) => ({ default: m.Rotina })))
 const Saude = lazy(() => import('./pages/pessoa/Saude').then((m) => ({ default: m.Saude })))
 const Paciente = lazy(() => import('./pages/profissional/Paciente').then((m) => ({ default: m.Paciente })))
@@ -105,7 +106,7 @@ export default function App() {
                 <Route path="/saude/perto" element={<PertoDeVoce />} />
                 <Route path="/saude/profissional/:id" element={<PerfilProfissional />} />
                 <Route path="/rotina" element={<Rotina />} />
-                <Route path="/plano" element={<ComingSoon title="Meu plano" />} />
+                <Route path="/plano" element={<Plano />} />
                 <Route path="/progresso" element={<ComingSoon title="Seu progresso" />} />
               </Route>
 

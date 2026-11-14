@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../auth/auth-context'
 import type { DailyLog, Habit, HabitKind, Professional, Share, Tip } from '../lib/database.types'
 import { addDays, today } from '../lib/dates'
-import { supabase } from '../lib/supabase'
+import { PRO_PROFILE, supabase } from '../lib/supabase'
 
 /** Profissional com nome e avatar (join com profiles). */
 export type ProfessionalWithProfile = Professional & {
@@ -18,7 +18,7 @@ export type TipWithAuthor = Tip & {
   professionals: { specialty: Professional['specialty']; profiles: { full_name: string; avatar_seed: string | null } }
 }
 
-const PRO_SELECT = '*, profiles(full_name, avatar_seed)'
+const PRO_SELECT = `*, ${PRO_PROFILE}`
 
 /** Lança o erro do Supabase para o React Query mostrar o estado de erro. */
 function unwrap<T>(res: { data: T | null; error: { message: string } | null }): T {
@@ -148,7 +148,7 @@ export function useLatestTip() {
       unwrap<TipWithAuthor | null>(
         await supabase
           .from('tips')
-          .select('*, professionals(specialty, profiles(full_name, avatar_seed))')
+          .select(`*, professionals(specialty, ${PRO_PROFILE})`)
           .eq('person_id', userId)
           .order('created_at', { ascending: false })
           .limit(1)
