@@ -18,7 +18,7 @@ Tudo está no código, com 40 testes automáticos, regras de acesso testadas no 
 
 ## O que já foi feito
 
-### Etapa 1: base do projeto (PR #1)
+### Etapa 1: base do projeto (PR #6)
 - **Stack:** React 19 + TypeScript + Vite + Tailwind CSS v4, Supabase (banco, login e regras de acesso) e app instalável (PWA)
 - **Banco:** 7 tabelas (`profiles`, `professionals`, `habits`, `habit_checks`, `daily_logs`, `shares`, `tips`) com **regras de acesso no próprio banco (RLS)**:
   - cada pessoa só mexe nos próprios dados
@@ -29,7 +29,7 @@ Tudo está no código, com 40 testes automáticos, regras de acesso testadas no 
 - **Contas demo:** Lucas (pessoa) e Ana (nutricionista), senha `skyro-demo-2026`
 - **Guia** `docs/SETUP-MAC.md` para rodar do zero no Mac
 
-### Etapa 2: telas da pessoa (PR #2)
+### Etapa 2: telas da pessoa (PR #7)
 - **Início:** strike com recorde, sono, foco, dica do profissional e checklist do dia
 - **Rotina:** semana, hábitos (marcar, adicionar, remover) e registro do dia
 - **Saúde:** atalhos por especialidade e "Sua equipe"
@@ -37,14 +37,14 @@ Tudo está no código, com 40 testes automáticos, regras de acesso testadas no 
 - **Perfil do profissional** com **Compartilhar minha rotina** (tela de consentimento) e **Parar de compartilhar**
 - **Catálogo demo:** 12 profissionais fictícios em São Paulo
 
-### Etapa 3: painel do profissional (PR #3)
+### Etapa 3: painel do profissional (PR #8)
 - **Regras de alerta** exatamente como na especificação: sono < 6h, 2+ treinos perdidos na semana, água < 50% ontem e 2+ dias sem registro
 - **Pacientes:** "N pacientes precisam de atenção hoje", busca e motivo de cada alerta
 - **Ficha do paciente:** números da semana, alertas, resumo, tabela dos 7 dias, envio de dica e histórico
 - **Pacientes demo:** a Ana tem 6, sendo 3 em Atenção (cada um por um motivo), como no mockup
 - **Testes automáticos** (`npm test`)
 
-### Etapa 4: resumo por IA (PR #4)
+### Etapa 4: resumo por IA (PR #9)
 - **Edge Function** `resumo-semanal` chama o **Claude**; a chave fica só no servidor
 - A IA **só escreve o texto**: quem está em Atenção continua sendo decidido pelas regras
 - Envia para a IA **só o primeiro nome e os números**
@@ -63,7 +63,7 @@ Tudo está no código, com 40 testes automáticos, regras de acesso testadas no 
 | Regras de acesso do banco | Testadas num Postgres local (`supabase/tests/`) |
 | Tipos e lint | Sem erros nem avisos |
 | Telas | Conferidas no navegador, no celular e no desktop, sem erros no console |
-| **Ainda não testado** | Supabase real com os PRs 2 a 5, IA real (precisa de chave) e deploy na Vercel |
+| **Ainda não testado** | Supabase real com as etapas 2 a 5, IA real (precisa de chave) e deploy na Vercel |
 
 ### Bugs que pegamos antes de chegar até você
 - Fuso horário: à noite no Brasil, "hoje" virava amanhã (no app e nos seeds)
@@ -155,7 +155,7 @@ Seguir `docs/DEPLOY-VERCEL.md`. Precisa estar no ar **antes de gravar o vídeo**
 | **Ligar a IA real?** | Precisa de uma chave da Anthropic; cada resumo novo custa centavos |
 | **Notas e estrelas para psicólogos** | A especificação pede para checar as regras do CFP; hoje eles aparecem sem nota |
 | **Preço para profissionais** | Testar com os 9 profissionais entrevistados |
-| **Merge dos PRs #1 a #5** | O deploy publica a `main` |
+| **Merge dos PRs** (#6 → #7 → #8 → #9 → #5) | O deploy publica a `main` |
 
 ---
 
@@ -173,8 +173,10 @@ Seguir `docs/DEPLOY-VERCEL.md`. Precisa estar no ar **antes de gravar o vídeo**
 | `supabase/functions/resumo-semanal/` | Resumo por IA |
 
 ### Pull requests (fazer o merge nesta ordem)
-1. [#1 Setup, banco, login e contas demo](https://github.com/coubit-corp/skyro/pull/1)
-2. [#2 Telas da pessoa](https://github.com/coubit-corp/skyro/pull/2)
-3. [#3 Painel do profissional](https://github.com/coubit-corp/skyro/pull/3)
-4. [#4 Resumo por IA](https://github.com/coubit-corp/skyro/pull/4)
+1. [#6 Setup, banco, login e contas demo](https://github.com/coubit-corp/skyro/pull/6)
+2. [#7 Telas da pessoa](https://github.com/coubit-corp/skyro/pull/7)
+3. [#8 Painel do profissional](https://github.com/coubit-corp/skyro/pull/8)
+4. [#9 Resumo por IA](https://github.com/coubit-corp/skyro/pull/9)
 5. [#5 Deploy na Vercel](https://github.com/coubit-corp/skyro/pull/5)
+
+Os PRs #1 a #4 foram fechados pelo GitHub quando os commits passaram para o nome do autor e foram substituídos pelos #6 a #9, com o mesmo código.
