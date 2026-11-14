@@ -171,9 +171,10 @@ export function useAiSummary(personId: string | undefined, alerts: string[], ena
         }
         return { ok: false, reason }
       }
-      const d = data as { source: 'ia' | 'cache'; lines: string[]; attention: string; model: string }
+      const d = data as { source: 'ia' | 'cache' | 'desligada'; lines: string[]; attention: string; model: string }
+      if (d?.source === 'desligada') return { ok: false, reason: 'ia_desligada' }
       if (!Array.isArray(d?.lines) || typeof d.attention !== 'string') return { ok: false, reason: 'ia_formato_invalido' }
-      return { ok: true, ...d }
+      return { ok: true, source: d.source, lines: d.lines, attention: d.attention, model: d.model }
     },
   })
 }
