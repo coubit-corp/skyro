@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { DEMO_ACCOUNTS, DEMO_TEAM_PROS } from './demo'
+import { DEMO_ACCOUNTS } from './demo'
 
 describe('contas demo', () => {
-  const all = [...Object.values(DEMO_ACCOUNTS), ...DEMO_TEAM_PROS]
+  const all = Object.values(DEMO_ACCOUNTS)
   it('cada botão entra numa conta diferente', () => {
     expect(new Set(all.map((a) => a.email)).size).toBe(all.length)
   })
@@ -12,11 +12,7 @@ describe('contas demo', () => {
       expect(a.password).toBe('skyro-demo-2026')
     }
   })
-  it('a equipe do Lucas usa os e-mails que o seed 02 cria com senha (1, 3 e 8)', () => {
-    expect(DEMO_TEAM_PROS.map((a) => a.email).sort()).toEqual([
-      'demo.catalogo.1@skyro.app',
-      'demo.catalogo.3@skyro.app',
-      'demo.catalogo.8@skyro.app',
-    ])
+  it('o login mostra só três botões: pessoa, profissional e equipe', () => {
+    expect(Object.keys(DEMO_ACCOUNTS)).toEqual(['person', 'professional', 'team'])
   })
 })

@@ -151,7 +151,7 @@ No **SQL Editor**, abra uma **New query**, cole e clique em **Run**. No final ap
 | Psicólogo do Lucas (Carlos Souza) | `demo.catalogo.1@skyro.app` | `skyro-demo-2026` |
 | Fisio do Lucas (Fernanda Dias) | `demo.catalogo.8@skyro.app` | `skyro-demo-2026` |
 
-As três últimas são criadas pelo `02_catalogo_demo.sql`, logo abaixo.
+As três últimas são criadas pelo `02_catalogo_demo.sql`, logo abaixo, e **não têm botão na tela de login**: para entrar, digite o e-mail e a senha na aba **Entrar**.
 
 Depois, do mesmo jeito, rode o catálogo de profissionais fictícios do "Perto de você":
 
