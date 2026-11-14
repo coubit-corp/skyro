@@ -20,12 +20,26 @@ export function PertoDeVoce() {
   const geo = useGeolocation()
   const pros = useProfessionals()
 
-  const list = useMemo(() => {
-    return (pros.data ?? [])
-      .filter((p) => filter === 'todos' || p.specialty === filter)
-      .map((p) => ({ pro: p, km: p.lat != null && p.lng != null ? distanceKm(geo.position, { lat: p.lat, lng: p.lng }) : Infinity }))
-      .sort((a, b) => a.km - b.km)
-  }, [pros.data, filter, geo.position])
+  const ofSpecialty = useMemo(
+    () => (pros.data ?? []).filter((p) => filter === 'todos' || p.specialty === filter),
+    [pros.data, filter],
+  )
+
+  // Quem atende presencialmente tem ponto no mapa e entra na lista por distância.
+  const list = useMemo(
+    () =>
+      ofSpecialty
+        .filter((p) => p.modality !== 'online' && p.lat != null && p.lng != null)
+        .map((p) => ({ pro: p, km: distanceKm(geo.position, { lat: p.lat!, lng: p.lng! }) }))
+        .sort((a, b) => a.km - b.km),
+    [ofSpecialty, geo.position],
+  )
+
+  // Quem atende só online não tem endereço: aparece numa lista própria, para qualquer lugar.
+  const onlineOnly = useMemo(
+    () => ofSpecialty.filter((p) => p.modality === 'online').sort((a, b) => a.profiles.full_name.localeCompare(b.profiles.full_name, 'pt-BR')),
+    [ofSpecialty],
+  )
 
   // Mostra quem está até 5 km; se ninguém estiver, mostra os mais perto mesmo assim.
   const nearby = list.filter((x) => x.km <= MAX_KM)
@@ -73,10 +87,23 @@ export function PertoDeVoce() {
               ? [0, 1, 2].map((i) => <Skeleton key={i} className="h-28" />)
               : shown.map(({ pro, km }) => (
                   <li key={pro.id}>
-                    <ProCard pro={pro} distanceKm={Number.isFinite(km) ? km : undefined} />
+                    <ProCard pro={pro} distanceKm={km} />
                   </li>
                 ))}
           </ul>
+
+          {!pros.isLoading && onlineOnly.length > 0 && (
+            <>
+              <SectionTitle>Atendem online, de qualquer lugar</SectionTitle>
+              <ul className="space-y-3">
+                {onlineOnly.map((pro) => (
+                  <li key={pro.id}>
+                    <ProCard pro={pro} />
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
         </>
       )}
 

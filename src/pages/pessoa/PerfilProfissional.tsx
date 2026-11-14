@@ -59,11 +59,13 @@ export function PerfilProfissional() {
         <h1 className="mt-3 text-2xl font-bold">{p.profiles.full_name}</h1>
         <p className="mt-1 inline-flex items-center gap-1 text-sm text-white/80">
           {specialtyLabel(p.specialty)}
-          {p.verified && (
+          {p.verified ? (
             <>
               {' · '}
               <BadgeCheck className="h-4 w-4 text-lavender" aria-hidden="true" /> registro verificado
             </>
+          ) : (
+            p.registry && <>{' · '}registro em verificação</>
           )}
         </p>
         {p.rating != null && (
