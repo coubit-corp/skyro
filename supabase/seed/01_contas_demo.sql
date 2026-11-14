@@ -5,8 +5,8 @@
 --   Pessoa:        demo.pessoa@skyro.app  / skyro-demo-2026   → Lucas Martins
 --   Profissional:  demo.nutri@skyro.app   / skyro-demo-2026   → Ana Lima, nutricionista
 --
--- O Lucas já compartilha a rotina com a Ana e tem 14 dias de registros,
--- com a última semana em "Atenção" (dormiu pouco, faltou treino, pouca água),
+-- O Lucas já compartilha a rotina com a Ana e tem registros de hoje e dos 13 dias
+-- anteriores, com esta semana em "Atenção" (dormiu pouco, faltou treino, pouca água),
 -- igual aos mockups. As datas são relativas a hoje, então a demo nunca "envelhece":
 -- é só rodar este arquivo de novo.
 --
@@ -87,26 +87,28 @@ begin
     (h_walk,    v_person, 'Caminhada',            'treino', '18:30', '30 min'),
     (h_sleep,   v_person, 'Dormir',               'sono',   '23:00', 'Deitar até 23h');
 
-  -- 6. Registros dos últimos 14 dias.
-  --    Semana anterior (dias 13..7): boa. Semana atual (6..1): piorando.
-  --    Ontem (1): 5h30 de sono, faltou ao treino, 1,6 L de 2 L → dispara "Atenção".
-  for v_offset in 1..14 loop
+  -- 6. Registros de hoje e dos 13 dias anteriores (o sono de um dia é o da noite anterior).
+  --    Até ~1 semana atrás: tudo bem. Esta semana: piorando.
+  --    Hoje: dormiu 5h30 e ainda não treinou; faltou ao treino ontem e há 3 dias
+  --    (2 faltas na semana) → o Lucas aparece em "Atenção" para a Ana.
+  for v_offset in 0..13 loop
     v_day := current_date - v_offset;
     insert into public.daily_logs (
       user_id, log_date, sleep_hours, water_liters, water_goal_liters,
       focus_minutes, workout_planned, workout_done, mood
     ) values (
       v_person, v_day,
-      case v_offset when 1 then 5.5 when 2 then 6.2 when 3 then 5.8 when 4 then 7.0 when 5 then 6.5 when 6 then 7.2
+      case v_offset when 0 then 5.5 when 1 then 6.2 when 2 then 5.8 when 3 then 7.0 when 4 then 6.5 when 5 then 7.2
                     else 7.0 + (v_offset % 3) * 0.4 end,
-      case v_offset when 1 then 1.6 when 2 then 1.4 when 3 then 1.9 when 4 then 2.0 else 2.1 end,
+      case v_offset when 0 then 0.8 when 1 then 1.6 when 2 then 1.4 when 3 then 1.9 else 2.1 end,
       2,
-      case when v_offset <= 6 then 40 + v_offset * 5 else 60 + (v_offset % 4) * 10 end,
-      -- Treina de segunda a sexta; ontem e 3 dias atrás o treino estava planejado
-      -- (mesmo que caia no fim de semana) e ele faltou: 2 faltas na semana → "Atenção".
-      extract(isodow from v_day) <= 5 or v_offset in (1, 3),
-      extract(isodow from v_day) <= 5 and v_offset not in (1, 3),
-      case when v_offset <= 3 then 'cansado' else 'bem' end
+      case v_offset when 0 then 40 else
+        case when v_offset <= 5 then 45 + v_offset * 5 else 60 + (v_offset % 4) * 10 end end,
+      -- Treina de segunda a sexta; hoje, ontem e há 3 dias o treino estava planejado
+      -- mesmo que caia no fim de semana.
+      extract(isodow from v_day) <= 5 or v_offset in (0, 1, 3),
+      extract(isodow from v_day) <= 5 and v_offset not in (0, 1, 3),
+      case when v_offset <= 2 then 'cansado' else 'bem' end
     );
 
     -- Hábitos marcados em cada dia (dias ruins têm menos marcações)
@@ -114,6 +116,7 @@ begin
     select h, v_person, v_day
     from unnest(
       case
+        when v_offset = 0 then array[h_wake]
         when v_offset = 1 then array[h_wake, h_focus]
         when v_offset = 3 then array[h_wake, h_focus, h_sleep]
         when extract(isodow from v_day) > 5 then array[h_wake, h_water, h_walk, h_sleep]
