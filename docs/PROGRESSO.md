@@ -110,8 +110,8 @@ Tudo está no código, com 40 testes automáticos, regras de acesso testadas no 
 | Regras de acesso do banco | Testadas num Postgres local (`supabase/tests/`, 5 arquivos) |
 | Tipos e lint | Sem erros nem avisos |
 | Telas | Conferidas no navegador, no celular e no desktop, sem erros no console |
-| Supabase real | Roteiros das etapas 1 a 8 conferidos pela equipe. Login das contas demo de pessoa e profissional conferido em 14/11. **As etapas 9 e 10 ainda precisam ser rodadas lá** (veja o passo 1 abaixo) |
-| **Ainda não testado** | Etapas 9 e 10 no Supabase real (as telas novas foram testadas com respostas simuladas), IA real (desligada por decisão da equipe), deploy na Vercel e aparelho real |
+| Supabase real | Roteiros das etapas 1 a 8 conferidos pela equipe. Etapas 9 e 10 rodadas pela equipe em 14/11. Navegando com as contas demo, sem alterar dados, abriram sem erro: Plano, Saúde, Perto de você, Início, a ficha do Lucas com o plano e a área da equipe |
+| **Ainda não testado** | No Supabase real: aprovar ou recusar pela equipe, marcar itens, registrar dor e montar o plano (testados só no Postgres local e com respostas simuladas). Também a IA real (desligada por decisão da equipe), o deploy na Vercel e o aparelho real |
 
 ### Bugs que pegamos antes de chegar até você
 - Fuso horário: à noite no Brasil, "hoje" virava amanhã (no app e nos seeds)
@@ -119,6 +119,7 @@ Tudo está no código, com 40 testes automáticos, regras de acesso testadas no 
 - Água de hoje marcada em vermelho antes de o dia acabar
 - Logo escondido e falta do botão "Sair" no desktop
 - Cache de uma conta aparecendo para a próxima depois de sair
+- Etapa 10: a tabela do recado do plano criou um segundo caminho entre profissionais e perfis no Supabase, e as telas que mostram o nome do profissional davam erro. Pego testando a prévia contra o banco real e corrigido com a ligação indicada nas consultas, mais um teste que impede a volta do erro
 
 ---
 
@@ -160,7 +161,7 @@ Todo o trabalho está na branch `etapa-10-meu-plano`, que já contém as etapas 
 
 Restam cerca de 16 dias. A ordem abaixo prioriza o que os jurados exigem e veem primeiro.
 
-### 1. Rodar as etapas 9 e 10 no Supabase real · 15 minutos · **urgente**
+### 1. ~~Rodar as etapas 9 e 10 no Supabase real~~ · feito em 14/11
 Os roteiros das etapas 1 a 8 já foram conferidos no Supabase real. Faltam as etapas 9 e 10. No SQL Editor, rode as migrations `20261115000001_aprovacao_registros.sql` e `20261115000002_planos.sql`, e depois os seeds 01, 02 e 03 de novo, nessa ordem. O 01 cria a conta da equipe, e o 02 monta a equipe e os planos do Lucas. Rodar os seeds também traz os dados demo para a data de hoje. Em seguida, siga o roteiro acima. Se algo falhar, me mande o print ou o texto do erro.
 
 ### 2. Validação com pessoas reais · em paralelo, até 21/11
