@@ -8,7 +8,7 @@ insert into auth.users (id, raw_user_meta_data) values
 select id, full_name, role from profiles order by full_name;
 -- Ana cria o perfil profissional
 set role authenticated; set request.jwt.claim.sub = '00000000-0000-0000-0000-00000000000a';
-insert into professionals (id, specialty) values (auth.uid(), 'nutricionista');
+insert into professionals (id, specialty, modality) values (auth.uid(), 'nutricionista', 'online');
 \echo '-- Ana tenta se dar selo de verificado (deve FALHAR):'
 update professionals set verified = true where id = auth.uid();
 \echo '-- Lucas tenta virar profissional (deve FALHAR):'

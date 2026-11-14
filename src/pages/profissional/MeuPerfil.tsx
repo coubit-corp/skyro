@@ -1,4 +1,4 @@
-import { BadgeCheck, Clock, MapPin, Pencil, Star } from 'lucide-react'
+import { BadgeCheck, CircleX, Clock, MapPin, Pencil, Star } from 'lucide-react'
 import { useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useAuth } from '../../auth/auth-context'
@@ -9,6 +9,7 @@ import { SignOutButton } from '../../components/SignOutButton'
 import { ErrorState, PageHeader, Skeleton } from '../../components/ui'
 import { useMyProfessional, useSaveProfessional } from '../../hooks/useProData'
 import { initialValues, toProfessionalRow } from '../../lib/professionalForm'
+import { verificationStatus } from '../../lib/registry'
 import { MODALITY_LABEL, specialtyLabel } from '../../lib/specialties'
 
 export function MeuPerfil() {
@@ -27,6 +28,7 @@ export function MeuPerfil() {
   if (me.error || !me.data) return <ErrorState message={me.error?.message} onRetry={() => me.refetch()} />
   const p = me.data
   const name = profile?.full_name ?? ''
+  const status = verificationStatus(p)
 
   if (editing) {
     return (
@@ -47,9 +49,11 @@ export function MeuPerfil() {
             await refreshProfile()
             setEditing(false)
             setSavedMsg(
-              registryChanged && p.verified
-                ? 'Alterações salvas. Como o registro ou a especialidade mudou, o selo volta para verificação.'
-                : 'Alterações salvas.',
+              !registryChanged || status === 'pendente'
+                ? 'Alterações salvas.'
+                : status === 'aprovado'
+                  ? 'Alterações salvas. Como o registro ou a especialidade mudou, o selo volta para verificação.'
+                  : 'Alterações salvas. Seu registro voltou para verificação e você já aparece de novo na busca.',
             )
           }}
         />
@@ -81,9 +85,13 @@ export function MeuPerfil() {
           <p className="font-display text-xl font-bold">{name}</p>
           <p className="text-sm text-muted">{specialtyLabel(p.specialty)}</p>
           <p className="mt-1 flex items-center gap-1 text-xs font-semibold">
-            {p.verified ? (
+            {status === 'aprovado' ? (
               <span className="inline-flex items-center gap-1 text-primary">
                 <BadgeCheck className="h-4 w-4" aria-hidden="true" /> Registro verificado
+              </span>
+            ) : status === 'recusado' ? (
+              <span className="inline-flex items-center gap-1 text-attention">
+                <CircleX className="h-4 w-4" aria-hidden="true" /> Registro recusado
               </span>
             ) : (
               <span className="inline-flex items-center gap-1 text-muted">
@@ -94,6 +102,22 @@ export function MeuPerfil() {
           {p.registry && <p className="text-xs text-muted">{p.registry}</p>}
         </div>
       </div>
+
+      {status === 'recusado' && (
+        <div role="alert" className="card space-y-3 border border-attention-soft">
+          <h2 className="font-semibold text-attention">A equipe Skyro não conseguiu confirmar seu registro</h2>
+          <p className="text-sm">
+            <span className="font-semibold">Motivo:</span> {p.rejection_reason}
+          </p>
+          <p className="text-sm text-muted">
+            Enquanto isso, seu perfil não aparece na busca. Corrija o registro ou a especialidade e ele volta para
+            verificação na hora.
+          </p>
+          <button className="btn-primary w-full sm:w-auto" onClick={() => setEditing(true)}>
+            <Pencil className="h-4 w-4" aria-hidden="true" /> Corrigir registro
+          </button>
+        </div>
+      )}
 
       {p.rating != null && (
         <div className="flex items-center gap-4 rounded-card bg-navy px-5 py-4 text-white">
