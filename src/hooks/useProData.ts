@@ -1,0 +1,141 @@
+// Consultas do painel do profissional. Quem garante que ele só vê pacientes
+// que compartilharam é o banco (RLS); aqui só buscamos e organizamos.
+
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useAuth } from '../auth/auth-context'
+import { evaluatePatient, type PatientStatus } from '../lib/alerts'
+import type { DailyLog, Habit, Professional, Share, Tip } from '../lib/database.types'
+import { addDays, today } from '../lib/dates'
+import { currentStreak } from '../lib/streak'
+import { supabase } from '../lib/supabase'
+
+type PersonProfile = { full_name: string; avatar_seed: string | null }
+export type PatientShare = Share & { profiles: PersonProfile }
+
+export interface PatientRow {
+  id: string
+  name: string
+  avatarSeed: string | null
+  since: string
+  evaluation: PatientStatus
+  streak: number
+}
+
+function unwrap<T>(res: { data: T | null; error: { message: string } | null }): T {
+  if (res.error) throw new Error(res.error.message)
+  return res.data as T
+}
+
+function useProId(): string {
+  const { session } = useAuth()
+  if (!session) throw new Error('Usuário não autenticado')
+  return session.user.id
+}
+
+/** O próprio cadastro profissional (pode não existir para contas criadas pelo formulário). */
+export function useMyProfessional() {
+  const proId = useProId()
+  return useQuery({
+    queryKey: ['professionals', proId],
+    queryFn: async () =>
+      unwrap<Professional | null>(await supabase.from('professionals').select('*').eq('id', proId).maybeSingle()),
+  })
+}
+
+/** Lista de pacientes com o status calculado pelas regras de alerta. Atenção primeiro. */
+export function usePatients() {
+  const proId = useProId()
+  return useQuery({
+    queryKey: ['patients', proId],
+    queryFn: async (): Promise<PatientRow[]> => {
+      const shares = unwrap<PatientShare[]>(
+        await supabase
+          .from('shares')
+          .select('*, profiles(full_name, avatar_seed)')
+          .eq('professional_id', proId)
+          .is('revoked_at', null),
+      )
+      if (shares.length === 0) return []
+
+      const ids = shares.map((s) => s.person_id)
+      const todayIso = today()
+      const [logs, checks] = await Promise.all([
+        supabase.from('daily_logs').select('*').in('user_id', ids).gte('log_date', addDays(todayIso, -14)),
+        supabase.from('habit_checks').select('user_id, check_date').in('user_id', ids).gte('check_date', addDays(todayIso, -60)),
+      ])
+      const allLogs = unwrap<DailyLog[]>(logs)
+      const allChecks = unwrap<{ user_id: string; check_date: string }[]>(checks)
+
+      return shares
+        .map((s) => {
+          const days = new Set(allChecks.filter((c) => c.user_id === s.person_id).map((c) => c.check_date))
+          return {
+            id: s.person_id,
+            name: s.profiles.full_name,
+            avatarSeed: s.profiles.avatar_seed,
+            since: s.created_at,
+            evaluation: evaluatePatient(allLogs.filter((l) => l.user_id === s.person_id), todayIso),
+            streak: currentStreak(days, todayIso),
+          }
+        })
+        .sort((a, b) => {
+          if (a.evaluation.status !== b.evaluation.status) return a.evaluation.status === 'atencao' ? -1 : 1
+          return b.evaluation.alerts.length - a.evaluation.alerts.length || a.name.localeCompare(b.name, 'pt-BR')
+        })
+    },
+  })
+}
+
+export interface PatientDetail {
+  share: PatientShare
+  logs: DailyLog[]
+  habits: Habit[]
+  checkDays: Set<string>
+  tips: Tip[]
+}
+
+/** Tudo da ficha de um paciente. Retorna null se ele não compartilha (ou revogou). */
+export function usePatient(personId: string | undefined) {
+  const proId = useProId()
+  return useQuery({
+    queryKey: ['patient', proId, personId],
+    enabled: Boolean(personId),
+    queryFn: async (): Promise<PatientDetail | null> => {
+      const share = unwrap<PatientShare | null>(
+        await supabase
+          .from('shares')
+          .select('*, profiles(full_name, avatar_seed)')
+          .eq('professional_id', proId)
+          .eq('person_id', personId!)
+          .is('revoked_at', null)
+          .maybeSingle(),
+      )
+      if (!share) return null
+
+      const todayIso = today()
+      const [logs, habits, checks, tips] = await Promise.all([
+        supabase.from('daily_logs').select('*').eq('user_id', personId!).gte('log_date', addDays(todayIso, -14)).order('log_date'),
+        supabase.from('habits').select('*').eq('user_id', personId!).eq('active', true).order('scheduled_time', { nullsFirst: false }),
+        supabase.from('habit_checks').select('check_date').eq('user_id', personId!).gte('check_date', addDays(todayIso, -60)),
+        supabase.from('tips').select('*').eq('professional_id', proId).eq('person_id', personId!).order('created_at', { ascending: false }).limit(10),
+      ])
+      return {
+        share,
+        logs: unwrap<DailyLog[]>(logs),
+        habits: unwrap<Habit[]>(habits),
+        checkDays: new Set(unwrap<{ check_date: string }[]>(checks).map((c) => c.check_date)),
+        tips: unwrap<Tip[]>(tips),
+      }
+    },
+  })
+}
+
+export function useSendTip() {
+  const proId = useProId()
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ personId, body }: { personId: string; body: string }) =>
+      unwrap(await supabase.from('tips').insert({ professional_id: proId, person_id: personId, body })),
+    onSuccess: (_d, v) => qc.invalidateQueries({ queryKey: ['patient', proId, v.personId] }),
+  })
+}
