@@ -115,9 +115,8 @@ Tudo está no código, com 40 testes automáticos, regras de acesso testadas no 
 - O avatar do topo do Início agora abre o perfil. Antes, tocar nele saía da conta
 
 ### Etapa 12: logins demo da equipe do Lucas
-- A tela de login ganhou três botões, embaixo dos que já existiam: **Personal** (Pedro), **Psicólogo** (Carlos) e **Fisio** (Fernanda)
-- Com eles dá para montar **treino**, **respiração** e **exercícios de fisio** no plano do Lucas com um clique. Antes, só a Ana (nutri) tinha login, e ela só adiciona refeições
-- Os três já estavam no catálogo e na equipe do Lucas; o seed `02_catalogo_demo.sql` passou a dar senha a eles (a mesma das outras contas demo)
+- O **personal** (Pedro), o **psicólogo** (Carlos) e a **fisio** (Fernanda) do Lucas ganharam login, com a mesma senha das outras contas demo. Assim dá para montar **treino**, **respiração** e **exercícios de fisio** no plano do Lucas sem criar conta. Antes, só a Ana (nutri) tinha login, e ela só adiciona refeições
+- **Sem botão no login**, por decisão da equipe: a tela continua com os três botões de sempre. Para entrar, digite o e-mail (`demo.catalogo.3@skyro.app` para o personal, `.1` para o psicólogo e `.8` para a fisio) e a senha `skyro-demo-2026`
 - Corrigido o seed 02, que falhava quando era rodado de novo sozinho, sem o 01 antes
 
 ### Qualidade
@@ -172,7 +171,7 @@ Todo o trabalho está na branch `etapa-12-logins-demo`, que já contém as etapa
    1. **Entrar como pessoa (demo)**: Início → Rotina → **Plano** (as 4 abas; marcar um item e a dor na Fisio) → Saúde → Ver mapa → um perfil → Compartilhar
    2. Sair → **Entrar como profissional (demo)**: 3 em Atenção → abrir o Lucas → ver o **Plano de Lucas** no fim da ficha, adicionar uma refeição → enviar uma dica
    3. Sair → entrar como pessoa: a dica aparece no Início
-   3b. Sair → **Personal** (demo): abrir o Lucas → no **Plano de Lucas**, adicionar um exercício com séries, repetições e carga
+   3b. Sair → entrar com `demo.catalogo.3@skyro.app` e a senha demo (personal): abrir o Lucas → no **Plano de Lucas**, adicionar um exercício com séries, repetições e carga
    4. Sair → **Entrar como equipe (demo)**: aprovar o Rafael → recusar o Bruno com um motivo → ver os dois em Decididos
 
 ---
