@@ -153,6 +153,22 @@ begin
   values (v_pro, v_person,
           'Vi que você dormiu pouco esta semana. Ajustei o jantar para ficar mais leve e mais cedo: tente comer até as 20h e evitar café depois das 16h.',
           now() - interval '2 hours');
+
+  -- 9. Plano alimentar da Ana para o Lucas (aba Nutrição do "Meu plano").
+  --    Dias: 1 = segunda … 7 = domingo. As marcações de "feito" são criadas no
+  --    02_catalogo_demo.sql, junto com os planos do resto da equipe.
+  insert into public.plan_items (professional_id, person_id, kind, title, weekdays, meal_time, foods, notes, position) values
+    (v_pro, v_person, 'refeicao', 'Café da manhã', '{1,2,3,4,5,6,7}', '07:30',
+     'Ovos mexidos, pão integral e uma fruta', null, 1),
+    (v_pro, v_person, 'refeicao', 'Lanche antes do treino', '{1,2,3,4,5}', '06:40',
+     'Banana com aveia', 'Coma uns 20 minutos antes de sair', 2),
+    (v_pro, v_person, 'refeicao', 'Almoço', '{1,2,3,4,5,6,7}', '12:30',
+     'Arroz, feijão, frango grelhado e salada à vontade', null, 3),
+    (v_pro, v_person, 'refeicao', 'Jantar leve', '{1,2,3,4,5,6,7}', '19:30',
+     'Omelete com legumes ou sopa', 'Até as 20h, para dormir melhor', 4);
+  insert into public.plan_notes (professional_id, person_id, note)
+  values (v_pro, v_person,
+          'Jante até as 20h e evite café depois das 16h. Nos dias de treino, não pule o lanche da manhã.');
 end $$;
 
 -- Conferência: deve listar as três contas

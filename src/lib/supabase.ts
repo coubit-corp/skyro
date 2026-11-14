@@ -9,3 +9,11 @@ export const supabaseConfigured = Boolean(url && key)
 export const supabase = createClient(url ?? 'http://localhost', key ?? 'missing-key', {
   auth: { persistSession: true, autoRefreshToken: true },
 })
+
+/**
+ * Nome e avatar de um profissional, para usar dentro de um select.
+ * O "!professionals_id_fkey" diz ao Supabase qual ligação usar: desde a tabela
+ * plan_notes, existem dois caminhos entre professionals e profiles, e sem a
+ * indicação a consulta falha ("more than one relationship was found").
+ */
+export const PRO_PROFILE = 'profiles!professionals_id_fkey(full_name, avatar_seed)'

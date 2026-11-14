@@ -59,6 +59,7 @@ Depois, teste à mão, de preferência no celular:
 - [ ] **Perto de você** pede a localização e mostra o mapa
 - [ ] Sair → **Entrar como profissional (demo)** → 3 pacientes em Atenção
 - [ ] Abrir o Lucas, enviar uma dica, voltar para a pessoa e ver a dica no Início
+- [ ] Como pessoa, abrir **Plano**: as 4 abas têm conteúdo; marcar um item e a dor na aba Fisio
 - [ ] Sair → **Entrar como equipe (demo)** → aprovar o Rafael e recusar o Bruno com um motivo (rode os seeds de novo depois, para a demo voltar ao começo)
 - [ ] Atualizar a página (F5) em `/saude/perto`: continua na mesma tela, sem erro 404
 - [ ] **Instalar o app:** no iPhone, Safari → Compartilhar → **Adicionar à Tela de Início**; no Android, Chrome → menu → **Instalar app**
