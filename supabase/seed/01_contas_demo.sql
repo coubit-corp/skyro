@@ -17,6 +17,8 @@
 
 do $$
 declare
+  -- "Hoje" no horário de Brasília (o current_date do Supabase é UTC e, à noite, já seria amanhã)
+  v_today constant date := (now() at time zone 'America/Sao_Paulo')::date;
   v_password  constant text := 'skyro-demo-2026';
   v_person    uuid := 'd0000000-0000-4000-8000-000000000001';
   v_pro       uuid := 'd0000000-0000-4000-8000-000000000002';
@@ -92,7 +94,7 @@ begin
   --    Hoje: dormiu 5h30 e ainda não treinou; faltou ao treino ontem e há 3 dias
   --    (2 faltas na semana) → o Lucas aparece em "Atenção" para a Ana.
   for v_offset in 0..13 loop
-    v_day := current_date - v_offset;
+    v_day := v_today - v_offset;
     insert into public.daily_logs (
       user_id, log_date, sleep_hours, water_liters, water_goal_liters,
       focus_minutes, workout_planned, workout_done, mood
