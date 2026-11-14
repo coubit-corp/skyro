@@ -22,7 +22,7 @@ export function ProCard({ pro, distanceKm }: { pro: ProfessionalWithProfile; dis
       to={`/saude/profissional/${pro.id}`}
       className="card flex items-start gap-3 transition hover:ring-2 hover:ring-lavender"
     >
-      <Avatar seed={pro.profiles.avatar_seed} name={pro.profiles.full_name} size={52} />
+      <Avatar seed={pro.profiles.avatar_seed} photo={pro.profiles.avatar_path} name={pro.profiles.full_name} size={52} />
       <div className="min-w-0 flex-1 space-y-1">
         <div className="flex items-start justify-between gap-2">
           <p className="font-semibold">{pro.profiles.full_name}</p>

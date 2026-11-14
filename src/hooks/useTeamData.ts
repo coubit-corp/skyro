@@ -2,11 +2,11 @@
 // recusa é o banco (função review_professional); aqui só buscamos e chamamos.
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type { Professional } from '../lib/database.types'
+import type { Professional, ProfileBrief } from '../lib/database.types'
 import { reviewErrorMessage } from '../lib/registry'
 import { PRO_PROFILE, supabase } from '../lib/supabase'
 
-export type RegistryRow = Professional & { profiles: { full_name: string; avatar_seed: string | null } }
+export type RegistryRow = Professional & { profiles: ProfileBrief }
 
 export type Decision = 'aprovado' | 'recusado'
 

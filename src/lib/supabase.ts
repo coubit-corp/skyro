@@ -16,4 +16,11 @@ export const supabase = createClient(url ?? 'http://localhost', key ?? 'missing-
  * plan_notes, existem dois caminhos entre professionals e profiles, e sem a
  * indicação a consulta falha ("more than one relationship was found").
  */
-export const PRO_PROFILE = 'profiles!professionals_id_fkey(full_name, avatar_seed)'
+export const PRO_PROFILE = 'profiles!professionals_id_fkey(full_name, avatar_seed, avatar_path)'
+
+export const AVATAR_BUCKET = 'avatars'
+
+/** Link público da foto de perfil, ou null se a pessoa usa o avatar ilustrado. */
+export function avatarUrl(path: string | null | undefined): string | null {
+  return path ? supabase.storage.from(AVATAR_BUCKET).getPublicUrl(path).data.publicUrl : null
+}

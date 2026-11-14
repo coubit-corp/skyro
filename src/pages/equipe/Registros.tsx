@@ -191,7 +191,7 @@ function RegistryCard({
   return (
     <li className="card min-w-0 space-y-3">
       <div className="flex items-start gap-3">
-        <Avatar seed={pro.profiles.avatar_seed} name={name} size={48} />
+        <Avatar seed={pro.profiles.avatar_seed} photo={pro.profiles.avatar_path} name={name} size={48} />
         <div className="min-w-0 flex-1">
           <p className="font-semibold">{name}</p>
           <p className="text-sm text-muted">

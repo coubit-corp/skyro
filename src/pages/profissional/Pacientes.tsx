@@ -109,7 +109,7 @@ export function Pacientes() {
                   to={`/pro/pacientes/${p.id}`}
                   className="card flex items-center gap-3 transition hover:ring-2 hover:ring-lavender"
                 >
-                  <Avatar seed={p.avatarSeed} name={p.name} size={48} />
+                  <Avatar seed={p.avatarSeed} photo={p.avatarPath} name={p.name} size={48} />
                   <div className="min-w-0 flex-1">
                     <p className="font-semibold">{p.name}</p>
                     <p className="truncate text-sm text-muted">{summaryLine(p)}</p>
