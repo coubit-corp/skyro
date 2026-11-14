@@ -106,6 +106,12 @@ EOF
    pbcopy < supabase/migrations/20261114000001_resumos_ia.sql
    ```
 
+6. E com a terceira, que libera o cadastro de profissional pelo app:
+
+   ```bash
+   pbcopy < supabase/migrations/20261114000002_cadastro_profissional.sql
+   ```
+
 > Se rodar duas vezes, dá erro de "already exists". Não é problema: as tabelas já foram criadas.
 
 ### 3.3 Criar as contas demo (só uma vez)
