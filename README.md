@@ -48,6 +48,7 @@ Pré-requisito: Node.js 20 ou mais novo.
 | `npm run preview` | Serve a versão de produção localmente |
 | `npm run lint` | Procura problemas no código (oxlint) |
 | `npm test` | Roda os testes automáticos (regras de alerta, strike, datas e resumo) |
+| `npm run smoke -- <link>` | Confere se o app publicado está no ar e configurado |
 
 ## Estrutura
 
@@ -72,6 +73,10 @@ docs/            especificação, pitch, análise de mercado e mockups
 - Só a **publishable key** vai para o navegador. A secret key do Supabase nunca entra no código nem no repositório.
 - O arquivo `.env` está no `.gitignore`.
 - O profissional só enxerga os dados de quem compartilhou a rotina com ele, e a pessoa pode revogar quando quiser. Essa regra é garantida pelo banco (RLS), não só pela tela.
+
+## Publicação
+
+O app é publicado na Vercel: cada merge na `main` vai para produção sozinho, e cada PR ganha um link de prévia. Passo a passo em [`docs/DEPLOY-VERCEL.md`](docs/DEPLOY-VERCEL.md).
 
 ## Como a IA entra
 

@@ -6,6 +6,7 @@ Material de planejamento do projeto (Hack Brasil 2026 · Trilha Saúde & bem-est
 
 | Arquivo | Conteúdo |
 |---|---|
+| [DEPLOY-VERCEL.md](DEPLOY-VERCEL.md) | Como publicar o app na Vercel e conferir se está tudo certo |
 | [SETUP-MAC.md](SETUP-MAC.md) | Passo a passo para instalar e rodar o projeto no Mac, do zero |
 | [SKYRO-MVP.md](SKYRO-MVP.md) | Especificação do MVP: problema, solução, escopo, regras de alerta, uso da IA, stack, modelo de dados, roteiro da demo e plano de 20 dias |
 | [checklist-e-entrevistas.txt](checklist-e-entrevistas.txt) | Checklist por etapas (problema, concorrentes, validação, produto, testes, pitch) e roteiros de entrevista com clientes e profissionais |
