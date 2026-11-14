@@ -77,7 +77,8 @@ _Pesquisa rápida da equipe, sem acesso aos apps por dentro. Detalhes em [`docs/
 - **Consentimento explícito e por profissional**, com a lista do que ele vai ver. A pessoa **revoga quando quiser**, e o acesso cai na hora.
 - **Garantido pelo banco, não só pela tela:** o profissional não consegue ler a rotina de quem não compartilhou com ele.
 - **Ninguém se dá selo de "verificado":** o registro do conselho fica "em verificação" até a equipe Skyro conferir na consulta do conselho e aprovar. Se recusar, o profissional vê o motivo e sai da busca até corrigir. Cada decisão fica registrada (quem, quando e o quê).
-- **Nenhuma foto de pessoa:** os avatares são ilustrações geradas no próprio app.
+- **Foto só se a pessoa quiser:** o padrão é um avatar ilustrado, gerado no próprio app. Quem envia uma foto tem a imagem recortada e reduzida no próprio aparelho antes do envio. As contas e os perfis da demo usam só ilustrações.
+- **Telefone sempre privado:** fica numa tabela que só a própria conta lê. Nem o profissional que acompanha a pessoa enxerga.
 
 ## Arquitetura
 

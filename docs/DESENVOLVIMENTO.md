@@ -77,6 +77,7 @@ docs/            especificação, pitch, análise de mercado, mockups e guias
 | `20261114000002_cadastro_profissional.sql` | Edição do perfil pelo profissional, local obrigatório no presencial e perda do selo ao trocar o registro |
 | `20261115000001_aprovacao_registros.sql` | Papel `admin` (equipe), aprovação e recusa do registro pela função `review_professional()`, histórico em `registry_reviews` e recusado fora da busca |
 | `20261115000002_planos.sql` | "Meu plano": itens por especialidade (`plan_items`), recado (`plan_notes`), marcações (`plan_checks`) e dor do dia (`daily_logs.pain_level`) |
+| `20261116000001_perfil.sql` | Configurações de perfil: `profiles.bio` e `avatar_path`, telefone privado (`private_contacts`), horários (`professionals.availability`) e o bucket `avatars` |
 
 Regra central, garantida pelo banco (RLS) e não só pela tela: **o profissional só lê a rotina de quem compartilhou com ele, e perde o acesso na hora em que a pessoa revoga.**
 
@@ -85,6 +86,8 @@ Regra central, garantida pelo banco (RLS) e não só pela tela: **o profissional
 - Só a **publishable key** vai para o navegador. A secret key do Supabase e a chave da Anthropic nunca entram no código nem no repositório.
 - O `.env` está no `.gitignore`.
 - Selo de verificado, nota e marcação de demo não podem ser alterados pelo próprio usuário (permissões por coluna).
+- **Telefone:** fica em `private_contacts`, que só o dono lê e escreve.
+- **Fotos:** bucket `avatars`. Cada conta só envia e apaga na própria pasta, e o perfil só aponta para um arquivo dessa pasta. Contas demo não enviam foto nem guardam telefone.
 - **Equipe (admin):** o papel só é dado por SQL; o cadastro pelo app nunca cria admin. O selo só muda pela função `review_professional()`, que confere o papel de quem chama. A conta demo da equipe só decide sobre perfis demo.
 
 ## Como a IA entra
@@ -106,7 +109,7 @@ createdb skyro_teste
 ```
 
 ```bash
-psql -d skyro_teste -f supabase/tests/00_stub_supabase.sql -f supabase/migrations/20261113000001_schema_inicial.sql -f supabase/migrations/20261114000001_resumos_ia.sql -f supabase/migrations/20261114000002_cadastro_profissional.sql -f supabase/migrations/20261115000001_aprovacao_registros.sql -f supabase/migrations/20261115000002_planos.sql
+psql -d skyro_teste -f supabase/tests/00_stub_supabase.sql -f supabase/migrations/20261113000001_schema_inicial.sql -f supabase/migrations/20261114000001_resumos_ia.sql -f supabase/migrations/20261114000002_cadastro_profissional.sql -f supabase/migrations/20261115000001_aprovacao_registros.sql -f supabase/migrations/20261115000002_planos.sql -f supabase/migrations/20261116000001_perfil.sql
 ```
 
 ```bash
@@ -129,6 +132,10 @@ psql -d skyro_teste -f supabase/tests/04_aprovacao_registros.sql
 psql -d skyro_teste -f supabase/tests/05_planos.sql
 ```
 
-Rode um arquivo por comando: cada teste muda o papel da sessão, e o seguinte precisa começar do zero. O 04 e o 05 mudam dados, então rode cada um num banco recém-criado (com o stub, as migrations e os seeds).
+```bash
+psql -d skyro_teste -f supabase/tests/06_perfil.sql
+```
+
+Rode um arquivo por comando: cada teste muda o papel da sessão, e o seguinte precisa começar do zero. O 04, o 05 e o 06 mudam dados, então rode cada um num banco recém-criado (com o stub, as migrations e os seeds).
 
 As linhas marcadas com "deve FALHAR" precisam terminar em `ERROR`. O `01_rls.sql` cria os próprios usuários e deve rodar num banco novo, só com o stub e as migrations.

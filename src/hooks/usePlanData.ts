@@ -3,14 +3,14 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../auth/auth-context'
-import type { PlanCheck, PlanItem, PlanNote, Share, Specialty } from '../lib/database.types'
+import type { PlanCheck, PlanItem, PlanNote, ProfileBrief, Share, Specialty } from '../lib/database.types'
 import { addDays, today } from '../lib/dates'
 import type { toPlanItemRow } from '../lib/plan'
 import { PRO_PROFILE, supabase } from '../lib/supabase'
 
 type PlanItemRow = ReturnType<typeof toPlanItemRow>
 
-export type PlanAuthor = { specialty: Specialty; profiles: { full_name: string; avatar_seed: string | null } }
+export type PlanAuthor = { specialty: Specialty; profiles: ProfileBrief }
 export type PersonPlanItem = PlanItem & { professionals: PlanAuthor }
 type ShareWithAuthor = Share & { professionals: PlanAuthor }
 

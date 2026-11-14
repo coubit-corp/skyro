@@ -89,7 +89,7 @@ export function Paciente() {
       </Link>
 
       <div className="flex items-center gap-4">
-        <Avatar seed={share.profiles.avatar_seed} name={name} size={72} />
+        <Avatar seed={share.profiles.avatar_seed} photo={share.profiles.avatar_path} name={name} size={72} />
         <div>
           <h1 className="text-2xl font-bold">{name}</h1>
           <p className="text-sm text-muted">Compartilha com você {monthsSince(share.created_at)}</p>

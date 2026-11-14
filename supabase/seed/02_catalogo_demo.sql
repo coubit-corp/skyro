@@ -93,10 +93,15 @@ begin
 
     insert into public.professionals (
       id, specialty, bio, registry, verified, tags, city, neighborhood, lat, lng,
-      modality, rating, reviews_count, is_demo
+      modality, rating, reviews_count, is_demo, availability
     ) values (
       v_id, r.esp, r.bio, 'Registro fictício (demo)', r.verificado, r.tags, 'São Paulo', r.bairro,
-      r.lat, r.lng, r.modalidade, r.nota, r.avaliacoes, true
+      r.lat, r.lng, r.modalidade, r.nota, r.avaliacoes, true,
+      -- Horários fictícios: os de número par também atendem sábado de manhã
+      case when r.n % 2 = 0
+        then '{"1":["09:00","19:00"],"2":["09:00","19:00"],"3":["09:00","19:00"],"4":["09:00","19:00"],"5":["09:00","18:00"],"6":["09:00","13:00"]}'::jsonb
+        else '{"1":["07:00","17:00"],"2":["07:00","17:00"],"3":["07:00","17:00"],"4":["07:00","17:00"],"5":["07:00","16:00"]}'::jsonb
+      end
     );
   end loop;
 

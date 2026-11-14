@@ -114,7 +114,7 @@ function ProPlan({ tab, proId, plan }: { tab: TabInfo; proId: string; plan: MyPl
     <article className="space-y-3" aria-label={`Plano de ${name}`}>
       <div className="rounded-card bg-navy p-5 text-white">
         <div className="flex items-center gap-3">
-          <Avatar seed={author?.profiles.avatar_seed} name={name} size={40} />
+          <Avatar seed={author?.profiles.avatar_seed} photo={author?.profiles.avatar_path} name={name} size={40} />
           <p className="eyebrow text-lavender">
             {tab.area} · {first}
           </p>
