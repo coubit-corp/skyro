@@ -6,6 +6,7 @@ Material de planejamento do projeto (Hack Brasil 2026 · Trilha Saúde & bem-est
 
 | Arquivo | Conteúdo |
 |---|---|
+| [Skyro-Status-do-MVP.pdf](Skyro-Status-do-MVP.pdf) | Status do MVP em PDF, para enviar à equipe |
 | [PROGRESSO.md](PROGRESSO.md) | O que já foi feito, como rodar tudo e os próximos passos |
 | [DEPLOY-VERCEL.md](DEPLOY-VERCEL.md) | Como publicar o app na Vercel e conferir se está tudo certo |
 | [SETUP-MAC.md](SETUP-MAC.md) | Passo a passo para instalar e rodar o projeto no Mac, do zero |
