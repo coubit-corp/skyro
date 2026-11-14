@@ -22,4 +22,4 @@ export const MODALITY_LABEL: Record<Modality, string> = {
 }
 
 /** Dados que o profissional passa a ver quando a pessoa compartilha (mostrado no consentimento). */
-export const SHARED_DATA = ['Sono', 'Treinos', 'Água', 'Tempo de foco', 'Hábitos marcados'] as const
+export const SHARED_DATA = ['Sono', 'Treinos', 'Água', 'Tempo de foco', 'Hábitos marcados', 'Itens do plano feitos', 'Dor do dia'] as const
