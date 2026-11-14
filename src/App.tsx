@@ -1,4 +1,5 @@
 import { CalendarDays, ChartNoAxesColumn, ClipboardList, Heart, House, MessageSquare, User, Users } from 'lucide-react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './auth/AuthProvider'
 import { useAuth } from './auth/auth-context'
@@ -16,6 +17,7 @@ import { Inicio } from './pages/pessoa/Inicio'
 import { PerfilProfissional } from './pages/pessoa/PerfilProfissional'
 import { PertoDeVoce } from './pages/pessoa/PertoDeVoce'
 import { Rotina } from './pages/pessoa/Rotina'
+import { Saude } from './pages/pessoa/Saude'
 import { Paciente } from './pages/profissional/Paciente'
 import { Pacientes } from './pages/profissional/Pacientes'
 
@@ -35,6 +37,12 @@ const PRO_NAV: NavItem[] = [
   { to: '/pro/perfil', label: 'Perfil', icon: User },
 ]
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: { retry: 1, staleTime: 30_000 },
+  },
+})
+
 /** "/" manda cada um para a sua home (ou para o login). */
 function RootRedirect() {
   const { session, profile, loading } = useAuth()
@@ -47,46 +55,49 @@ export default function App() {
   if (!supabaseConfigured) return <ConfigMissing />
 
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<RootRedirect />} />
-          <Route path="/entrar" element={<Login />} />
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<RootRedirect />} />
+            <Route path="/entrar" element={<Login />} />
 
-          {/* App da pessoa */}
-          <Route
-            element={
-              <RequireRole role="person">
-                <AppLayout nav={PERSON_NAV} />
-              </RequireRole>
-            }
-          >
-            <Route path="/inicio" element={<Inicio />} />
-            <Route path="/saude" element={<PertoDeVoce />} />
-            <Route path="/saude/profissional/:id" element={<PerfilProfissional />} />
-            <Route path="/rotina" element={<Rotina />} />
-            <Route path="/plano" element={<ComingSoon title="Meu plano" />} />
-            <Route path="/progresso" element={<ComingSoon title="Seu progresso" />} />
-          </Route>
+            {/* App da pessoa */}
+            <Route
+              element={
+                <RequireRole role="person">
+                  <AppLayout nav={PERSON_NAV} />
+                </RequireRole>
+              }
+            >
+              <Route path="/inicio" element={<Inicio />} />
+              <Route path="/saude" element={<Saude />} />
+              <Route path="/saude/perto" element={<PertoDeVoce />} />
+              <Route path="/saude/profissional/:id" element={<PerfilProfissional />} />
+              <Route path="/rotina" element={<Rotina />} />
+              <Route path="/plano" element={<ComingSoon title="Meu plano" />} />
+              <Route path="/progresso" element={<ComingSoon title="Seu progresso" />} />
+            </Route>
 
-          {/* App do profissional */}
-          <Route
-            element={
-              <RequireRole role="professional">
-                <AppLayout nav={PRO_NAV} wide />
-              </RequireRole>
-            }
-          >
-            <Route path="/pro" element={<Pacientes />} />
-            <Route path="/pro/pacientes/:id" element={<Paciente />} />
-            <Route path="/pro/agenda" element={<ComingSoon title="Agenda" />} />
-            <Route path="/pro/mensagens" element={<ComingSoon title="Mensagens" />} />
-            <Route path="/pro/perfil" element={<ComingSoon title="Meu perfil" />} />
-          </Route>
+            {/* App do profissional */}
+            <Route
+              element={
+                <RequireRole role="professional">
+                  <AppLayout nav={PRO_NAV} wide />
+                </RequireRole>
+              }
+            >
+              <Route path="/pro" element={<Pacientes />} />
+              <Route path="/pro/pacientes/:id" element={<Paciente />} />
+              <Route path="/pro/agenda" element={<ComingSoon title="Agenda" />} />
+              <Route path="/pro/mensagens" element={<ComingSoon title="Mensagens" />} />
+              <Route path="/pro/perfil" element={<ComingSoon title="Meu perfil" />} />
+            </Route>
 
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
+    </QueryClientProvider>
   )
 }

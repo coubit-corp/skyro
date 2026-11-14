@@ -1,4 +1,5 @@
 import type { Session } from '@supabase/supabase-js'
+import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import type { Profile } from '../lib/database.types'
 import { supabase } from '../lib/supabase'
@@ -17,6 +18,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
+  const queryClient = useQueryClient()
 
   useEffect(() => {
     let active = true
@@ -46,7 +48,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = useCallback(async () => {
     await supabase.auth.signOut()
-  }, [])
+    // Apaga os dados em cache para a próxima conta não ver nada da anterior.
+    queryClient.clear()
+  }, [queryClient])
 
   const refreshProfile = useCallback(async () => {
     if (session) setProfile(await fetchProfile(session.user.id))
