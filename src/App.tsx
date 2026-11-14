@@ -53,6 +53,8 @@ const PERSON_NAV: NavItem[] = [
   { to: '/plano', label: 'Plano', icon: ClipboardList },
   { to: '/rotina', label: 'Rotina', icon: CalendarDays },
   { to: '/progresso', label: 'Progresso', icon: ChartNoAxesColumn },
+  // No celular, o perfil abre pelo avatar no topo do Início (como nos mockups, são 5 abas).
+  { to: '/perfil', label: 'Meu perfil', icon: User, desktopOnly: true },
 ]
 
 const PRO_NAV: NavItem[] = [
@@ -98,7 +100,7 @@ export default function App() {
               <Route
                 element={
                   <RequireRole role="person">
-                    <AppLayout nav={PERSON_NAV} profileTo="/perfil" />
+                    <AppLayout nav={PERSON_NAV} />
                   </RequireRole>
                 }
               >
