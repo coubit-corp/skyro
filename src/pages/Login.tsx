@@ -4,7 +4,7 @@ import { useAuth } from '../auth/auth-context'
 import { homeFor } from '../auth/home'
 import { Logo } from '../components/Logo'
 import type { Role } from '../lib/database.types'
-import { DEMO_ACCOUNTS } from '../lib/demo'
+import { DEMO_ACCOUNTS, DEMO_TEAM_PROS } from '../lib/demo'
 import { supabase } from '../lib/supabase'
 
 type Mode = 'entrar' | 'cadastrar'
@@ -170,6 +170,24 @@ export function Login() {
               {acc.label}
             </button>
           ))}
+          <div role="group" aria-labelledby="demo-equipe" className="space-y-2 pt-2">
+            <p id="demo-equipe" className="text-center text-xs text-muted">
+              Outros profissionais da equipe do Lucas (demo):
+            </p>
+            <div className="grid grid-cols-3 gap-2">
+              {DEMO_TEAM_PROS.map((acc) => (
+                <button
+                  key={acc.email}
+                  className="btn-outline px-2"
+                  disabled={busy}
+                  aria-label={`Entrar como ${acc.label.toLowerCase()} (demo), ${acc.name}`}
+                  onClick={() => signIn(acc.email, acc.password)}
+                >
+                  {acc.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
