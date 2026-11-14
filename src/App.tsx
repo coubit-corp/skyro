@@ -1,5 +1,6 @@
 import { CalendarDays, ChartNoAxesColumn, ClipboardList, Heart, House, MessageSquare, User, Users } from 'lucide-react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './auth/AuthProvider'
 import { useAuth } from './auth/auth-context'
@@ -14,15 +15,22 @@ import { ComingSoon } from './pages/ComingSoon'
 import { ConfigMissing } from './pages/ConfigMissing'
 import { Login } from './pages/Login'
 import { NotFound } from './pages/NotFound'
-import { Inicio } from './pages/pessoa/Inicio'
-import { PerfilProfissional } from './pages/pessoa/PerfilProfissional'
-import { PertoDeVoce } from './pages/pessoa/PertoDeVoce'
-import { Rotina } from './pages/pessoa/Rotina'
-import { Saude } from './pages/pessoa/Saude'
-import { Paciente } from './pages/profissional/Paciente'
-import { CompletarPerfil } from './pages/profissional/CompletarPerfil'
-import { MeuPerfil } from './pages/profissional/MeuPerfil'
-import { Pacientes } from './pages/profissional/Pacientes'
+
+// Cada tela é baixada só quando é aberta: o celular não precisa carregar o
+// painel do profissional (nem o mapa) para mostrar o Início da pessoa.
+const Inicio = lazy(() => import('./pages/pessoa/Inicio').then((m) => ({ default: m.Inicio })))
+const PerfilProfissional = lazy(() =>
+  import('./pages/pessoa/PerfilProfissional').then((m) => ({ default: m.PerfilProfissional })),
+)
+const PertoDeVoce = lazy(() => import('./pages/pessoa/PertoDeVoce').then((m) => ({ default: m.PertoDeVoce })))
+const Rotina = lazy(() => import('./pages/pessoa/Rotina').then((m) => ({ default: m.Rotina })))
+const Saude = lazy(() => import('./pages/pessoa/Saude').then((m) => ({ default: m.Saude })))
+const Paciente = lazy(() => import('./pages/profissional/Paciente').then((m) => ({ default: m.Paciente })))
+const CompletarPerfil = lazy(() =>
+  import('./pages/profissional/CompletarPerfil').then((m) => ({ default: m.CompletarPerfil })),
+)
+const MeuPerfil = lazy(() => import('./pages/profissional/MeuPerfil').then((m) => ({ default: m.MeuPerfil })))
+const Pacientes = lazy(() => import('./pages/profissional/Pacientes').then((m) => ({ default: m.Pacientes })))
 
 // Mesma ordem de abas dos mockups.
 const PERSON_NAV: NavItem[] = [
@@ -61,56 +69,58 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<RootRedirect />} />
-            <Route path="/entrar" element={<Login />} />
+          <Suspense fallback={<FullScreenLoader />}>
+            <Routes>
+              <Route path="/" element={<RootRedirect />} />
+              <Route path="/entrar" element={<Login />} />
 
-            {/* App da pessoa */}
-            <Route
-              element={
-                <RequireRole role="person">
-                  <AppLayout nav={PERSON_NAV} />
-                </RequireRole>
-              }
-            >
-              <Route path="/inicio" element={<Inicio />} />
-              <Route path="/saude" element={<Saude />} />
-              <Route path="/saude/perto" element={<PertoDeVoce />} />
-              <Route path="/saude/profissional/:id" element={<PerfilProfissional />} />
-              <Route path="/rotina" element={<Rotina />} />
-              <Route path="/plano" element={<ComingSoon title="Meu plano" />} />
-              <Route path="/progresso" element={<ComingSoon title="Seu progresso" />} />
-            </Route>
+              {/* App da pessoa */}
+              <Route
+                element={
+                  <RequireRole role="person">
+                    <AppLayout nav={PERSON_NAV} />
+                  </RequireRole>
+                }
+              >
+                <Route path="/inicio" element={<Inicio />} />
+                <Route path="/saude" element={<Saude />} />
+                <Route path="/saude/perto" element={<PertoDeVoce />} />
+                <Route path="/saude/profissional/:id" element={<PerfilProfissional />} />
+                <Route path="/rotina" element={<Rotina />} />
+                <Route path="/plano" element={<ComingSoon title="Meu plano" />} />
+                <Route path="/progresso" element={<ComingSoon title="Seu progresso" />} />
+              </Route>
 
-            {/* App do profissional */}
-            <Route
-              element={
-                <RequireRole role="professional">
-                  <RequireProProfile>
-                    <AppLayout nav={PRO_NAV} wide />
-                  </RequireProProfile>
-                </RequireRole>
-              }
-            >
-              <Route path="/pro" element={<Pacientes />} />
-              <Route path="/pro/pacientes/:id" element={<Paciente />} />
-              <Route path="/pro/agenda" element={<ComingSoon title="Agenda" />} />
-              <Route path="/pro/mensagens" element={<ComingSoon title="Mensagens" />} />
-              <Route path="/pro/perfil" element={<MeuPerfil />} />
-            </Route>
+              {/* App do profissional */}
+              <Route
+                element={
+                  <RequireRole role="professional">
+                    <RequireProProfile>
+                      <AppLayout nav={PRO_NAV} wide />
+                    </RequireProProfile>
+                  </RequireRole>
+                }
+              >
+                <Route path="/pro" element={<Pacientes />} />
+                <Route path="/pro/pacientes/:id" element={<Paciente />} />
+                <Route path="/pro/agenda" element={<ComingSoon title="Agenda" />} />
+                <Route path="/pro/mensagens" element={<ComingSoon title="Mensagens" />} />
+                <Route path="/pro/perfil" element={<MeuPerfil />} />
+              </Route>
 
-            {/* Fora do painel: quem ainda não tem perfil profissional completo */}
-            <Route
-              path="/pro/completar-perfil"
-              element={
-                <RequireRole role="professional">
-                  <CompletarPerfil />
-                </RequireRole>
-              }
-            />
+              {/* Fora do painel: quem ainda não tem perfil profissional completo */}
+              <Route
+                path="/pro/completar-perfil"
+                element={
+                  <RequireRole role="professional">
+                    <CompletarPerfil />
+                  </RequireRole>
+                }
+              />
 
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
         </BrowserRouter>
       </AuthProvider>
     </QueryClientProvider>
