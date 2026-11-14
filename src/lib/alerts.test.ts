@@ -18,6 +18,7 @@ function log(daysAgo: number, over: Partial<DailyLog> = {}): DailyLog {
     workout_planned: true,
     workout_done: true,
     mood: null,
+    pain_level: null,
     created_at: '',
     updated_at: '',
     ...over,
