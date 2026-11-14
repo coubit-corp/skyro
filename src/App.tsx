@@ -54,7 +54,7 @@ const PERSON_NAV: NavItem[] = [
 ]
 
 const PRO_NAV: NavItem[] = [
-  { to: '/pro', label: 'Pacientes', icon: Users },
+  { to: '/pro', label: 'Pacientes', icon: Users, end: true, alsoActiveOn: ['/pro/pacientes'] },
   { to: '/pro/agenda', label: 'Agenda', icon: CalendarDays },
   { to: '/pro/mensagens', label: 'Mensagens', icon: MessageSquare },
   { to: '/pro/perfil', label: 'Perfil', icon: User },
