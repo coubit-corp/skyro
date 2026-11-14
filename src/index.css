@@ -4,7 +4,8 @@
 @theme {
   --color-navy: #1c2a4d;
   --color-navy-soft: #2b3a61;
-  --color-primary: #4c63b6;
+  /* Tons ajustados para contraste WCAG AA (≥ 4,5:1) sobre os fundos claros */
+  --color-primary: #465cab;
   --color-primary-dark: #3d519a;
   --color-lavender: #8ea2e6;
   --color-lavender-soft: #dfe5f8;
@@ -14,7 +15,7 @@
   --color-chip: #e9edf8;
   --color-ink: #1c2a4d;
   --color-muted: #5b6782;
-  --color-attention: #b4532a;
+  --color-attention: #9c4420;
   --color-attention-soft: #fce3d8;
   --color-gold: #e3a52b;
 
@@ -54,6 +55,10 @@
 }
 @utility input {
   @apply w-full rounded-2xl border border-line bg-card px-4 py-3 text-sm outline-none placeholder:text-muted/70 focus:border-primary focus:ring-2 focus:ring-lavender/40;
+}
+/* Área de toque mínima de 44 px para links e botões só de texto (WCAG 2.5.5 / 2.5.8) */
+@utility tap {
+  @apply inline-flex min-h-11 items-center;
 }
 @utility chip {
   @apply inline-flex items-center rounded-full bg-chip px-3 py-1 text-xs font-medium text-muted;

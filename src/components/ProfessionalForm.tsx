@@ -1,5 +1,5 @@
 import { X } from 'lucide-react'
-import { useState, type FormEvent, type ReactNode } from 'react'
+import { lazy, Suspense, useId, useState, type FormEvent, type ReactNode } from 'react'
 import type { Modality, Specialty } from '../lib/database.types'
 import { MODALITY_LABEL, SPECIALTIES } from '../lib/specialties'
 import {
@@ -12,16 +12,50 @@ import {
   type FormErrors,
   type ProfessionalFormValues,
 } from '../lib/professionalForm'
-import { LocationPicker } from './LocationPicker'
 
-function Field({ label, hint, error, children }: { label: string; hint?: ReactNode; error?: string; children: ReactNode }) {
+const LocationPicker = lazy(() => import('./LocationPicker').then((m) => ({ default: m.LocationPicker })))
+
+/**
+ * Campo com rótulo acessível. `children` recebe o id do controle (para inputs) e
+ * o rótulo fica ligado a ele; em grupos (botões de escolha) vira um group rotulado.
+ */
+function Field({
+  label,
+  hint,
+  error,
+  group = false,
+  children,
+}: {
+  label: string
+  hint?: ReactNode
+  error?: string
+  group?: boolean
+  children: (ids: { id: string; describedBy?: string }) => ReactNode
+}) {
+  const id = useId()
+  const labelId = `${id}-label`
+  const msgId = `${id}-msg`
+  const describedBy = error || hint ? msgId : undefined
+  const content = children({ id, describedBy })
   return (
-    <div className="space-y-1.5">
-      <p className="eyebrow">{label}</p>
-      {children}
-      {hint && !error && <p className="text-xs text-muted">{hint}</p>}
+    <div className="space-y-1.5" {...(group ? { role: 'group', 'aria-labelledby': labelId } : {})}>
+      {group ? (
+        <p id={labelId} className="eyebrow">
+          {label}
+        </p>
+      ) : (
+        <label id={labelId} htmlFor={id} className="eyebrow block">
+          {label}
+        </label>
+      )}
+      {content}
+      {hint && !error && (
+        <p id={msgId} className="text-xs text-muted">
+          {hint}
+        </p>
+      )}
       {error && (
-        <p role="alert" className="text-xs font-medium text-attention">
+        <p id={msgId} role="alert" className="text-xs font-medium text-attention">
           {error}
         </p>
       )}
@@ -80,30 +114,44 @@ export function ProfessionalForm({
     <form onSubmit={handleSubmit} className="space-y-5" noValidate>
       <div className="card space-y-4">
         <Field label="Seu nome" error={errors.fullName}>
-          <input className="input" autoComplete="name" value={v.fullName} onChange={(e) => set('fullName', e.target.value)} />
+          {({ id, describedBy }) => (
+            <input
+              id={id}
+              aria-describedby={describedBy}
+              aria-invalid={Boolean(errors.fullName)}
+              className="input"
+              autoComplete="name"
+              value={v.fullName}
+              onChange={(e) => set('fullName', e.target.value)}
+            />
+          )}
         </Field>
 
-        <Field label="Especialidade" error={errors.specialty}>
-          <div className="grid grid-cols-2 gap-2">
-            {SPECIALTIES.map((s) => (
-              <label
-                key={s.value}
-                className={`flex cursor-pointer items-center gap-2 rounded-2xl border px-3 py-2.5 text-sm font-semibold transition ${
-                  v.specialty === s.value ? 'border-primary bg-lavender-soft text-primary' : 'border-line bg-card'
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="specialty"
-                  className="sr-only"
-                  checked={v.specialty === s.value}
-                  onChange={() => set('specialty', s.value)}
-                />
-                <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-lavender-soft text-primary">{s.letter}</span>
-                {s.value === 'fisioterapeuta' ? 'Fisioterapeuta' : s.label}
-              </label>
-            ))}
-          </div>
+        <Field label="Especialidade" error={errors.specialty} group>
+          {() => (
+            <div className="grid grid-cols-2 gap-2">
+              {SPECIALTIES.map((s) => (
+                <label
+                  key={s.value}
+                  className={`flex cursor-pointer items-center gap-2 rounded-2xl border px-3 py-2.5 text-sm font-semibold transition ${
+                    v.specialty === s.value ? 'border-primary bg-lavender-soft text-primary' : 'border-line bg-card'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="specialty"
+                    className="sr-only"
+                    checked={v.specialty === s.value}
+                    onChange={() => set('specialty', s.value)}
+                  />
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-lavender-soft text-primary">
+                    {s.letter}
+                  </span>
+                  {s.value === 'fisioterapeuta' ? 'Fisioterapeuta' : s.label}
+                </label>
+              ))}
+            </div>
+          )}
         </Field>
 
         <Field
@@ -111,112 +159,163 @@ export function ProfessionalForm({
           error={errors.registry}
           hint="Fica como “em verificação” até a equipe da Skyro conferir. Trocar o registro depois volta para verificação."
         >
-          <input
-            className="input"
-            placeholder={v.specialty ? `Ex.: ${REGISTRY_EXAMPLE[v.specialty as Specialty]}` : 'Ex.: CRN-3 12345'}
-            value={v.registry}
-            maxLength={40}
-            onChange={(e) => set('registry', e.target.value)}
-          />
-        </Field>
-      </div>
-
-      <div className="card space-y-4">
-        <Field label="Sobre você" error={errors.bio} hint="É o que o paciente lê no seu perfil.">
-          <textarea
-            className="input min-h-28 resize-y"
-            maxLength={BIO_MAX}
-            placeholder="Ex.: Trabalho com alimentação para quem treina e tem rotina corrida…"
-            value={v.bio}
-            onChange={(e) => set('bio', e.target.value)}
-          />
-          <p className="text-right text-xs text-muted">
-            {v.bio.length} / {BIO_MAX}
-          </p>
-        </Field>
-
-        <Field label={`Especialidades (até ${TAGS_MAX})`} error={errors.tags}>
-          <div className="flex flex-wrap gap-2">
-            {v.tags.map((t) => (
-              <span key={t} className="chip gap-1 py-1.5 text-sm">
-                {t}
-                <button type="button" aria-label={`Remover ${t}`} onClick={() => set('tags', v.tags.filter((x) => x !== t))}>
-                  <X className="h-3.5 w-3.5" />
-                </button>
-              </span>
-            ))}
-          </div>
-          {v.tags.length < TAGS_MAX && (
-            <div className="flex gap-2">
-              <input
-                className="input"
-                placeholder="Ex.: Nutrição esportiva"
-                value={tagDraft}
-                maxLength={30}
-                onChange={(e) => setTagDraft(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ',') {
-                    e.preventDefault()
-                    commitTag()
-                  }
-                }}
-                aria-label="Nova especialidade"
-              />
-              <button type="button" className="btn-outline shrink-0 px-4" onClick={commitTag} disabled={tagDraft.trim().length < 2}>
-                + Adicionar
-              </button>
-            </div>
+          {({ id, describedBy }) => (
+            <input
+              id={id}
+              aria-describedby={describedBy}
+              aria-invalid={Boolean(errors.registry)}
+              className="input"
+              placeholder={v.specialty ? `Ex.: ${REGISTRY_EXAMPLE[v.specialty as Specialty]}` : 'Ex.: CRN-3 12345'}
+              value={v.registry}
+              maxLength={40}
+              onChange={(e) => set('registry', e.target.value)}
+            />
           )}
         </Field>
       </div>
 
       <div className="card space-y-4">
-        <Field label="Como você atende">
-          <div className="grid grid-cols-3 gap-2" role="radiogroup">
-            {MODALITIES.map((m) => (
-              <button
-                key={m}
-                type="button"
-                role="radio"
-                aria-checked={v.modality === m}
-                onClick={() => set('modality', m)}
-                className={`rounded-2xl border px-2 py-2.5 text-sm font-semibold transition ${
-                  v.modality === m ? 'border-primary bg-lavender-soft text-primary' : 'border-line bg-card'
-                }`}
-              >
-                {m === 'online' ? 'Só online' : MODALITY_LABEL[m]}
-              </button>
-            ))}
-          </div>
+        <Field label="Sobre você" error={errors.bio} hint="É o que o paciente lê no seu perfil.">
+          {({ id, describedBy }) => (
+            <>
+              <textarea
+                id={id}
+                aria-describedby={describedBy}
+                aria-invalid={Boolean(errors.bio)}
+                className="input min-h-28 resize-y"
+                maxLength={BIO_MAX}
+                placeholder="Ex.: Trabalho com alimentação para quem treina e tem rotina corrida…"
+                value={v.bio}
+                onChange={(e) => set('bio', e.target.value)}
+              />
+              <p className="text-right text-xs text-muted" aria-live="polite">
+                {v.bio.length} / {BIO_MAX}
+              </p>
+            </>
+          )}
+        </Field>
+
+        <Field label={`Especialidades (até ${TAGS_MAX})`} error={errors.tags} group>
+          {() => (
+            <>
+              <div className="flex flex-wrap gap-2">
+                {v.tags.map((t) => (
+                  <span key={t} className="chip gap-1 py-1.5 text-sm">
+                    {t}
+                    <button
+                      type="button"
+                      className="-m-2 flex h-11 w-11 items-center justify-center"
+                      aria-label={`Remover ${t}`}
+                      onClick={() =>
+                        set(
+                          'tags',
+                          v.tags.filter((x) => x !== t),
+                        )
+                      }
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+              {v.tags.length < TAGS_MAX && (
+                <div className="flex gap-2">
+                  <input
+                    className="input"
+                    placeholder="Ex.: Nutrição esportiva"
+                    value={tagDraft}
+                    maxLength={30}
+                    onChange={(e) => setTagDraft(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ',') {
+                        e.preventDefault()
+                        commitTag()
+                      }
+                    }}
+                    aria-label="Nova especialidade"
+                  />
+                  <button
+                    type="button"
+                    className="btn-outline shrink-0 px-4"
+                    onClick={commitTag}
+                    disabled={tagDraft.trim().length < 2}
+                  >
+                    + Adicionar
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+        </Field>
+      </div>
+
+      <div className="card space-y-4">
+        <Field label="Como você atende" group>
+          {() => (
+            <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Como você atende">
+              {MODALITIES.map((m) => (
+                <button
+                  key={m}
+                  type="button"
+                  role="radio"
+                  aria-checked={v.modality === m}
+                  onClick={() => set('modality', m)}
+                  className={`rounded-2xl border px-2 py-2.5 text-sm font-semibold transition ${
+                    v.modality === m ? 'border-primary bg-lavender-soft text-primary' : 'border-line bg-card'
+                  }`}
+                >
+                  {m === 'online' ? 'Só online' : MODALITY_LABEL[m]}
+                </button>
+              ))}
+            </div>
+          )}
         </Field>
 
         {needsLocation(v.modality) ? (
           <>
-            <Field label="Onde você atende" error={errors.location}>
-              <LocationPicker
-                lat={v.lat}
-                lng={v.lng}
-                onChange={(loc) => {
-                  clearError('location', ...(loc.neighborhood ? (['neighborhood'] as const) : []))
-                  setV((s) => ({
-                    ...s,
-                    lat: loc.lat,
-                    lng: loc.lng,
-                    neighborhood: loc.neighborhood || s.neighborhood,
-                    city: loc.city || s.city,
-                  }))
-                }}
-              />
+            <Field label="Onde você atende" error={errors.location} group>
+              {() => (
+                <Suspense fallback={<div className="h-72 animate-pulse rounded-card bg-lavender-soft/70" />}>
+                  <LocationPicker
+                    lat={v.lat}
+                    lng={v.lng}
+                    onChange={(loc) => {
+                      clearError('location', ...(loc.neighborhood ? (['neighborhood'] as const) : []))
+                      setV((s) => ({
+                        ...s,
+                        lat: loc.lat,
+                        lng: loc.lng,
+                        neighborhood: loc.neighborhood || s.neighborhood,
+                        city: loc.city || s.city,
+                      }))
+                    }}
+                  />
+                </Suspense>
+              )}
             </Field>
             <div className="grid grid-cols-2 gap-2">
               <Field label="Bairro" error={errors.neighborhood}>
-                <input className="input" value={v.neighborhood} onChange={(e) => set('neighborhood', e.target.value)} />
+                {({ id, describedBy }) => (
+                  <input
+                    id={id}
+                    aria-describedby={describedBy}
+                    aria-invalid={Boolean(errors.neighborhood)}
+                    className="input"
+                    value={v.neighborhood}
+                    onChange={(e) => set('neighborhood', e.target.value)}
+                  />
+                )}
               </Field>
               <Field label="Cidade">
-                <input className="input" value={v.city} onChange={(e) => set('city', e.target.value)} />
+                {({ id }) => (
+                  <input id={id} className="input" value={v.city} onChange={(e) => set('city', e.target.value)} />
+                )}
               </Field>
             </div>
-            <p className="text-xs text-muted">Os pacientes veem o pino no mapa, o bairro e a distância até você. Se preferir não mostrar o endereço exato, marque um ponto próximo, como a esquina.</p>
+            <p className="text-xs text-muted">
+              Os pacientes veem o pino no mapa, o bairro e a distância até você. Se preferir não mostrar o endereço
+              exato, marque um ponto próximo, como a esquina.
+            </p>
           </>
         ) : (
           <p className="text-sm text-muted">

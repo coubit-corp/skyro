@@ -39,7 +39,7 @@ export function ProMap({ center, pros }: { center: LatLng; pros: ProfessionalWit
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <Marker position={[center.lat, center.lng]} icon={meIcon} title="Você" />
+      <Marker position={[center.lat, center.lng]} icon={meIcon} title="Você" interactive={false} keyboard={false} />
       {pros
         .filter((p) => p.lat != null && p.lng != null)
         .map((p) => (
