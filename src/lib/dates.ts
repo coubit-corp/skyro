@@ -48,6 +48,17 @@ export function longDate(iso: string): string {
   return fromISODate(iso).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' })
 }
 
+/**
+ * Data e hora de um instante salvo pelo banco (timestamptz), sempre no horário
+ * de Brasília: "14/11 às 22:30". Para "hoje", use today().
+ */
+export function formatDateTimeBR(timestamp: string): string {
+  const d = new Date(timestamp)
+  const date = d.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit' })
+  const time = d.toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo', hour: '2-digit', minute: '2-digit' })
+  return `${date} às ${time}`
+}
+
 /** 7.5 → "7h30" ; 7 → "7h" */
 export function formatHours(hours: number | null | undefined): string {
   if (hours == null) return '—'
