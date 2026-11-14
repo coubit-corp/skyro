@@ -5,19 +5,20 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../auth/auth-context'
 import { evaluatePatient, type PatientStatus } from '../lib/alerts'
 import type { toProfessionalRow } from '../lib/professionalForm'
-import type { DailyLog, Habit, Professional, Share, Tip } from '../lib/database.types'
+import type { DailyLog, Habit, Professional, ProfileBrief, Share, Tip } from '../lib/database.types'
 import { addDays, today } from '../lib/dates'
 import { currentStreak } from '../lib/streak'
 import { supabase } from '../lib/supabase'
 
-type ProfessionalRow = ReturnType<typeof toProfessionalRow>
-type PersonProfile = { full_name: string; avatar_seed: string | null }
+type ProfessionalRow = ReturnType<typeof toProfessionalRow> & { availability?: Record<string, [string, string] | undefined> }
+type PersonProfile = ProfileBrief
 export type PatientShare = Share & { profiles: PersonProfile }
 
 export interface PatientRow {
   id: string
   name: string
   avatarSeed: string | null
+  avatarPath: string | null
   since: string
   evaluation: PatientStatus
   streak: number
@@ -53,7 +54,7 @@ export function usePatients() {
       const shares = unwrap<PatientShare[]>(
         await supabase
           .from('shares')
-          .select('*, profiles(full_name, avatar_seed)')
+          .select('*, profiles(full_name, avatar_seed, avatar_path)')
           .eq('professional_id', proId)
           .is('revoked_at', null),
       )
@@ -75,6 +76,7 @@ export function usePatients() {
             id: s.person_id,
             name: s.profiles.full_name,
             avatarSeed: s.profiles.avatar_seed,
+            avatarPath: s.profiles.avatar_path,
             since: s.created_at,
             evaluation: evaluatePatient(allLogs.filter((l) => l.user_id === s.person_id), todayIso),
             streak: currentStreak(days, todayIso),
@@ -106,7 +108,7 @@ export function usePatient(personId: string | undefined) {
       const share = unwrap<PatientShare | null>(
         await supabase
           .from('shares')
-          .select('*, profiles(full_name, avatar_seed)')
+          .select('*, profiles(full_name, avatar_seed, avatar_path)')
           .eq('professional_id', proId)
           .eq('person_id', personId!)
           .is('revoked_at', null)

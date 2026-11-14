@@ -54,7 +54,7 @@ export function Saude() {
           {team.data!.map(({ id, professionals: pro }) => (
             <li key={id} className="card space-y-3">
               <div className="flex items-center gap-3">
-                <Avatar seed={pro.profiles.avatar_seed} name={pro.profiles.full_name} size={48} />
+                <Avatar seed={pro.profiles.avatar_seed} photo={pro.profiles.avatar_path} name={pro.profiles.full_name} size={48} />
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold">
                     {pro.profiles.full_name.split(' ')[0]} · {specialtyLabel(pro.specialty)}
