@@ -1,106 +1,144 @@
 # Skyro
 
-Seu nutricionista, psicólogo ou personal acompanhando sua rotina de verdade, não só no dia da consulta.
+**Sua rotina, seus dados, todos os seus profissionais vendo o mesmo quadro.**
 
-Projeto do **Hack Brasil 2026**, trilha 04 (Saúde & bem-estar). A especificação completa do MVP está em [`docs/SKYRO-MVP.md`](docs/SKYRO-MVP.md) e os mockups em [`docs/mockups/`](docs/mockups).
+![Skyro: a pessoa registra a rotina, escolhe com quem compartilhar, e o profissional vê quem precisa de atenção](docs/screenshots/capa.png)
 
-## Stack
+Projeto do **Hack Brasil 2026**, trilha 04 (Saúde & bem-estar).
 
-- **Frontend:** React 19 + TypeScript + Vite, Tailwind CSS v4 e React Router
-- **Banco, login e regras de acesso:** Supabase (Postgres + Auth + Row Level Security)
-- **App:** web responsivo e instalável (PWA), pensado primeiro para o celular
-- **IA:** resumo semanal do paciente escrito pelo Claude (Anthropic) numa Supabase Edge Function. Sem chave configurada, o app usa o resumo por regras
-
-## Como rodar
-
-> **No Mac, do zero?** Siga o passo a passo completo em [`docs/SETUP-MAC.md`](docs/SETUP-MAC.md).
-
-Pré-requisito: Node.js 20 ou mais novo.
-
-1. Instale as dependências:
-
-   ```bash
-   npm install
-   ```
-
-2. Crie o arquivo `.env` a partir do modelo e preencha com a URL e a **publishable key** do Supabase (painel → Project Settings → API):
-
-   ```bash
-   cp .env.example .env
-   ```
-
-3. Crie as tabelas: no painel do Supabase, abra o **SQL Editor**, cole o conteúdo de cada arquivo de `supabase/migrations/` (em ordem) e clique em **Run**.
-
-4. Crie os dados demo: no mesmo SQL Editor, rode, nessa ordem, `supabase/seed/01_contas_demo.sql`, `02_catalogo_demo.sql` e `03_pacientes_demo.sql`. Pessoa: `demo.pessoa@skyro.app`; profissional: `demo.nutri@skyro.app`. A senha das duas é `skyro-demo-2026`.
-
-5. Suba o app:
-
-   ```bash
-   npm run dev
-   ```
-
-## Scripts
-
-| Comando | O que faz |
-|---|---|
-| `npm run dev` | Servidor de desenvolvimento com recarga automática |
-| `npm run build` | Checa os tipos e gera a versão de produção em `dist/` |
-| `npm run preview` | Serve a versão de produção localmente |
-| `npm run lint` | Procura problemas no código (oxlint) |
-| `npm test` | Roda os testes automáticos (regras de alerta, strike, datas e resumo) |
-| `npm run smoke -- <link>` | Confere se o app publicado está no ar e configurado |
-
-## Estrutura
-
-```
-src/
-  auth/          sessão, perfil e proteção das rotas por tipo de conta
-  components/    peças reutilizáveis (navegação, avatar, logo…)
-  lib/           cliente do Supabase e tipos das tabelas
-  pages/
-    pessoa/        telas do app da pessoa
-    profissional/  telas do painel do profissional
-supabase/
-  functions/     Edge Functions (resumo-semanal: resumo por IA)
-  migrations/    SQL do banco (tabelas + regras de acesso)
-  seed/          dados de demonstração (contas demo)
-  tests/         teste das regras de acesso num Postgres local
-docs/            especificação, pitch, análise de mercado e mockups
-```
-
-## Segurança
-
-- Só a **publishable key** vai para o navegador. A secret key do Supabase nunca entra no código nem no repositório.
-- O arquivo `.env` está no `.gitignore`.
-- O profissional só enxerga os dados de quem compartilhou a rotina com ele, e a pessoa pode revogar quando quiser. Essa regra é garantida pelo banco (RLS), não só pela tela.
-
-## Publicação
-
-O app é publicado na Vercel: cada merge na `main` vai para produção sozinho, e cada PR ganha um link de prévia. Passo a passo em [`docs/DEPLOY-VERCEL.md`](docs/DEPLOY-VERCEL.md).
-
-## Como a IA entra
-
-- **Quem está em "Atenção" é decidido por regras fixas** (`src/lib/alerts.ts`), nunca pela IA. Assim o comportamento é previsível e explicável.
-- **A IA só escreve o texto do resumo para o profissional.** Ela não fala com o paciente, não diagnostica e não prescreve (`supabase/functions/resumo-semanal/prompt.ts`).
-- **O que vai para a IA:** apenas o primeiro nome e os números dos registros dos últimos 14 dias.
-- **Cache:** o resumo fica guardado (`ai_summaries`) e só é refeito quando chegam registros novos ou o dia vira.
-- **Reserva:** sem chave, ou se a IA falhar ou recusar, a ficha mostra o resumo por regras (`src/lib/weekSummary.ts`).
-
-Como ligar: veja o passo 3.5 de [`docs/SETUP-MAC.md`](docs/SETUP-MAC.md).
-
-## Testar as regras de acesso (opcional)
-
-Com um Postgres local (não use o Supabase de verdade para isso):
-
-```bash
-createdb skyro_teste
-psql -d skyro_teste -f supabase/tests/00_stub_supabase.sql -f supabase/migrations/20261113000001_schema_inicial.sql -f supabase/migrations/20261114000001_resumos_ia.sql
-psql -d skyro_teste -f supabase/seed/01_contas_demo.sql -f supabase/seed/02_catalogo_demo.sql -f supabase/seed/03_pacientes_demo.sql
-psql -d skyro_teste -f supabase/tests/01_rls.sql
-```
-
-As linhas marcadas com "deve FALHAR" precisam terminar em `ERROR`; as demais mostram o que cada pessoa enxerga.
+> **Demo:** _link da Vercel aqui_ · **Vídeo:** _link do vídeo aqui_ · **Pitch:** [`docs/Skyro-Pitch-v2.pdf`](docs/Skyro-Pitch-v2.pdf)
+>
+> Para testar sem cadastro, use os botões **"Entrar como pessoa (demo)"** e **"Entrar como profissional (demo)"** na tela de login.
 
 ---
 
-Versão de demonstração: perfis, avaliações e registros são fictícios. A Skyro não substitui atendimento profissional e não faz diagnóstico.
+## O problema
+
+Quem começa a cuidar da saúde com um profissional só o encontra de tempos em tempos. **Entre uma consulta e outra, o profissional não sabe se a pessoa dormiu mal, faltou ao treino ou parou de beber água**, e ela perde o ritmo sem ninguém perceber.
+
+Quando há mais de um profissional, piora: o nutricionista não sabe que a pessoa dormiu 5 horas, e o personal vê a falta no treino, mas não sabe por quê. **Cada um vê só um pedaço**, cada um no seu app.
+
+## A solução
+
+A Skyro é a **ponte entre a rotina que a pessoa registra no dia a dia e os profissionais que cuidam dela**.
+
+1. **A pessoa registra a rotina:** sono, água, foco, treino e hábitos, com strike para manter o ritmo.
+2. **Ela escolhe com quem compartilhar:** encontra profissionais perto dela, **dá consentimento explícito e pode revogar a qualquer momento**.
+3. **O profissional vê quem precisa de atenção hoje** e lê um resumo da semana escrito por IA.
+4. **Ele age antes da próxima consulta:** manda uma dica, que aparece no app da pessoa.
+
+## Como funciona
+
+### Para a pessoa
+
+| Início | Rotina | Sua equipe | Compartilhar |
+|---|---|---|---|
+| ![Início](docs/screenshots/pessoa-inicio.png) | ![Rotina](docs/screenshots/pessoa-rotina.png) | ![Saúde](docs/screenshots/pessoa-saude.png) | ![Consentimento](docs/screenshots/pessoa-consentimento.png) |
+| Strike, sono, foco e checklist do dia | Hábitos e registro de sono, água, foco e treino | Os profissionais que acompanham a rotina | Consentimento explícito, por profissional |
+
+### Para o profissional
+
+| Pacientes | Ficha do paciente | Dica para a pessoa | Cadastro |
+|---|---|---|---|
+| ![Pacientes](docs/screenshots/profissional-pacientes.png) | ![Ficha](docs/screenshots/profissional-ficha.png) | ![Dica](docs/screenshots/pessoa-dica.png) | ![Cadastro](docs/screenshots/profissional-completar-perfil.png) |
+| Quem precisa de atenção aparece primeiro, com o motivo | Semana, alertas e o resumo que cruza sono e treino | A dica chega no Início da pessoa | Perfil com local no mapa e registro do conselho |
+
+## O que nos diferencia
+
+Já existem apps em que um profissional acompanha o paciente (Dietbox na nutrição, MFIT no treino) e vitrines para encontrar profissionais (Doctoralia). **O que não encontramos foi um lugar em que vários profissionais enxergam a mesma rotina, com os dados pertencendo à pessoa.**
+
+| | Rotina diária | Profissional acompanha | Vários profissionais | Dados da pessoa | IA entre áreas |
+|---|:-:|:-:|:-:|:-:|:-:|
+| Apps de uma especialidade (Dietbox, MFIT) | Uma área | ✓ | | | |
+| Busca de profissionais (Doctoralia) | | | Busca | | |
+| Apps de hábitos | ✓ | | | ✓ | |
+| **Skyro** | **✓** | **✓** | **✓** | **✓** | **✓** |
+
+_Pesquisa rápida da equipe, sem acesso aos apps por dentro. Detalhes em [`docs/Skyro-Analise-de-Mercado.pdf`](docs/Skyro-Analise-de-Mercado.pdf)._
+
+## IA com responsabilidade
+
+- **A IA não decide quem precisa de atenção.** Isso é feito por **regras fixas e explicáveis**:
+  - dormiu menos de 6 horas;
+  - faltou a 2 ou mais treinos na semana;
+  - bebeu menos de 50% da meta de água;
+  - ficou 2 dias sem registrar.
+- **A IA só escreve o resumo da semana para o profissional**, cruzando as áreas: "nos dias com menos de 6h de sono, faltou aos treinos".
+- **Não diagnostica, não prescreve e não fala com o paciente.** Quem decide é o profissional.
+- **Envia o mínimo:** só o primeiro nome e os números dos registros. A chave da IA fica no servidor, nunca no celular.
+- **Sem IA, o app funciona igual:** se ela estiver desligada ou falhar, aparece um resumo montado pelas regras.
+
+## Privacidade (LGPD)
+
+- **Consentimento explícito e por profissional**, com a lista do que ele vai ver. A pessoa **revoga quando quiser**, e o acesso cai na hora.
+- **Garantido pelo banco, não só pela tela:** o profissional não consegue ler a rotina de quem não compartilhou com ele.
+- **Ninguém se dá selo de "verificado":** o registro do conselho fica "em verificação" até a equipe conferir.
+- **Nenhuma foto de pessoa:** os avatares são ilustrações geradas no próprio app.
+
+## Arquitetura
+
+```mermaid
+flowchart LR
+  P[App da pessoa<br/>React · PWA] -- registros --> DB[(Supabase<br/>Postgres + RLS)]
+  PRO[Painel do profissional<br/>React · PWA] -- lê só quem compartilhou --> DB
+  PRO -- pede resumo --> FN[Edge Function<br/>resumo-semanal]
+  FN -- confere o compartilhamento --> DB
+  FN -- primeiro nome + números --> AI[Claude · Anthropic]
+  FN -- cache do resumo --> DB
+```
+
+| Camada | Tecnologia |
+|---|---|
+| App (pessoa e profissional) | React 19, TypeScript, Vite, Tailwind CSS, PWA instalável |
+| Banco, login e regras de acesso | Supabase: Postgres, Auth e Row Level Security |
+| Mapa e endereços | OpenStreetMap, Leaflet e Nominatim |
+| IA | Claude (Anthropic) numa Supabase Edge Function |
+| Publicação | Vercel |
+
+## Qualidade
+
+- **56 testes automáticos** cobrem as regras de alerta, o strike, as datas, o resumo, o formulário e o prompt da IA.
+- **Regras de acesso do banco** testadas: quem pode ver, gravar e revogar o quê.
+- **Acessibilidade WCAG 2.1 AA:** as 13 telas passam na auditoria automática, com contraste, rótulos e áreas de toque de 44 px.
+- **Testado em 5 tamanhos de tela**, do iPhone SE ao iPad.
+
+## Rodar localmente
+
+```bash
+npm install
+```
+
+```bash
+cp .env.example .env
+```
+
+Preencha o `.env` com a URL e a publishable key do Supabase, rode as migrations e os seeds no SQL Editor e então:
+
+```bash
+npm run dev
+```
+
+Passo a passo completo: [`docs/SETUP-MAC.md`](docs/SETUP-MAC.md). Guia técnico: [`docs/DESENVOLVIMENTO.md`](docs/DESENVOLVIMENTO.md).
+
+## Próximos passos
+
+- **Validar com pessoas e profissionais reais:** entrevistas e preço da assinatura para profissionais.
+- **Tela da equipe** para conferir registros de conselho.
+- **Avisos pelo WhatsApp**, treino em grupo, recompensas e integração com relógios.
+- **Mais especialidades** com o mesmo quadro compartilhado.
+
+## Modelo de negócio (a validar)
+
+- **Pessoa:** gratuito para registrar a rotina e compartilhar; Premium com recursos extras.
+- **Profissional:** assinatura do painel, com alertas e resumos por IA.
+- **Parcerias:** academias e clínicas, sempre identificadas como serviço.
+
+_Valores e preços serão testados com os profissionais entrevistados._
+
+## Equipe
+
+_Nomes e papéis da equipe aqui._
+
+---
+
+Versão de demonstração: perfis, avaliações e registros são fictícios. **A Skyro não substitui atendimento profissional e não faz diagnóstico.**
