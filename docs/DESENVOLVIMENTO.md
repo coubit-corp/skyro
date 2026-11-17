@@ -29,7 +29,7 @@ Pré-requisito: Node.js 20 ou mais novo.
 
 3. No **SQL Editor** do Supabase, rode **em ordem**:
    1. as migrations de `supabase/migrations/`
-   2. os seeds `supabase/seed/01_contas_demo.sql`, `02_catalogo_demo.sql` e `03_pacientes_demo.sql`
+   2. os seeds `supabase/seed/01_contas_demo.sql`, `02_catalogo_demo.sql`, `03_pacientes_demo.sql` e `04_conversas_demo.sql`
 
 4. Suba o app:
 
@@ -78,6 +78,7 @@ docs/            especificação, pitch, análise de mercado, mockups e guias
 | `20261115000001_aprovacao_registros.sql` | Papel `admin` (equipe), aprovação e recusa do registro pela função `review_professional()`, histórico em `registry_reviews` e recusado fora da busca |
 | `20261115000002_planos.sql` | "Meu plano": itens por especialidade (`plan_items`), recado (`plan_notes`), marcações (`plan_checks`) e dor do dia (`daily_logs.pain_level`) |
 | `20261116000001_perfil.sql` | Configurações de perfil: `profiles.bio` e `avatar_path`, telefone privado (`private_contacts`), horários (`professionals.availability`) e o bucket `avatars` |
+| `20261117000001_chat.sql` | Chat pessoa ↔ profissional (`messages`): só os dois leem, envio só com compartilhamento ativo, sem editar nem apagar, e a tabela entra no Realtime |
 
 Regra central, garantida pelo banco (RLS) e não só pela tela: **o profissional só lê a rotina de quem compartilhou com ele, e perde o acesso na hora em que a pessoa revoga.**
 
@@ -109,11 +110,11 @@ createdb skyro_teste
 ```
 
 ```bash
-psql -d skyro_teste -f supabase/tests/00_stub_supabase.sql -f supabase/migrations/20261113000001_schema_inicial.sql -f supabase/migrations/20261114000001_resumos_ia.sql -f supabase/migrations/20261114000002_cadastro_profissional.sql -f supabase/migrations/20261115000001_aprovacao_registros.sql -f supabase/migrations/20261115000002_planos.sql -f supabase/migrations/20261116000001_perfil.sql
+psql -d skyro_teste -f supabase/tests/00_stub_supabase.sql -f supabase/migrations/20261113000001_schema_inicial.sql -f supabase/migrations/20261114000001_resumos_ia.sql -f supabase/migrations/20261114000002_cadastro_profissional.sql -f supabase/migrations/20261115000001_aprovacao_registros.sql -f supabase/migrations/20261115000002_planos.sql -f supabase/migrations/20261116000001_perfil.sql -f supabase/migrations/20261117000001_chat.sql
 ```
 
 ```bash
-psql -d skyro_teste -f supabase/seed/01_contas_demo.sql -f supabase/seed/02_catalogo_demo.sql -f supabase/seed/03_pacientes_demo.sql
+psql -d skyro_teste -f supabase/seed/01_contas_demo.sql -f supabase/seed/02_catalogo_demo.sql -f supabase/seed/03_pacientes_demo.sql -f supabase/seed/04_conversas_demo.sql
 ```
 
 ```bash
