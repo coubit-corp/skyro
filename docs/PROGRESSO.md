@@ -130,11 +130,19 @@ Tudo está no código, com 40 testes automáticos, regras de acesso testadas no 
 - **Liga e Loja Skyro continuam fora** (roadmap): precisam de outros usuários e de uma loja de verdade
 
 ### Etapa 14: modo escuro
-- **Meu perfil → Aparência**, para a pessoa e para o profissional: **Claro**, **Escuro** ou **Automático** (segue o celular ou o computador). Troca na hora, sem precisar salvar
+- **Aparência** (hoje em Configurações, veja a etapa 15), para a pessoa, o profissional e a equipe: **Claro**, **Escuro** ou **Automático** (segue o celular ou o computador). Troca na hora, sem precisar salvar
 - A escolha fica **só no aparelho** (não vai para o banco) e é aplicada antes de o app abrir, para a tela não piscar branco
 - O padrão continua sendo o **claro**, igual aos mockups
 - Todas as telas usam as mesmas classes nos dois modos: só a paleta muda (`src/index.css`). No escuro, o azul fica mais claro e o texto em cima dele fica escuro, para manter o contraste WCAG AA
 - Conferido no Início, Rotina, Plano, Saúde, Perto de você, Progresso, Meu perfil, login, lista de pacientes e ficha do paciente
+
+### Etapa 15: aba Configurações
+- Nova tela **Configurações**, com **Aparência** (claro, escuro ou automático), atalho para **Meu perfil** e **Sair**
+- **Como achar:**
+  - **Pessoa:** engrenagem no topo do Início (celular) ou "Configurações" na barra lateral (computador)
+  - **Profissional:** aba **Ajustes** no menu, embaixo no celular e na lateral no computador
+  - **Equipe:** "Configurações" no menu
+- A escolha do tema saiu de Meu perfil e foi para Configurações. O perfil ganhou um atalho para lá
 
 ### Qualidade
 | O quê | Situação |
