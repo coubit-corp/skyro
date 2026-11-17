@@ -129,6 +129,13 @@ Tudo está no código, com 40 testes automáticos, regras de acesso testadas no 
 - **Sem tabela nova e sem IA:** tudo sai dos registros que a pessoa já faz, por regras fixas em `src/lib/progress.ts`, com testes
 - **Liga e Loja Skyro continuam fora** (roadmap): precisam de outros usuários e de uma loja de verdade
 
+### Etapa 14: modo escuro
+- **Meu perfil → Aparência**, para a pessoa e para o profissional: **Claro**, **Escuro** ou **Automático** (segue o celular ou o computador). Troca na hora, sem precisar salvar
+- A escolha fica **só no aparelho** (não vai para o banco) e é aplicada antes de o app abrir, para a tela não piscar branco
+- O padrão continua sendo o **claro**, igual aos mockups
+- Todas as telas usam as mesmas classes nos dois modos: só a paleta muda (`src/index.css`). No escuro, o azul fica mais claro e o texto em cima dele fica escuro, para manter o contraste WCAG AA
+- Conferido no Início, Rotina, Plano, Saúde, Perto de você, Progresso, Meu perfil, login, lista de pacientes e ficha do paciente
+
 ### Qualidade
 | O quê | Situação |
 |---|---|

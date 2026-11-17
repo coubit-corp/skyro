@@ -189,7 +189,7 @@ function SleepChart({ days }: { days: { date: string; hours: number | null }[] }
               ) : (
                 <span
                   aria-hidden="true"
-                  className={`w-full rounded-lg ${good ? 'bg-primary' : 'bg-lavender'}`}
+                  className={`w-full rounded-lg ${good ? 'bg-primary' : 'bg-bar-low'}`}
                   style={{ height: `${Math.max(8, Math.min(d.hours / MAX_BAR_HOURS, 1) * 100)}%` }}
                 />
               )}
@@ -205,7 +205,7 @@ function SleepChart({ days }: { days: { date: string; hours: number | null }[] }
           <span className="h-2.5 w-2.5 rounded-sm bg-primary" aria-hidden="true" /> {GOOD_SLEEP_HOURS}h ou mais
         </span>
         <span className="flex items-center gap-1">
-          <span className="h-2.5 w-2.5 rounded-sm bg-lavender" aria-hidden="true" /> menos de {GOOD_SLEEP_HOURS}h
+          <span className="h-2.5 w-2.5 rounded-sm bg-bar-low" aria-hidden="true" /> menos de {GOOD_SLEEP_HOURS}h
         </span>
       </p>
     </div>

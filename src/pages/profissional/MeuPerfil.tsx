@@ -8,6 +8,7 @@ import { Avatar } from '../../components/Avatar'
 import { DemoBanner } from '../../components/DemoBanner'
 import { ProfessionalForm } from '../../components/ProfessionalForm'
 import { SignOutButton } from '../../components/SignOutButton'
+import { ThemePicker } from '../../components/ThemePicker'
 import { ErrorState, PageHeader, Skeleton } from '../../components/ui'
 import { useMyPhone, useSaveAccount } from '../../hooks/useAccount'
 import { useMyProfessional, useSaveProfessional } from '../../hooks/useProData'
@@ -275,6 +276,8 @@ export function MeuPerfil() {
           Privado: os pacientes não veem seu e-mail nem seu telefone.
         </p>
       </div>
+
+      <ThemePicker />
 
       <div className="lg:hidden">
         <SignOutButton />
