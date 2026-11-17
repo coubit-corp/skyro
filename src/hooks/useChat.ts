@@ -11,6 +11,9 @@ import { supabase } from '../lib/supabase'
 /** Reserva para quando o tempo real não estiver ligado no projeto do Supabase. */
 const POLL_MS = 15_000
 
+/** Numera os canais do tempo real para que cada uso tenha um nome único. */
+let channelSeq = 0
+
 function unwrap<T>(res: { data: T | null; error: { message: string } | null }): T {
   if (res.error) throw new Error(res.error.message)
   return res.data as T
@@ -26,12 +29,16 @@ function useMe(): string {
  * Atualiza as consultas do chat assim que chega uma mensagem nova (Supabase
  * Realtime). O filtro do canal é só um atalho: o banco já entrega apenas o
  * que a pessoa tem permissão de ler.
+ *
+ * Cada uso abre o próprio canal, com nome único: a mesma tela pode contar as
+ * não lidas em dois lugares (topo e barra lateral), e o Supabase devolve o
+ * canal já existente quando o nome se repete e recusa novas inscrições nele.
  */
 function useChatRealtime(column: 'person_id' | 'professional_id', id: string) {
   const qc = useQueryClient()
   useEffect(() => {
     const channel = supabase
-      .channel(`chat-${column}-${id}`)
+      .channel(`chat-${column}-${id}-${++channelSeq}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'messages', filter: `${column}=eq.${id}` }, () =>
         qc.invalidateQueries({ queryKey: ['chat'] }),
       )
