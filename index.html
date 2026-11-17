@@ -14,6 +14,14 @@
       rel="stylesheet"
     />
     <title>Skyro</title>
+    <script>
+      // Aplica o tema salvo antes de o app carregar (src/lib/theme.ts faz o mesmo depois).
+      try {
+        var t = localStorage.getItem('skyro-tema')
+        var dark = t === 'escuro' || (t === 'sistema' && matchMedia('(prefers-color-scheme: dark)').matches)
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light'
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="root"></div>

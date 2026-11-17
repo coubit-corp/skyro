@@ -4,6 +4,7 @@ import { useAuth } from '../../auth/auth-context'
 import { AccountSection } from '../../components/AccountSection'
 import { DemoBanner } from '../../components/DemoBanner'
 import { SignOutButton } from '../../components/SignOutButton'
+import { ThemePicker } from '../../components/ThemePicker'
 import { ErrorState, PageHeader, Skeleton } from '../../components/ui'
 import { useMyPhone, useSaveAccount } from '../../hooks/useAccount'
 import type { Profile } from '../../lib/database.types'
@@ -178,6 +179,10 @@ function PerfilForm({ profile, email, phone }: { profile: Profile; email: string
           </button>
         </div>
       </form>
+
+      <div className="mt-4">
+        <ThemePicker />
+      </div>
 
       <div className="mt-6 lg:hidden">
         <SignOutButton />
