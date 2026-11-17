@@ -1,4 +1,4 @@
-import { BadgeCheck, ChevronLeft, ShieldCheck } from 'lucide-react'
+import { BadgeCheck, ChevronLeft, MessageCircle, ShieldCheck } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Avatar } from '../../components/Avatar'
@@ -126,6 +126,9 @@ export function PerfilProfissional() {
               Você compartilha desde {new Date(activeShare.created_at).toLocaleDateString('pt-BR')}. {firstName} vê seus
               registros e pode te mandar dicas entre as consultas.
             </p>
+            <Link to={`/mensagens/${p.id}`} className="btn-primary w-full">
+              <MessageCircle className="h-4 w-4" aria-hidden="true" /> Conversar com {firstName}
+            </Link>
             <button className="btn-outline w-full" onClick={() => setRevokeOpen(true)}>
               Parar de compartilhar
             </button>

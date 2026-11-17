@@ -5,6 +5,7 @@ import { useAuth } from '../../auth/auth-context'
 import { Avatar } from '../../components/Avatar'
 import { DemoBanner } from '../../components/DemoBanner'
 import { Logo } from '../../components/Logo'
+import { MessagesShortcut } from '../../components/MessagesShortcut'
 import { SignOutButton } from '../../components/SignOutButton'
 import { ErrorState, Skeleton } from '../../components/ui'
 import { useMyProfessional, usePatients, type PatientRow } from '../../hooks/useProData'
@@ -41,18 +42,25 @@ export function Pacientes() {
           <Logo />
           <span className="rounded-md bg-navy px-1.5 py-0.5 text-[10px] font-bold text-white">PRO</span>
         </span>
-        <SignOutButton />
+        <div className="flex items-center gap-2">
+          <MessagesShortcut to="/pro/mensagens" side="professional" />
+          <SignOutButton />
+        </div>
       </header>
 
       <div>
         <h1 className="text-[28px] font-bold">Seus pacientes</h1>
         <p className="text-sm text-muted">
           {me.data ? specialtyLabel(me.data.specialty) : profile?.full_name}
-          {patients.data && ` · ${patients.data.length} ${patients.data.length === 1 ? 'paciente ativo' : 'pacientes ativos'}`}
+          {patients.data &&
+            ` · ${patients.data.length} ${patients.data.length === 1 ? 'paciente ativo' : 'pacientes ativos'}`}
         </p>
       </div>
       <label className="relative block">
-        <Search className="pointer-events-none absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-muted" aria-hidden="true" />
+        <Search
+          className="pointer-events-none absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-muted"
+          aria-hidden="true"
+        />
         <input
           className="input pl-10"
           placeholder="Buscar paciente"
@@ -94,8 +102,8 @@ export function Pacientes() {
         </div>
       ) : patients.data!.length === 0 ? (
         <div className="card text-sm text-muted">
-          Nenhum paciente compartilhou a rotina com você ainda. Quando alguém tocar em "Compartilhar minha rotina" no seu
-          perfil, ele aparece aqui.
+          Nenhum paciente compartilhou a rotina com você ainda. Quando alguém tocar em "Compartilhar minha rotina" no
+          seu perfil, ele aparece aqui.
         </div>
       ) : filtered.length === 0 ? (
         <p className="card text-sm text-muted">Nenhum paciente com esse nome.</p>

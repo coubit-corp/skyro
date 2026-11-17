@@ -5,6 +5,7 @@ import { Avatar } from '../../components/Avatar'
 import { DemoBanner } from '../../components/DemoBanner'
 import { useGreeting } from '../../hooks/useAccount'
 import { Logo } from '../../components/Logo'
+import { MessagesShortcut } from '../../components/MessagesShortcut'
 import { CheckButton, ErrorState, Modal, Skeleton } from '../../components/ui'
 import {
   useDailyLogs,
@@ -44,20 +45,36 @@ export function Inicio() {
   const remaining = (habits.data ?? []).filter((h) => !doneToday.has(h.id)).length
 
   if (habits.error || checks.error) {
-    return <ErrorState message={(habits.error ?? checks.error)?.message} onRetry={() => { habits.refetch(); checks.refetch() }} />
+    return (
+      <ErrorState
+        message={(habits.error ?? checks.error)?.message}
+        onRetry={() => {
+          habits.refetch()
+          checks.refetch()
+        }}
+      />
+    )
   }
 
   return (
     <section className="space-y-4">
       <header className="flex items-center justify-between lg:hidden">
         <Logo />
-        <Link
-          to="/perfil"
-          className="flex h-11 w-11 items-center justify-center rounded-full ring-lavender transition hover:ring-2"
-          aria-label="Meu perfil"
-        >
-          <Avatar seed={profile?.avatar_seed} photo={profile?.avatar_path} name={profile?.full_name || 'você'} size={40} />
-        </Link>
+        <div className="flex items-center gap-2">
+          <MessagesShortcut to="/mensagens" side="person" />
+          <Link
+            to="/perfil"
+            className="flex h-11 w-11 items-center justify-center rounded-full ring-lavender transition hover:ring-2"
+            aria-label="Meu perfil"
+          >
+            <Avatar
+              seed={profile?.avatar_seed}
+              photo={profile?.avatar_path}
+              name={profile?.full_name || 'você'}
+              size={40}
+            />
+          </Link>
+        </div>
       </header>
 
       <div>
@@ -129,7 +146,8 @@ export function Inicio() {
           />
           <div className="min-w-0 flex-1">
             <p className="text-sm font-semibold">
-              {specialtyLabel(tip.data.professionals.specialty)} {tip.data.professionals.profiles.full_name.split(' ')[0]}{' '}
+              {specialtyLabel(tip.data.professionals.specialty)}{' '}
+              {tip.data.professionals.profiles.full_name.split(' ')[0]}{' '}
               {tip.data.read_at ? 'deixou uma dica' : 'viu sua rotina'}
             </p>
             <p className="truncate text-xs text-muted">{tip.data.body}</p>
