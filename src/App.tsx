@@ -6,7 +6,7 @@ import {
   Heart,
   History,
   House,
-  MessageSquare,
+  MessageCircle,
   User,
   Users,
 } from 'lucide-react'
@@ -53,18 +53,19 @@ const Registros = lazy(() => import('./pages/equipe/Registros').then((m) => ({ d
 // Mesma ordem de abas dos mockups.
 const PERSON_NAV: NavItem[] = [
   { to: '/inicio', label: 'Início', icon: House },
-  { to: '/saude', label: 'Saúde', icon: Heart, alsoActiveOn: ['/mensagens'] },
+  { to: '/saude', label: 'Saúde', icon: Heart, mobileAlsoActiveOn: ['/mensagens'] },
   { to: '/plano', label: 'Plano', icon: ClipboardList },
   { to: '/rotina', label: 'Rotina', icon: CalendarDays },
   { to: '/progresso', label: 'Progresso', icon: ChartNoAxesColumn },
-  // No celular, o perfil abre pelo avatar no topo do Início (como nos mockups, são 5 abas).
+  // No celular, mensagens e perfil abrem pelos ícones no topo do Início (como nos mockups, são 5 abas).
+  { to: '/mensagens', label: 'Mensagens', icon: MessageCircle, desktopOnly: true, unreadFor: 'person' },
   { to: '/perfil', label: 'Meu perfil', icon: User, desktopOnly: true },
 ]
 
 const PRO_NAV: NavItem[] = [
   { to: '/pro', label: 'Pacientes', icon: Users, end: true, alsoActiveOn: ['/pro/pacientes'] },
   { to: '/pro/agenda', label: 'Agenda', icon: CalendarDays },
-  { to: '/pro/mensagens', label: 'Mensagens', icon: MessageSquare },
+  { to: '/pro/mensagens', label: 'Mensagens', icon: MessageCircle, unreadFor: 'professional' },
   { to: '/pro/perfil', label: 'Perfil', icon: User },
 ]
 
