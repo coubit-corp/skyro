@@ -6,7 +6,7 @@ import {
   Heart,
   History,
   House,
-  MessageSquare,
+  MessageCircle,
   User,
   Users,
 } from 'lucide-react'
@@ -42,6 +42,10 @@ const Paciente = lazy(() => import('./pages/profissional/Paciente').then((m) => 
 const CompletarPerfil = lazy(() =>
   import('./pages/profissional/CompletarPerfil').then((m) => ({ default: m.CompletarPerfil })),
 )
+const Mensagens = lazy(() => import('./pages/pessoa/Mensagens').then((m) => ({ default: m.Mensagens })))
+const Conversa = lazy(() => import('./pages/pessoa/Conversa').then((m) => ({ default: m.Conversa })))
+const MensagensPro = lazy(() => import('./pages/profissional/Mensagens').then((m) => ({ default: m.MensagensPro })))
+const ConversaPro = lazy(() => import('./pages/profissional/Conversa').then((m) => ({ default: m.ConversaPro })))
 const MeuPerfil = lazy(() => import('./pages/profissional/MeuPerfil').then((m) => ({ default: m.MeuPerfil })))
 const Pacientes = lazy(() => import('./pages/profissional/Pacientes').then((m) => ({ default: m.Pacientes })))
 const Registros = lazy(() => import('./pages/equipe/Registros').then((m) => ({ default: m.Registros })))
@@ -49,18 +53,19 @@ const Registros = lazy(() => import('./pages/equipe/Registros').then((m) => ({ d
 // Mesma ordem de abas dos mockups.
 const PERSON_NAV: NavItem[] = [
   { to: '/inicio', label: 'Início', icon: House },
-  { to: '/saude', label: 'Saúde', icon: Heart },
+  { to: '/saude', label: 'Saúde', icon: Heart, mobileAlsoActiveOn: ['/mensagens'] },
   { to: '/plano', label: 'Plano', icon: ClipboardList },
   { to: '/rotina', label: 'Rotina', icon: CalendarDays },
   { to: '/progresso', label: 'Progresso', icon: ChartNoAxesColumn },
-  // No celular, o perfil abre pelo avatar no topo do Início (como nos mockups, são 5 abas).
+  // No celular, mensagens e perfil abrem pelos ícones no topo do Início (como nos mockups, são 5 abas).
+  { to: '/mensagens', label: 'Mensagens', icon: MessageCircle, desktopOnly: true, unreadFor: 'person' },
   { to: '/perfil', label: 'Meu perfil', icon: User, desktopOnly: true },
 ]
 
 const PRO_NAV: NavItem[] = [
   { to: '/pro', label: 'Pacientes', icon: Users, end: true, alsoActiveOn: ['/pro/pacientes'] },
   { to: '/pro/agenda', label: 'Agenda', icon: CalendarDays },
-  { to: '/pro/mensagens', label: 'Mensagens', icon: MessageSquare },
+  { to: '/pro/mensagens', label: 'Mensagens', icon: MessageCircle, unreadFor: 'professional' },
   { to: '/pro/perfil', label: 'Perfil', icon: User },
 ]
 
@@ -111,6 +116,8 @@ export default function App() {
                 <Route path="/rotina" element={<Rotina />} />
                 <Route path="/plano" element={<Plano />} />
                 <Route path="/perfil" element={<Perfil />} />
+                <Route path="/mensagens" element={<Mensagens />} />
+                <Route path="/mensagens/:professionalId" element={<Conversa />} />
                 <Route path="/progresso" element={<ComingSoon title="Seu progresso" />} />
               </Route>
 
@@ -127,7 +134,8 @@ export default function App() {
                 <Route path="/pro" element={<Pacientes />} />
                 <Route path="/pro/pacientes/:id" element={<Paciente />} />
                 <Route path="/pro/agenda" element={<ComingSoon title="Agenda" />} />
-                <Route path="/pro/mensagens" element={<ComingSoon title="Mensagens" />} />
+                <Route path="/pro/mensagens" element={<MensagensPro />} />
+                <Route path="/pro/mensagens/:personId" element={<ConversaPro />} />
                 <Route path="/pro/perfil" element={<MeuPerfil />} />
               </Route>
 

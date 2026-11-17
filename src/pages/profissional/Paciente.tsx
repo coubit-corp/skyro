@@ -1,4 +1,4 @@
-import { AlertTriangle, ChevronLeft, Send, Sparkles } from 'lucide-react'
+import { AlertTriangle, ChevronLeft, MessageCircle, Send, Sparkles } from 'lucide-react'
 import { useMemo, useState, type FormEvent } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { Avatar } from '../../components/Avatar'
@@ -94,6 +94,9 @@ export function Paciente() {
           <h1 className="text-2xl font-bold">{name}</h1>
           <p className="text-sm text-muted">Compartilha com você {monthsSince(share.created_at)}</p>
         </div>
+        <Link to={`/pro/mensagens/${share.person_id}`} className="btn-outline ml-auto shrink-0 px-4 py-2">
+          <MessageCircle className="h-4 w-4" aria-hidden="true" /> Conversar
+        </Link>
       </div>
       <div className="flex flex-wrap items-center gap-1.5">
         <span className="text-xs text-muted">Você vê:</span>

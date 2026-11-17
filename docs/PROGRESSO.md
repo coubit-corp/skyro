@@ -119,11 +119,20 @@ Tudo está no código, com 40 testes automáticos, regras de acesso testadas no 
 - **Sem botão no login**, por decisão da equipe: a tela continua com os três botões de sempre. Para entrar, digite o e-mail (`demo.catalogo.3@skyro.app` para o personal, `.1` para o psicólogo e `.8` para a fisio) e a senha `skyro-demo-2026`
 - Corrigido o seed 02, que falhava quando era rodado de novo sozinho, sem o 01 antes
 
+### Etapa 13: chat entre pessoa e profissional
+- **Conversa nos dois sentidos**, além da dica: a pessoa fala com qualquer profissional da equipe dela, e o profissional fala com quem compartilha a rotina com ele
+- **Pessoa:** botão **Conversar** nos cards da equipe (Saúde) e no perfil do profissional; caixa de entrada em `/mensagens`, aberta pelo ícone de balão no topo do Início, com o número de mensagens não lidas
+- **Profissional:** botão **Conversar** na ficha do paciente; caixa de entrada em `/pro/mensagens`, aberta pelo ícone no topo de Pacientes
+- Mensagens agrupadas por dia ("Hoje", "Ontem"), as suas à direita com "lida" quando a outra pessoa abriu. **Enter** envia e **Shift + Enter** quebra a linha. Até 2.000 caracteres
+- **Chega sem recarregar** (Supabase Realtime), com uma conferência a cada 15 segundos de reserva
+- **Garantido pelo banco:** só quem está na conversa lê e escreve; ninguém edita nem apaga mensagem. Quando a pessoa revoga o compartilhamento, o profissional deixa de ver a conversa e não envia mais; a pessoa continua com o histórico, só para leitura
+- **Demo:** o Lucas já tem a conversa com a Ana do mockup e uma mensagem não lida do Pedro; a Ana tem uma não lida da Beatriz
+
 ### Qualidade
 | O quê | Situação |
 |---|---|
-| Testes automáticos (`npm test`) | 105 passando, com relógio em São Paulo e em UTC |
-| Regras de acesso do banco | Testadas num Postgres local (`supabase/tests/`, 6 arquivos) |
+| Testes automáticos (`npm test`) | 113 passando, com relógio em São Paulo e em UTC |
+| Regras de acesso do banco | Testadas num Postgres local (`supabase/tests/`, 7 arquivos) |
 | Tipos e lint | Sem erros nem avisos |
 | Telas | Conferidas no navegador, no celular e no desktop, sem erros no console |
 | Supabase real | Roteiros das etapas 1 a 8 conferidos pela equipe. Etapas 9 e 10 rodadas pela equipe em 14/11. Navegando com as contas demo, sem alterar dados, abriram sem erro: Plano, Saúde, Perto de você, Início, a ficha do Lucas com o plano e a área da equipe |
@@ -142,12 +151,12 @@ Tudo está no código, com 40 testes automáticos, regras de acesso testadas no 
 
 ## Como rodar tudo localmente
 
-Todo o trabalho está na branch `etapa-12-logins-demo`, que já contém as etapas 1 a 12.
+Todo o trabalho está na `main` (etapas 1 a 12) e na branch `etapa-13-chat` (chat), até o PR dela entrar.
 
 1. Baixe o projeto (ou descompacte o `.zip` em `~/Documents/skyro`):
 
    ```bash
-   cd ~/Documents && git clone -b etapa-12-logins-demo https://github.com/coubit-corp/skyro.git
+   cd ~/Documents && git clone -b etapa-13-chat https://github.com/coubit-corp/skyro.git
    ```
 
 2. Instale as dependências e crie o `.env`, conforme os passos 2 e 3.1 de `docs/SETUP-MAC.md`.
@@ -158,9 +167,11 @@ Todo o trabalho está na branch `etapa-12-logins-demo`, que já contém as etapa
    4. `supabase/migrations/20261115000001_aprovacao_registros.sql`
    5. `supabase/migrations/20261115000002_planos.sql`
    6. `supabase/migrations/20261116000001_perfil.sql`
-   7. `supabase/seed/01_contas_demo.sql`
-   8. `supabase/seed/02_catalogo_demo.sql`
-   9. `supabase/seed/03_pacientes_demo.sql`
+   7. `supabase/migrations/20261117000001_chat.sql`
+   8. `supabase/seed/01_contas_demo.sql`
+   9. `supabase/seed/02_catalogo_demo.sql`
+   10. `supabase/seed/03_pacientes_demo.sql`
+   11. `supabase/seed/04_conversas_demo.sql`
 4. Confira e suba o app:
 
    ```bash
@@ -172,6 +183,7 @@ Todo o trabalho está na branch `etapa-12-logins-demo`, que já contém as etapa
    2. Sair → **Entrar como profissional (demo)**: 3 em Atenção → abrir o Lucas → ver o **Plano de Lucas** no fim da ficha, adicionar uma refeição → enviar uma dica
    3. Sair → entrar como pessoa: a dica aparece no Início
    3b. Sair → entrar com `demo.catalogo.3@skyro.app` e a senha demo (personal): abrir o Lucas → no **Plano de Lucas**, adicionar um exercício com séries, repetições e carga
+   3c. Entrar como pessoa → ícone de balão no Início → abrir a conversa com a Ana → responder. Sair → entrar como profissional → ícone de balão em Pacientes: a resposta aparece como não lida
    4. Sair → **Entrar como equipe (demo)**: aprovar o Rafael → recusar o Bruno com um motivo → ver os dois em Decididos
 
 ---
@@ -180,8 +192,8 @@ Todo o trabalho está na branch `etapa-12-logins-demo`, que já contém as etapa
 
 Restam cerca de 16 dias. A ordem abaixo prioriza o que os jurados exigem e veem primeiro.
 
-### 1. Rodar a etapa 11 no Supabase real · 10 minutos · **urgente**
-No SQL Editor, rode a migration `20261116000001_perfil.sql` e depois os seeds 01, 02 e 03 de novo, nessa ordem (eles dão horários de atendimento aos profissionais demo). Depois, crie uma conta nova, abra **Meu perfil**, envie uma foto e salve: é o único jeito de conferir o envio de fotos de verdade, porque as contas demo não enviam. Se der erro, me mande o texto.
+### 1. Rodar as etapas 11 e 13 no Supabase real · 10 minutos · **urgente**
+No SQL Editor, rode as migrations `20261116000001_perfil.sql` (se ainda não rodou) e `20261117000001_chat.sql`, e depois os seeds 01, 02, 03 e 04, nessa ordem (o 02 dá horários de atendimento aos profissionais demo e o 04 cria as conversas de exemplo). No app, abra o chat pelo ícone de balão no Início e mande uma mensagem. Depois, crie uma conta nova, abra **Meu perfil**, envie uma foto e salve: é o único jeito de conferir o envio de fotos de verdade, porque as contas demo não enviam. Se der erro, me mande o texto.
 
 As etapas 9 e 10 já foram rodadas em 14/11.
 

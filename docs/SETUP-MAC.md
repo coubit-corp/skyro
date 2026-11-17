@@ -130,6 +130,12 @@ EOF
    pbcopy < supabase/migrations/20261116000001_perfil.sql
    ```
 
+10. E com a sétima, que cria o chat entre pessoa e profissional:
+
+    ```bash
+    pbcopy < supabase/migrations/20261117000001_chat.sql
+    ```
+
 > Se rodar duas vezes, dá erro de "already exists". Não é problema: as tabelas já foram criadas.
 
 ### 3.3 Criar as contas demo (só uma vez)
@@ -169,7 +175,13 @@ pbcopy < supabase/seed/03_pacientes_demo.sql
 
 Cole numa **New query** e clique em **Run**. Aparecem 5 nomes; junto com o Lucas, a Ana fica com 6 pacientes, 3 deles em "Atenção".
 
-Os botões "Entrar como … (demo)" da tela de login já usam essas contas. O Lucas já compartilha a rotina com a Ana e tem 14 dias de registros. Se os dados ficarem bagunçados depois de testes, é só rodar os três scripts de novo, nessa ordem (`01`, `02` e `03`): eles apagam os dados demo e recriam tudo, com as datas atualizadas para hoje.
+E as conversas de exemplo do chat:
+
+```bash
+pbcopy < supabase/seed/04_conversas_demo.sql
+```
+
+Os botões "Entrar como … (demo)" da tela de login já usam essas contas. O Lucas já compartilha a rotina com a Ana e tem 14 dias de registros. Se os dados ficarem bagunçados depois de testes, é só rodar os três scripts de novo, nessa ordem (`01`, `02`, `03` e `04`): eles apagam os dados demo e recriam tudo, com as datas atualizadas para hoje.
 
 ### 3.4 Liberar o login sem confirmação de e-mail (para desenvolver)
 

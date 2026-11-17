@@ -54,16 +54,26 @@ export function Saude() {
           {team.data!.map(({ id, professionals: pro }) => (
             <li key={id} className="card space-y-3">
               <div className="flex items-center gap-3">
-                <Avatar seed={pro.profiles.avatar_seed} photo={pro.profiles.avatar_path} name={pro.profiles.full_name} size={48} />
+                <Avatar
+                  seed={pro.profiles.avatar_seed}
+                  photo={pro.profiles.avatar_path}
+                  name={pro.profiles.full_name}
+                  size={48}
+                />
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold">
                     {pro.profiles.full_name.split(' ')[0]} · {specialtyLabel(pro.specialty)}
                   </p>
                   <p className="text-xs text-muted">Acompanha sua rotina</p>
                 </div>
-                <Link to={`/saude/profissional/${pro.id}`} className="btn-outline px-4 py-2">
-                  Ver perfil
-                </Link>
+                <div className="flex shrink-0 flex-col gap-1.5 sm:flex-row">
+                  <Link to={`/mensagens/${pro.id}`} className="btn-primary px-4 py-2">
+                    Conversar
+                  </Link>
+                  <Link to={`/saude/profissional/${pro.id}`} className="btn-outline px-4 py-2">
+                    Ver perfil
+                  </Link>
+                </div>
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {SHARED_DATA.map((d) => (
