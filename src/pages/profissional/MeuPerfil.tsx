@@ -1,6 +1,6 @@
-import { BadgeCheck, CalendarClock, CircleX, Clock, Lock, MapPin, Pencil, Star } from 'lucide-react'
+import { BadgeCheck, CalendarClock, ChevronRight, CircleX, Clock, Lock, MapPin, Pencil, Star } from 'lucide-react'
 import { useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../../auth/auth-context'
 import { AccountSection } from '../../components/AccountSection'
 import { AvailabilityEditor } from '../../components/AvailabilityEditor'
@@ -8,7 +8,6 @@ import { Avatar } from '../../components/Avatar'
 import { DemoBanner } from '../../components/DemoBanner'
 import { ProfessionalForm } from '../../components/ProfessionalForm'
 import { SignOutButton } from '../../components/SignOutButton'
-import { ThemePicker } from '../../components/ThemePicker'
 import { ErrorState, PageHeader, Skeleton } from '../../components/ui'
 import { useMyPhone, useSaveAccount } from '../../hooks/useAccount'
 import { useMyProfessional, useSaveProfessional } from '../../hooks/useProData'
@@ -277,7 +276,9 @@ export function MeuPerfil() {
         </p>
       </div>
 
-      <ThemePicker />
+      <Link to="/pro/configuracoes" className="tap gap-1 text-sm font-semibold text-primary">
+        Aparência e conta em Configurações <ChevronRight className="h-4 w-4" aria-hidden="true" />
+      </Link>
 
       <div className="lg:hidden">
         <SignOutButton />
