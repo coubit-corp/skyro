@@ -46,6 +46,7 @@ const CompletarPerfil = lazy(() =>
   import('./pages/profissional/CompletarPerfil').then((m) => ({ default: m.CompletarPerfil })),
 )
 const MeuPerfil = lazy(() => import('./pages/profissional/MeuPerfil').then((m) => ({ default: m.MeuPerfil })))
+const Galeria = lazy(() => import('./pages/profissional/Galeria').then((m) => ({ default: m.Galeria })))
 const Pacientes = lazy(() => import('./pages/profissional/Pacientes').then((m) => ({ default: m.Pacientes })))
 const Registros = lazy(() => import('./pages/equipe/Registros').then((m) => ({ default: m.Registros })))
 
@@ -137,6 +138,7 @@ export default function App() {
                 <Route path="/pro/agenda" element={<ComingSoon title="Agenda" />} />
                 <Route path="/pro/mensagens" element={<ComingSoon title="Mensagens" />} />
                 <Route path="/pro/perfil" element={<MeuPerfil />} />
+                <Route path="/pro/perfil/galeria" element={<Galeria />} />
                 <Route path="/pro/configuracoes" element={<Configuracoes />} />
               </Route>
 

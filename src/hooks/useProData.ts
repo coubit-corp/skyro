@@ -5,12 +5,14 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../auth/auth-context'
 import { evaluatePatient, type PatientStatus } from '../lib/alerts'
 import type { toProfessionalRow } from '../lib/professionalForm'
+import type { toShowcaseRow } from '../lib/vitrine'
 import type { DailyLog, Habit, Professional, ProfileBrief, Share, Tip } from '../lib/database.types'
 import { addDays, today } from '../lib/dates'
 import { currentStreak } from '../lib/streak'
 import { supabase } from '../lib/supabase'
 
-type ProfessionalRow = ReturnType<typeof toProfessionalRow> & { availability?: Record<string, [string, string] | undefined> }
+type ProfessionalRow = ReturnType<typeof toProfessionalRow> &
+  Partial<ReturnType<typeof toShowcaseRow>> & { availability?: Record<string, [string, string] | undefined> }
 type PersonProfile = ProfileBrief
 export type PatientShare = Share & { profiles: PersonProfile }
 

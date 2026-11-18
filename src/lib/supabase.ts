@@ -24,3 +24,10 @@ export const AVATAR_BUCKET = 'avatars'
 export function avatarUrl(path: string | null | undefined): string | null {
   return path ? supabase.storage.from(AVATAR_BUCKET).getPublicUrl(path).data.publicUrl : null
 }
+
+export const PORTFOLIO_BUCKET = 'portfolio'
+
+/** Link público de uma foto ou vídeo da galeria do profissional. */
+export function portfolioUrl(path: string): string {
+  return supabase.storage.from(PORTFOLIO_BUCKET).getPublicUrl(path).data.publicUrl
+}
