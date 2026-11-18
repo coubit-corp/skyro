@@ -36,7 +36,6 @@ const PerfilProfissional = lazy(() =>
   import('./pages/pessoa/PerfilProfissional').then((m) => ({ default: m.PerfilProfissional })),
 )
 const PertoDeVoce = lazy(() => import('./pages/pessoa/PertoDeVoce').then((m) => ({ default: m.PertoDeVoce })))
-const Perfil = lazy(() => import('./pages/pessoa/Perfil').then((m) => ({ default: m.Perfil })))
 const Plano = lazy(() => import('./pages/pessoa/Plano').then((m) => ({ default: m.Plano })))
 const Progresso = lazy(() => import('./pages/pessoa/Progresso').then((m) => ({ default: m.Progresso })))
 const ResumoSemana = lazy(() => import('./pages/pessoa/ResumoSemana').then((m) => ({ default: m.ResumoSemana })))
@@ -57,9 +56,8 @@ const PERSON_NAV: NavItem[] = [
   { to: '/plano', label: 'Plano', icon: ClipboardList },
   { to: '/rotina', label: 'Rotina', icon: CalendarDays },
   { to: '/progresso', label: 'Progresso', icon: ChartNoAxesColumn },
-  // No celular, o perfil abre pelo avatar no topo do Início (como nos mockups, são 5 abas).
-  { to: '/perfil', label: 'Meu perfil', icon: User, desktopOnly: true },
-  // No celular, as configurações abrem pela engrenagem no topo do Início.
+  // "Meu perfil" fica dentro de Configurações. No celular, abre pela engrenagem
+  // ou pelo avatar no topo do Início (como nos mockups, são 5 abas).
   { to: '/configuracoes', label: 'Configurações', icon: Settings, desktopOnly: true },
 ]
 
@@ -118,7 +116,7 @@ export default function App() {
                 <Route path="/saude/profissional/:id" element={<PerfilProfissional />} />
                 <Route path="/rotina" element={<Rotina />} />
                 <Route path="/plano" element={<Plano />} />
-                <Route path="/perfil" element={<Perfil />} />
+                <Route path="/perfil" element={<Navigate to="/configuracoes" replace />} />
                 <Route path="/configuracoes" element={<Configuracoes />} />
                 <Route path="/progresso" element={<Progresso />} />
                 <Route path="/progresso/semana" element={<ResumoSemana />} />

@@ -61,7 +61,7 @@ export function Inicio() {
             <Settings className="h-6 w-6" strokeWidth={1.75} aria-hidden="true" />
           </Link>
           <Link
-            to="/perfil"
+            to="/configuracoes"
             className="flex h-11 w-11 items-center justify-center rounded-full ring-lavender transition hover:ring-2"
             aria-label="Meu perfil"
           >
