@@ -1,9 +1,10 @@
-import { Settings } from 'lucide-react'
+import { MessageSquare, Settings } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../auth/auth-context'
 import { Avatar } from '../../components/Avatar'
 import { DemoBanner } from '../../components/DemoBanner'
+import { PersonUnreadBadge } from '../../components/UnreadBadge'
 import { useGreeting } from '../../hooks/useAccount'
 import { Logo } from '../../components/Logo'
 import { CheckButton, ErrorState, Modal, Skeleton } from '../../components/ui'
@@ -53,6 +54,14 @@ export function Inicio() {
       <header className="flex items-center justify-between lg:hidden">
         <Logo />
         <div className="flex items-center gap-1">
+          <Link
+            to="/mensagens"
+            className="relative flex h-11 w-11 items-center justify-center rounded-full text-muted transition hover:bg-lavender-soft hover:text-ink"
+            aria-label="Mensagens"
+          >
+            <MessageSquare className="h-6 w-6" strokeWidth={1.75} aria-hidden="true" />
+            <PersonUnreadBadge className="absolute -top-0.5 -right-0.5" />
+          </Link>
           <Link
             to="/configuracoes"
             className="flex h-11 w-11 items-center justify-center rounded-full text-muted transition hover:bg-lavender-soft hover:text-ink"
