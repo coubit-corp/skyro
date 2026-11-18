@@ -193,3 +193,14 @@ export interface PlanCheck {
   check_date: string
   created_at: string
 }
+
+/** Mensagem entre a pessoa e um profissional com compartilhamento ativo. */
+export interface Message {
+  id: string
+  person_id: string
+  professional_id: string
+  sender_id: string
+  body: string
+  created_at: string
+  read_at: string | null
+}

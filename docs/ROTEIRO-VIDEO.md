@@ -6,7 +6,7 @@ Vídeo de demonstração da Skyro para o Hack Brasil 2026. **Duração máxima: 
 
 ## Antes de gravar (checklist)
 
-- [ ] **Dados da demo com a data de hoje:** no SQL Editor do Supabase, rode `01_contas_demo.sql`, `02_catalogo_demo.sql`, `03_pacientes_demo.sql` e `04_vitrine_demo.sql`, nessa ordem, **no dia da gravação**. Os registros são relativos a "hoje"; com dados velhos, ninguém aparece em "Atenção".
+- [ ] **Dados da demo com a data de hoje:** no SQL Editor do Supabase, rode `01_contas_demo.sql`, `02_catalogo_demo.sql`, `03_pacientes_demo.sql`, `04_vitrine_demo.sql` e `05_mensagens_demo.sql`, nessa ordem, **no dia da gravação**. Os registros são relativos a "hoje"; com dados velhos, ninguém aparece em "Atenção".
 - [ ] **App publicado** (Vercel) e testado com `npm run smoke -- <link>`.
 - [ ] **Duas janelas lado a lado:**
   - uma normal, logada como **pessoa (demo)**;
