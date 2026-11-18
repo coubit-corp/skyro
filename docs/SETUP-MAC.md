@@ -136,6 +136,12 @@ EOF
    pbcopy < supabase/migrations/20261118000001_vitrine_profissional.sql
    ```
 
+11. E com a oitava, que cria as mensagens entre a pessoa e o profissional:
+
+   ```bash
+   pbcopy < supabase/migrations/20261118000002_mensagens.sql
+   ```
+
 > Se rodar duas vezes, dá erro de "already exists". Não é problema: as tabelas já foram criadas.
 
 ### 3.3 Criar as contas demo (só uma vez)
@@ -183,7 +189,15 @@ pbcopy < supabase/seed/04_vitrine_demo.sql
 
 Cole numa **New query** e clique em **Run**. Aparece a nota e o total de avaliações de cada profissional demo (psicólogos ficam sem nota).
 
-Os botões "Entrar como … (demo)" da tela de login já usam essas contas. O Lucas já compartilha a rotina com a Ana e tem 14 dias de registros. Se os dados ficarem bagunçados depois de testes, é só rodar os quatro scripts de novo, nessa ordem (`01`, `02`, `03` e `04`): eles apagam os dados demo e recriam tudo, com as datas atualizadas para hoje.
+Por último, as conversas demonstrativas:
+
+```bash
+pbcopy < supabase/seed/05_mensagens_demo.sql
+```
+
+Cole numa **New query** e clique em **Run**. Aparecem as conversas da Ana e do Pedro, com quantas mensagens estão sem ler.
+
+Os botões "Entrar como … (demo)" da tela de login já usam essas contas. O Lucas já compartilha a rotina com a Ana e tem 14 dias de registros. Se os dados ficarem bagunçados depois de testes, é só rodar os cinco scripts de novo, nessa ordem (`01`, `02`, `03`, `04` e `05`): eles apagam os dados demo e recriam tudo, com as datas atualizadas para hoje.
 
 ### 3.4 Liberar o login sem confirmação de e-mail (para desenvolver)
 

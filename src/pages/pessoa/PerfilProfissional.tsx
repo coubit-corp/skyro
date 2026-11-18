@@ -1,4 +1,4 @@
-import { BadgeCheck, ChevronLeft, Pencil, ShieldCheck, Star } from 'lucide-react'
+import { BadgeCheck, ChevronLeft, MessageSquare, Pencil, ShieldCheck, Star } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Avatar } from '../../components/Avatar'
@@ -155,9 +155,14 @@ export function PerfilProfissional() {
               Você compartilha desde {new Date(activeShare.created_at).toLocaleDateString('pt-BR')}. {firstName} vê seus
               registros e pode te mandar dicas entre as consultas.
             </p>
-            <button className="btn-outline w-full" onClick={() => setRevokeOpen(true)}>
-              Parar de compartilhar
-            </button>
+            <div className="grid gap-2 sm:grid-cols-2">
+              <Link to={`/saude/mensagens/${p.id}`} className="btn-primary gap-2">
+                <MessageSquare className="h-4 w-4" aria-hidden="true" /> Mandar mensagem
+              </Link>
+              <button className="btn-outline" onClick={() => setRevokeOpen(true)}>
+                Parar de compartilhar
+              </button>
+            </div>
           </>
         ) : (
           <>
