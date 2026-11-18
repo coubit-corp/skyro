@@ -1,4 +1,4 @@
-import { BadgeCheck, CalendarClock, ChevronRight, CircleX, Clock, Lock, MapPin, Pencil, Star } from 'lucide-react'
+import { BadgeCheck, CalendarClock, ChevronRight, CircleX, Clock, Lock, MapPin, Pencil } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../../auth/auth-context'
@@ -7,10 +7,14 @@ import { AvailabilityEditor } from '../../components/AvailabilityEditor'
 import { Avatar } from '../../components/Avatar'
 import { DemoBanner } from '../../components/DemoBanner'
 import { ProfessionalForm } from '../../components/ProfessionalForm'
+import { ProfileTabs } from '../../components/ProfileTabs'
+import { ExperienceCard, ReviewItem, RatingSummary, SocialButtons } from '../../components/Showcase'
+import { ShowcaseEditor } from '../../components/ShowcaseEditor'
 import { SignOutButton } from '../../components/SignOutButton'
 import { ErrorState, PageHeader, Skeleton } from '../../components/ui'
 import { useMyPhone, useSaveAccount } from '../../hooks/useAccount'
 import { useMyProfessional, useSaveProfessional } from '../../hooks/useProData'
+import { useProReviews } from '../../hooks/useShowcase'
 import { initialValues, toProfessionalRow } from '../../lib/professionalForm'
 import {
   availabilityLines,
@@ -24,6 +28,14 @@ import {
 } from '../../lib/profile'
 import { verificationStatus } from '../../lib/registry'
 import { MODALITY_LABEL, specialtyLabel } from '../../lib/specialties'
+import {
+  acceptsReviews,
+  initialShowcase,
+  toShowcaseRow,
+  validateShowcase,
+  type ShowcaseErrors,
+  type ShowcaseValues,
+} from '../../lib/vitrine'
 
 export function MeuPerfil() {
   const { profile, session, refreshProfile } = useAuth()
@@ -36,6 +48,9 @@ export function MeuPerfil() {
   const [accountErrors, setAccountErrors] = useState<AccountErrors>({})
   const [availability, setAvailability] = useState<Availability>({})
   const [availabilityErrors, setAvailabilityErrors] = useState<Record<string, string>>({})
+  const [showcase, setShowcase] = useState<ShowcaseValues>(() => initialShowcase())
+  const [showcaseErrors, setShowcaseErrors] = useState<ShowcaseErrors>({})
+  const reviews = useProReviews(session?.user.id, Boolean(me.data && acceptsReviews(me.data.specialty)))
   const location = useLocation()
   const [editing, setEditing] = useState(false)
   const [savedMsg, setSavedMsg] = useState<string | null>(
@@ -58,6 +73,8 @@ export function MeuPerfil() {
     setAccountErrors({})
     setAvailability(p.availability ?? {})
     setAvailabilityErrors({})
+    setShowcase(initialShowcase(p))
+    setShowcaseErrors({})
     save.reset()
     saveAccount.reset()
     setSavedMsg(null)
@@ -99,21 +116,41 @@ export function MeuPerfil() {
             />
           }
           bottom={
-            <AvailabilityEditor
-              value={availability}
-              errors={availabilityErrors}
-              onChange={(next) => {
-                setAvailability(next)
-                setAvailabilityErrors({})
-              }}
-            />
+            <>
+              <ShowcaseEditor
+                value={showcase}
+                errors={showcaseErrors}
+                demo={demo}
+                onChange={(patch) => {
+                  setShowcase((s) => ({ ...s, ...patch }))
+                  setShowcaseErrors((e) => {
+                    const next = { ...e }
+                    for (const k of Object.keys(patch) as (keyof ShowcaseValues)[]) {
+                      if (k === 'social') for (const n of Object.keys(patch.social ?? {})) delete next[n as keyof ShowcaseErrors]
+                      else delete next[k as keyof ShowcaseErrors]
+                    }
+                    return next
+                  })
+                }}
+              />
+              <AvailabilityEditor
+                value={availability}
+                errors={availabilityErrors}
+                onChange={(next) => {
+                  setAvailability(next)
+                  setAvailabilityErrors({})
+                }}
+              />
+            </>
           }
           validateExtra={() => {
             const a = validateAccount(account, demo)
             const h = validateAvailability(availability)
+            const sc = validateShowcase(showcase)
             setAccountErrors(a)
             setAvailabilityErrors(h)
-            return Object.keys(a).length === 0 && Object.keys(h).length === 0
+            setShowcaseErrors(sc)
+            return Object.keys(a).length === 0 && Object.keys(h).length === 0 && Object.keys(sc).length === 0
           }}
           onSubmit={async (v) => {
             const registryChanged = v.registry.trim() !== (p.registry ?? '') || v.specialty !== p.specialty
@@ -121,7 +158,7 @@ export function MeuPerfil() {
             try {
               await save.mutateAsync({
                 fullName: v.fullName,
-                row: { ...toProfessionalRow(v), availability: cleanAvailability(availability) },
+                row: { ...toProfessionalRow(v), ...toShowcaseRow(showcase), availability: cleanAvailability(availability) },
                 exists: true,
               })
               emailPending = (
@@ -160,6 +197,8 @@ export function MeuPerfil() {
           </button>
         }
       />
+
+      <ProfileTabs />
 
       {savedMsg && (
         <p role="status" className="rounded-xl bg-lavender-soft px-3 py-2 text-sm text-primary">
@@ -207,20 +246,6 @@ export function MeuPerfil() {
         </div>
       )}
 
-      {p.rating != null && (
-        <div className="flex items-center gap-4 rounded-card bg-navy px-5 py-4 text-white">
-          <span className="font-display text-4xl font-extrabold">{p.rating.toLocaleString('pt-BR', { minimumFractionDigits: 1 })}</span>
-          <div>
-            <p className="flex gap-0.5 text-gold" aria-hidden="true">
-              {Array.from({ length: 5 }, (_, i) => (
-                <Star key={i} className="h-4 w-4 fill-gold" />
-              ))}
-            </p>
-            <p className="text-sm text-white/80">{p.reviews_count} avaliações</p>
-          </div>
-        </div>
-      )}
-
       <div className="card space-y-2">
         <h2 className="eyebrow">Sobre você</h2>
         <p className="text-sm leading-relaxed">{p.bio}</p>
@@ -238,6 +263,10 @@ export function MeuPerfil() {
           </div>
         </div>
       )}
+
+      <ExperienceCard pro={p} emptyHint="Conte onde se formou, há quantos anos atua e suas experiências. Toque em Editar." />
+
+      <SocialButtons links={p.social_links ?? {}} firstName={name.split(' ')[0]} />
 
       <div className="card space-y-2">
         <h2 className="eyebrow">Como você atende</h2>
@@ -263,6 +292,30 @@ export function MeuPerfil() {
           </ul>
         ) : (
           <p className="text-sm text-muted">Você ainda não informou seus horários. Toque em Editar para adicionar.</p>
+        )}
+      </div>
+
+      <div className="card space-y-3">
+        <h2 className="eyebrow">Avaliações</h2>
+        {!acceptsReviews(p.specialty) ? (
+          <p className="text-sm text-muted">
+            Psicólogos não recebem avaliações públicas na Skyro, por cautela com as regras do Conselho Federal de Psicologia.
+          </p>
+        ) : reviews.data && reviews.data.length > 0 ? (
+          <>
+            <RatingSummary rating={p.rating} count={p.reviews_count} reviews={reviews.data} />
+            <ul className="space-y-3 border-t border-line pt-3">
+              {reviews.data.map((r) => (
+                <ReviewItem key={r.id} review={r} />
+              ))}
+            </ul>
+          </>
+        ) : (
+          <p className="text-sm text-muted">
+            {reviews.isLoading
+              ? 'Carregando…'
+              : 'Ainda sem avaliações. Quem compartilha a rotina com você pode deixar uma nota e um comentário no seu perfil.'}
+          </p>
         )}
       </div>
 

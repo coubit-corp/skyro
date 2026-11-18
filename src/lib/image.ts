@@ -38,3 +38,28 @@ export async function toAvatarJpeg(file: Blob): Promise<Blob> {
     canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('Não deu para preparar a imagem.'))), 'image/jpeg', 0.85),
   )
 }
+
+/** Lado maior das fotos da galeria do profissional. */
+export const GALLERY_MAX_SIDE = 1600
+
+/**
+ * Prepara uma foto da galeria: mantém o formato, reduz para no máximo
+ * 1600 px no lado maior e regrava em JPEG (sem o local e os dados da câmera).
+ */
+export async function toGalleryJpeg(file: Blob): Promise<Blob> {
+  const img = await loadImage(file)
+  const { naturalWidth: w, naturalHeight: h } = img
+  if (Math.min(w, h) < 200) throw new Error('A foto é pequena demais. Use uma com pelo menos 200 px.')
+  const scale = Math.min(1, GALLERY_MAX_SIDE / Math.max(w, h))
+  const canvas = document.createElement('canvas')
+  canvas.width = Math.round(w * scale)
+  canvas.height = Math.round(h * scale)
+  const ctx = canvas.getContext('2d')
+  if (!ctx) throw new Error('Seu navegador não conseguiu preparar a imagem.')
+  ctx.fillStyle = '#ffffff'
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+  return new Promise((resolve, reject) =>
+    canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('Não deu para preparar a imagem.'))), 'image/jpeg', 0.85),
+  )
+}
