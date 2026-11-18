@@ -27,7 +27,7 @@ export function Mensagens() {
             Você só conversa com quem acompanha sua rotina agora. Para conversar, compartilhe sua rotina no perfil do
             profissional.
           </p>
-          <Link to="/saude/mensagens" className="btn-outline">
+          <Link to="/mensagens" className="btn-outline">
             Voltar para as mensagens
           </Link>
         </div>
@@ -40,7 +40,7 @@ export function Mensagens() {
         professionalId={proId}
         other={open.other}
         subtitle={specialtyLabel(open.other.specialty)}
-        back={{ to: '/saude/mensagens', label: 'Voltar para as mensagens' }}
+        back={{ to: '/mensagens', label: 'Voltar para as mensagens' }}
         headerAction={
           <Link to={`/saude/profissional/${proId}`} className="btn-outline shrink-0 px-3 py-2 text-sm">
             Perfil
@@ -80,7 +80,7 @@ export function Mensagens() {
           <ConversationList
             items={items}
             meId={me}
-            hrefFor={(id) => `/saude/mensagens/${id}`}
+            hrefFor={(id) => `/mensagens/${id}`}
             detail={(o) => specialtyLabel(o.specialty)}
           />
         )}
