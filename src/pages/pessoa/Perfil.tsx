@@ -1,11 +1,8 @@
-import { CheckCircle2, ChevronRight } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { CheckCircle2 } from 'lucide-react'
 import { useId, useState, type FormEvent } from 'react'
 import { useAuth } from '../../auth/auth-context'
 import { AccountSection } from '../../components/AccountSection'
-import { DemoBanner } from '../../components/DemoBanner'
-import { SignOutButton } from '../../components/SignOutButton'
-import { ErrorState, PageHeader, Skeleton } from '../../components/ui'
+import { ErrorState, Skeleton } from '../../components/ui'
 import { useMyPhone, useSaveAccount } from '../../hooks/useAccount'
 import type { Profile } from '../../lib/database.types'
 import {
@@ -18,7 +15,7 @@ import {
   type AccountValues,
 } from '../../lib/profile'
 
-/** Configurações de perfil da pessoa. */
+/** "Meu perfil" da pessoa: fica dentro de Configurações. */
 export function Perfil() {
   const { profile, session } = useAuth()
   const phone = useMyPhone()
@@ -74,22 +71,25 @@ function PerfilForm({ profile, email, phone }: { profile: Profile; email: string
       // A foto e o e-mail voltam ao estado "sem mudança"; o resto já está salvo.
       setAccount((a) => ({ ...a, email: result.emailPending ? email : a.email, photo: { kind: 'keep' } }))
       setSaved({ emailPending: result.emailPending, email: account.email.trim() })
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      document.getElementById('perfil')?.scrollIntoView({ behavior: 'smooth' })
     } catch {
       /* a mensagem aparece acima dos botões */
     }
   }
 
   return (
-    <section>
-      <PageHeader
-        title="Meu perfil"
-        subtitle="Seus dados na Skyro. Nome e foto aparecem para os profissionais que acompanham sua rotina."
-        back={{ to: '/inicio', label: 'Início' }}
-      />
+    <section id="perfil" aria-labelledby="perfil-titulo" className="scroll-mt-4 space-y-4">
+      <div>
+        <h2 id="perfil-titulo" className="font-display text-xl font-bold">
+          Meu perfil
+        </h2>
+        <p className="text-sm text-muted">
+          Nome e foto aparecem para os profissionais que acompanham sua rotina.
+        </p>
+      </div>
 
       {saved && (
-        <div role="status" className="mb-4 flex items-start gap-2 rounded-xl bg-lavender-soft px-3 py-2.5 text-sm text-primary">
+        <div role="status" className="flex items-start gap-2 rounded-xl bg-lavender-soft px-3 py-2.5 text-sm text-primary">
           <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
           <p>
             <span className="font-semibold">Alterações salvas.</span>
@@ -179,17 +179,6 @@ function PerfilForm({ profile, email, phone }: { profile: Profile; email: string
           </button>
         </div>
       </form>
-
-      <div className="mt-4">
-        <Link to="/configuracoes" className="tap gap-1 text-sm font-semibold text-primary">
-        Aparência e conta em Configurações <ChevronRight className="h-4 w-4" aria-hidden="true" />
-      </Link>
-      </div>
-
-      <div className="mt-6 lg:hidden">
-        <SignOutButton />
-      </div>
-      <DemoBanner />
     </section>
   )
 }
