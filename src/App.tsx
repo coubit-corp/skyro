@@ -8,7 +8,6 @@ import {
   House,
   MessageSquare,
   Settings,
-  User,
   Users,
 } from 'lucide-react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -45,7 +44,6 @@ const Paciente = lazy(() => import('./pages/profissional/Paciente').then((m) => 
 const CompletarPerfil = lazy(() =>
   import('./pages/profissional/CompletarPerfil').then((m) => ({ default: m.CompletarPerfil })),
 )
-const MeuPerfil = lazy(() => import('./pages/profissional/MeuPerfil').then((m) => ({ default: m.MeuPerfil })))
 const Pacientes = lazy(() => import('./pages/profissional/Pacientes').then((m) => ({ default: m.Pacientes })))
 const Registros = lazy(() => import('./pages/equipe/Registros').then((m) => ({ default: m.Registros })))
 
@@ -65,7 +63,7 @@ const PRO_NAV: NavItem[] = [
   { to: '/pro', label: 'Pacientes', icon: Users, end: true, alsoActiveOn: ['/pro/pacientes'] },
   { to: '/pro/agenda', label: 'Agenda', icon: CalendarDays },
   { to: '/pro/mensagens', label: 'Mensagens', icon: MessageSquare },
-  { to: '/pro/perfil', label: 'Perfil', icon: User },
+  // O perfil (dados, fotos e vídeos, avaliações) fica dentro de Configurações.
   { to: '/pro/configuracoes', label: 'Ajustes', icon: Settings },
 ]
 
@@ -136,8 +134,10 @@ export default function App() {
                 <Route path="/pro/pacientes/:id" element={<Paciente />} />
                 <Route path="/pro/agenda" element={<ComingSoon title="Agenda" />} />
                 <Route path="/pro/mensagens" element={<ComingSoon title="Mensagens" />} />
-                <Route path="/pro/perfil" element={<MeuPerfil />} />
+                <Route path="/pro/perfil" element={<Navigate to="/pro/configuracoes" replace />} />
+                <Route path="/pro/perfil/galeria" element={<Navigate to="/pro/configuracoes/galeria" replace />} />
                 <Route path="/pro/configuracoes" element={<Configuracoes />} />
+                <Route path="/pro/configuracoes/galeria" element={<Configuracoes />} />
               </Route>
 
               {/* Área da equipe: aprovar ou recusar registros de conselho */}

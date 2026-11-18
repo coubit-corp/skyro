@@ -99,11 +99,14 @@ export function Modal({
   onClose,
   title,
   children,
+  wide = false,
 }: {
   open: boolean
   onClose: () => void
   title: string
   children: ReactNode
+  /** Mais largo, para fotos e vídeos */
+  wide?: boolean
 }) {
   const ref = useRef<HTMLDialogElement>(null)
 
@@ -119,7 +122,7 @@ export function Modal({
       ref={ref}
       onClose={onClose}
       onClick={(e) => e.target === ref.current && onClose()}
-      className="m-auto w-[calc(100%-2rem)] max-w-md rounded-card bg-card p-0 text-ink backdrop:bg-navy/50"
+      className={`m-auto w-[calc(100%-2rem)] ${wide ? 'max-w-3xl' : 'max-w-md'} rounded-card bg-card p-0 text-ink backdrop:bg-navy/50`}
     >
       <div className="space-y-4 p-5">
         <h2 className="text-lg font-bold">{title}</h2>

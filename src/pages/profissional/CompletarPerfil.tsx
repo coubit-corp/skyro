@@ -21,7 +21,7 @@ export function CompletarPerfil() {
   if (me.isLoading) return <FullScreenLoader />
   if (me.error) return <ErrorState message={me.error.message} onRetry={() => me.refetch()} />
   if (me.data) {
-    return publishing ? <Navigate to="/pro/perfil" replace state={{ justCreated: true }} /> : <Navigate to="/pro" replace />
+    return publishing ? <Navigate to="/pro/configuracoes" replace state={{ justCreated: true }} /> : <Navigate to="/pro" replace />
   }
 
   return (
