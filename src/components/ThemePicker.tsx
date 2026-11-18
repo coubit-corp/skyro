@@ -4,7 +4,7 @@ import { readThemePref, saveThemePref, THEME_OPTIONS, type ThemePref } from '../
 
 const ICONS: Record<ThemePref, LucideIcon> = { claro: Sun, escuro: Moon, sistema: Monitor }
 
-/** "Aparência" em Meu perfil: troca na hora, sem precisar salvar. */
+/** "Aparência" em Configurações: troca na hora, sem precisar salvar. */
 export function ThemePicker() {
   const [pref, setPref] = useState<ThemePref>(readThemePref)
   const titleId = useId()
