@@ -1,15 +1,23 @@
-import { MessageSquare } from 'lucide-react'
+import { MapPin, MessageSquare } from 'lucide-react'
+import { lazy, Suspense } from 'react'
 import { Link } from 'react-router-dom'
 import { Avatar } from '../../components/Avatar'
 import { DemoBanner } from '../../components/DemoBanner'
 import { ErrorState, PageHeader, SectionTitle, Skeleton } from '../../components/ui'
 import { usePersonConversations } from '../../hooks/useMessages'
-import { useMyTeam } from '../../hooks/usePersonData'
+import { useGeolocation } from '../../hooks/useGeolocation'
+import { useMyTeam, useProfessionals } from '../../hooks/usePersonData'
 import { unreadLabel } from '../../lib/messages'
 import { SHARED_DATA, SPECIALTIES, specialtyLabel } from '../../lib/specialties'
 
+// O mapa (Leaflet) só carrega quando a tela abre, sem pesar no resto do app.
+const ProMap = lazy(() => import('../../components/ProMap').then((m) => ({ default: m.ProMap })))
+
 export function Saude() {
   const team = useMyTeam()
+  const pros = useProfessionals()
+  // Sem abrir o pedido de localização aqui: ele aparece só no mapa inteiro.
+  const geo = useGeolocation({ onlyIfAllowed: true })
   const conversations = usePersonConversations()
   const unreadFrom = (proId: string) => conversations.data?.find((c) => c.otherId === proId)?.unread ?? 0
   const unread = conversations.data?.reduce((n, c) => n + c.unread, 0) ?? 0
@@ -27,6 +35,18 @@ export function Saude() {
       >
         Encontrar perto de você
       </SectionTitle>
+      <Link
+        to="/saude/perto"
+        className="group relative mb-3 block h-36 overflow-hidden rounded-card border border-line bg-lavender-soft sm:h-44"
+        aria-label="Ver profissionais perto de você no mapa"
+      >
+        <Suspense fallback={null}>
+          {!geo.loading && <ProMap preview center={geo.position} pros={pros.data ?? []} />}
+        </Suspense>
+        <span className="absolute bottom-3 left-3 z-[500] inline-flex items-center gap-1.5 rounded-full bg-card px-3 py-1.5 text-sm font-semibold text-primary shadow transition group-hover:bg-lavender-soft">
+          <MapPin className="h-4 w-4" aria-hidden="true" /> Abrir mapa
+        </span>
+      </Link>
       <div className="grid grid-cols-2 gap-3">
         {SPECIALTIES.map((s) => (
           <Link
