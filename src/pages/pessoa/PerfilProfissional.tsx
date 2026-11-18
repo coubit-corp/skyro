@@ -156,7 +156,7 @@ export function PerfilProfissional() {
               registros e pode te mandar dicas entre as consultas.
             </p>
             <div className="grid gap-2 sm:grid-cols-2">
-              <Link to={`/saude/mensagens/${p.id}`} className="btn-primary gap-2">
+              <Link to={`/mensagens/${p.id}`} className="btn-primary gap-2">
                 <MessageSquare className="h-4 w-4" aria-hidden="true" /> Mandar mensagem
               </Link>
               <button className="btn-outline" onClick={() => setRevokeOpen(true)}>

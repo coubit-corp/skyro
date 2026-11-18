@@ -1,5 +1,6 @@
 import type { LucideIcon } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
+import { PersonUnreadBadge, ProUnreadBadge } from './UnreadBadge'
 import { isNavActive, type NavMatch } from '../lib/nav'
 
 export interface NavItem extends NavMatch {
@@ -7,12 +8,17 @@ export interface NavItem extends NavMatch {
   icon: LucideIcon
   /** Só aparece na barra lateral do desktop (no celular não cabe mais uma aba) */
   desktopOnly?: boolean
+  /** Mostra o número de mensagens não lidas ao lado do nome */
+  unreadFor?: 'person' | 'professional'
 }
 
 /**
  * Navegação principal. No celular fica fixa embaixo (como nos mockups);
  * em telas largas vira uma barra lateral.
  */
+/** No celular, em cima do ícone; no computador, no fim da linha. */
+const BADGE_POSITION = 'absolute top-1 left-[calc(50%+4px)] lg:static lg:ml-auto'
+
 export function BottomNav({ items }: { items: NavItem[] }) {
   const { pathname } = useLocation()
   return (
@@ -30,12 +36,14 @@ export function BottomNav({ items }: { items: NavItem[] }) {
               <Link
                 to={to}
                 aria-current={active ? 'page' : undefined}
-                className={`flex flex-col items-center gap-1 py-2.5 text-[11px] font-medium transition lg:flex-row lg:gap-3 lg:rounded-xl lg:px-3 lg:text-sm ${
+                className={`relative flex flex-col items-center gap-1 py-2.5 text-[11px] font-medium transition lg:flex-row lg:gap-3 lg:rounded-xl lg:px-3 lg:text-sm ${
                   active ? 'text-primary lg:bg-lavender-soft' : 'text-muted hover:text-ink'
                 }`}
               >
                 <Icon className="h-6 w-6 lg:h-5 lg:w-5" strokeWidth={1.75} aria-hidden="true" />
                 {label}
+                {item.unreadFor === 'person' && <PersonUnreadBadge className={BADGE_POSITION} />}
+                {item.unreadFor === 'professional' && <ProUnreadBadge className={BADGE_POSITION} />}
               </Link>
             </li>
           )
