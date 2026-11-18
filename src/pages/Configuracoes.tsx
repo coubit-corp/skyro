@@ -1,30 +1,45 @@
-import { ChevronRight, Info, UserRound } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Info } from 'lucide-react'
+import { lazy, Suspense } from 'react'
+import { useLocation } from 'react-router-dom'
 import { useAuth } from '../auth/auth-context'
 import { DemoBanner } from '../components/DemoBanner'
 import { SignOutButton } from '../components/SignOutButton'
 import { ThemePicker } from '../components/ThemePicker'
-import { PageHeader } from '../components/ui'
+import { ProfileTabs } from '../components/ProfileTabs'
+import { PageHeader, Skeleton } from '../components/ui'
 import { Perfil } from './pessoa/Perfil'
 
+// O perfil do profissional é grande (mapa, galeria): só carrega para quem é profissional.
+const MeuPerfil = lazy(() => import('./profissional/MeuPerfil').then((m) => ({ default: m.MeuPerfil })))
+const Galeria = lazy(() => import('./profissional/Galeria').then((m) => ({ default: m.Galeria })))
+
 /**
- * Configurações: aparência, conta e sair, para os três tipos de conta.
- * A pessoa edita o "Meu perfil" aqui mesmo; o profissional tem uma aba própria
- * de perfil (vitrine para os pacientes), então aqui fica só o atalho.
+ * Configurações: perfil, aparência, conta e sair.
+ * A pessoa edita o "Meu perfil" aqui mesmo. O profissional também, em duas
+ * abas: "Perfil" (dados, formação, redes e avaliações) e "Fotos e vídeos".
  */
 export function Configuracoes() {
   const { profile, session } = useAuth()
+  const { pathname } = useLocation()
   const isPerson = profile?.role === 'person'
-  const profilePath = profile?.role === 'professional' ? '/pro/perfil' : undefined
+  const isPro = profile?.role === 'professional'
+  const onGallery = pathname.replace(/\/+$/, '').endsWith('/galeria')
 
   return (
     <section className="space-y-6">
       <PageHeader
         title="Configurações"
-        subtitle={isPerson ? 'Seu perfil, a aparência do app e sua conta.' : 'Aparência do app e sua conta.'}
+        subtitle={isPerson || isPro ? 'Seu perfil, a aparência do app e sua conta.' : 'Aparência do app e sua conta.'}
       />
 
       {isPerson && <Perfil />}
+
+      {isPro && (
+        <div className="space-y-4">
+          <ProfileTabs />
+          <Suspense fallback={<Skeleton className="h-96" />}>{onGallery ? <Galeria /> : <MeuPerfil />}</Suspense>
+        </div>
+      )}
 
       <div className="space-y-4">
         <ThemePicker />
@@ -35,21 +50,6 @@ export function Configuracoes() {
             <p className="text-sm">
               Entrou como <span className="font-semibold">{session.user.email}</span>
             </p>
-          )}
-          {profilePath && (
-            <Link
-              to={profilePath}
-              className="tap -mx-2 justify-between gap-3 rounded-xl px-2 text-sm font-semibold hover:bg-lavender-soft"
-            >
-              <span className="flex items-center gap-3 py-1">
-                <UserRound className="h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
-                <span>
-                  Meu perfil
-                  <span className="block text-xs font-normal text-muted">Foto, nome, e-mail e telefone</span>
-                </span>
-              </span>
-              <ChevronRight className="h-4 w-4 text-muted" aria-hidden="true" />
-            </Link>
           )}
           <div className="pt-1">
             <SignOutButton />
