@@ -44,7 +44,7 @@ export function Saude() {
 
       <SectionTitle
         action={
-          <Link to="/saude/mensagens" className="tap gap-1.5 text-sm font-semibold text-primary">
+          <Link to="/mensagens" className="tap gap-1.5 text-sm font-semibold text-primary">
             <MessageSquare className="h-4 w-4" aria-hidden="true" /> Mensagens
             {unread > 0 && (
               <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-xs font-bold text-white">
@@ -85,7 +85,7 @@ export function Saude() {
                   Ver perfil
                 </Link>
               </div>
-              <Link to={`/saude/mensagens/${pro.id}`} className="btn-outline w-full gap-2 py-2.5">
+              <Link to={`/mensagens/${pro.id}`} className="btn-outline w-full gap-2 py-2.5">
                 <MessageSquare className="h-4 w-4" aria-hidden="true" />
                 Mensagem
                 {unreadFrom(pro.id) > 0 && (

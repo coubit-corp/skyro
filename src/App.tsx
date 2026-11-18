@@ -56,15 +56,16 @@ const PERSON_NAV: NavItem[] = [
   { to: '/plano', label: 'Plano', icon: ClipboardList },
   { to: '/rotina', label: 'Rotina', icon: CalendarDays },
   { to: '/progresso', label: 'Progresso', icon: ChartNoAxesColumn },
-  // "Meu perfil" fica dentro de Configurações. No celular, abre pela engrenagem
-  // ou pelo avatar no topo do Início (como nos mockups, são 5 abas).
+  // No celular, mensagens e configurações abrem pelos ícones no topo do Início
+  // (como nos mockups, são 5 abas). "Meu perfil" fica dentro de Configurações.
+  { to: '/mensagens', label: 'Mensagens', icon: MessageSquare, desktopOnly: true, unreadFor: 'person' },
   { to: '/configuracoes', label: 'Configurações', icon: Settings, desktopOnly: true },
 ]
 
 const PRO_NAV: NavItem[] = [
   { to: '/pro', label: 'Pacientes', icon: Users, end: true, alsoActiveOn: ['/pro/pacientes'] },
   { to: '/pro/agenda', label: 'Agenda', icon: CalendarDays },
-  { to: '/pro/mensagens', label: 'Mensagens', icon: MessageSquare },
+  { to: '/pro/mensagens', label: 'Mensagens', icon: MessageSquare, unreadFor: 'professional' },
   // O perfil (dados, fotos e vídeos, avaliações) fica dentro de Configurações.
   { to: '/pro/configuracoes', label: 'Ajustes', icon: Settings },
 ]
@@ -114,8 +115,9 @@ export default function App() {
                 <Route path="/saude" element={<Saude />} />
                 <Route path="/saude/perto" element={<PertoDeVoce />} />
                 <Route path="/saude/profissional/:id" element={<PerfilProfissional />} />
-                <Route path="/saude/mensagens" element={<MensagensPessoa />} />
-                <Route path="/saude/mensagens/:proId" element={<MensagensPessoa />} />
+                <Route path="/mensagens" element={<MensagensPessoa />} />
+                <Route path="/mensagens/:proId" element={<MensagensPessoa />} />
+                <Route path="/saude/mensagens" element={<Navigate to="/mensagens" replace />} />
                 <Route path="/rotina" element={<Rotina />} />
                 <Route path="/plano" element={<Plano />} />
                 <Route path="/perfil" element={<Navigate to="/configuracoes" replace />} />
