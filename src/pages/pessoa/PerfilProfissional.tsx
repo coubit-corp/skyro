@@ -1,15 +1,19 @@
-import { BadgeCheck, ChevronLeft, ShieldCheck } from 'lucide-react'
+import { BadgeCheck, ChevronLeft, Pencil, ShieldCheck, Star } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Avatar } from '../../components/Avatar'
 import { DemoBanner } from '../../components/DemoBanner'
 import { Rating } from '../../components/ProCard'
+import { ExperienceCard, MediaGrid, RatingSummary, ReviewForm, ReviewItem, SocialButtons } from '../../components/Showcase'
 import { ErrorState, Modal, Skeleton } from '../../components/ui'
 import { useGeolocation } from '../../hooks/useGeolocation'
 import { useMyTeam, useProfessional, useRevokeShare, useShareRoutine } from '../../hooks/usePersonData'
+import { useCanReview, useDeleteReview, useProMedia, useProReviews, useSaveReview } from '../../hooks/useShowcase'
+import { useAuth } from '../../auth/auth-context'
 import { distanceKm, formatDistance } from '../../lib/geo'
 import { availabilityLines } from '../../lib/profile'
 import { MODALITY_LABEL, SHARED_DATA, specialtyLabel } from '../../lib/specialties'
+import { acceptsReviews } from '../../lib/vitrine'
 
 export function PerfilProfissional() {
   const { id } = useParams()
@@ -19,6 +23,14 @@ export function PerfilProfissional() {
   const geo = useGeolocation()
   const share = useShareRoutine()
   const revoke = useRevokeShare()
+  const { session } = useAuth()
+  const reviewable = Boolean(pro.data && acceptsReviews(pro.data.specialty))
+  const media = useProMedia(id)
+  const reviews = useProReviews(id, reviewable)
+  const canReview = useCanReview(id, reviewable)
+  const saveReview = useSaveReview()
+  const deleteReview = useDeleteReview()
+  const [reviewOpen, setReviewOpen] = useState(false)
 
   const [consentOpen, setConsentOpen] = useState(false)
   const [agreed, setAgreed] = useState(false)
@@ -47,6 +59,12 @@ export function PerfilProfissional() {
   const km = p.lat != null && p.lng != null ? distanceKm(geo.position, { lat: p.lat, lng: p.lng }) : null
   const firstName = p.profiles.full_name.split(' ')[0]
   const hours = availabilityLines(p.availability)
+  const myReview = reviews.data?.find((r) => r.person_id === session?.user.id)
+  const closeReview = () => {
+    setReviewOpen(false)
+    saveReview.reset()
+    deleteReview.reset()
+  }
 
   return (
     <section className="space-y-4">
@@ -98,6 +116,17 @@ export function PerfilProfissional() {
         {p.neighborhood && <p className="text-xs text-muted">{p.neighborhood}, {p.city}</p>}
       </div>
 
+      <ExperienceCard pro={p} />
+
+      <SocialButtons links={p.social_links ?? {}} firstName={firstName} />
+
+      {media.data && media.data.length > 0 && (
+        <div className="card space-y-3">
+          <h2 className="eyebrow">Fotos e vídeos</h2>
+          <MediaGrid items={media.data} />
+        </div>
+      )}
+
       {hours.length > 0 && (
         <div className="card space-y-2">
           <h2 className="eyebrow">Horários de atendimento</h2>
@@ -143,7 +172,84 @@ export function PerfilProfissional() {
         )}
       </div>
 
+      {reviewable && (
+        <div className="card space-y-3">
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="eyebrow">Avaliações</h2>
+            {canReview.data && (
+              <button className="btn-outline gap-1.5 px-3 py-2 text-sm" onClick={() => setReviewOpen(true)}>
+                {myReview ? (
+                  <>
+                    <Pencil className="h-4 w-4" aria-hidden="true" /> Editar a minha
+                  </>
+                ) : (
+                  <>
+                    <Star className="h-4 w-4" aria-hidden="true" /> Avaliar
+                  </>
+                )}
+              </button>
+            )}
+          </div>
+          {reviews.isLoading ? (
+            <Skeleton className="h-24" />
+          ) : reviews.data && reviews.data.length > 0 ? (
+            <>
+              <RatingSummary rating={p.rating} count={p.reviews_count} reviews={reviews.data} />
+              <ul className="space-y-3 border-t border-line pt-3">
+                {reviews.data.map((r) => (
+                  <ReviewItem key={r.id} review={r} mine={r.id === myReview?.id} />
+                ))}
+              </ul>
+            </>
+          ) : (
+            <p className="text-sm text-muted">
+              Ainda sem avaliações.
+              {canReview.data ? ` Seja a primeira pessoa a avaliar ${firstName}.` : ''}
+            </p>
+          )}
+          {canReview.data === false && (
+            <p className="text-xs text-muted">Só avalia quem já compartilhou a rotina com {firstName}.</p>
+          )}
+        </div>
+      )}
+
       <DemoBanner />
+
+      <Modal
+        open={reviewOpen}
+        onClose={closeReview}
+        title={myReview ? 'Editar sua avaliação' : `Avaliar ${firstName}`}
+      >
+        {reviewOpen && (
+          <ReviewForm
+            initialRating={myReview?.rating}
+            initialComment={myReview?.comment}
+            saving={saveReview.isPending || deleteReview.isPending}
+            error={saveReview.error?.message ?? deleteReview.error?.message}
+            onCancel={closeReview}
+            onSubmit={async (rating, comment) => {
+              try {
+                await saveReview.mutateAsync({ proId: p.id, rating, comment, existingId: myReview?.id })
+                closeReview()
+              } catch {
+                /* a mensagem aparece no formulário */
+              }
+            }}
+            onDelete={
+              myReview
+                ? async () => {
+                    try {
+                      await deleteReview.mutateAsync({ id: myReview.id, proId: p.id })
+                      closeReview()
+                    } catch {
+                      /* a mensagem aparece no formulário */
+                    }
+                  }
+                : undefined
+            }
+          />
+        )}
+      </Modal>
 
       {/* Consentimento explícito (especificação, seção 10) */}
       <Modal open={consentOpen} onClose={() => { setConsentOpen(false); setAgreed(false); share.reset() }} title={`Compartilhar com ${firstName}?`}>

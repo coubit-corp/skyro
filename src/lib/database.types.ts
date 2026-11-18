@@ -49,6 +49,47 @@ export interface Professional {
   rejection_reason: string | null
   /** Quando a equipe decidiu pela última vez. Nulo = nunca revisado. */
   reviewed_at: string | null
+  /** Onde se formou (texto livre, até 200 caracteres). */
+  education: string
+  years_experience: number | null
+  /** Ano de nascimento: a tela mostra só a idade. */
+  birth_year: number | null
+  /** Experiências, uma por linha (até 8). */
+  experiences: string[]
+  /** Links https das redes sociais (validados pelo banco). */
+  social_links: SocialLinks
+}
+
+export type SocialNetwork = 'instagram' | 'facebook' | 'tiktok' | 'youtube' | 'linkedin' | 'site'
+export type SocialLinks = Partial<Record<SocialNetwork, string>>
+
+export type MediaKind = 'foto' | 'video' | 'link'
+export type MediaProvider = 'youtube' | 'drive' | 'vimeo'
+
+/** Item da galeria: arquivo no bucket "portfolio" ou vídeo do YouTube, Drive ou Vimeo. */
+export interface ProfessionalMedia {
+  id: string
+  professional_id: string
+  kind: MediaKind
+  storage_path: string | null
+  provider: MediaProvider | null
+  external_id: string | null
+  caption: string
+  created_at: string
+}
+
+/** Avaliação de quem já compartilhou a rotina com o profissional. */
+export interface ProfessionalReview {
+  id: string
+  professional_id: string
+  person_id: string
+  rating: number
+  comment: string
+  /** "Lucas M.", gravado pelo banco */
+  author_name: string
+  author_avatar_seed: string | null
+  created_at: string
+  updated_at: string
 }
 
 export interface RegistryReview {
