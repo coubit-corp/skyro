@@ -1,3 +1,4 @@
+import { Settings } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../auth/auth-context'
@@ -51,13 +52,22 @@ export function Inicio() {
     <section className="space-y-4">
       <header className="flex items-center justify-between lg:hidden">
         <Logo />
-        <Link
-          to="/perfil"
-          className="flex h-11 w-11 items-center justify-center rounded-full ring-lavender transition hover:ring-2"
-          aria-label="Meu perfil"
-        >
-          <Avatar seed={profile?.avatar_seed} photo={profile?.avatar_path} name={profile?.full_name || 'você'} size={40} />
-        </Link>
+        <div className="flex items-center gap-1">
+          <Link
+            to="/configuracoes"
+            className="flex h-11 w-11 items-center justify-center rounded-full text-muted transition hover:bg-lavender-soft hover:text-ink"
+            aria-label="Configurações"
+          >
+            <Settings className="h-6 w-6" strokeWidth={1.75} aria-hidden="true" />
+          </Link>
+          <Link
+            to="/perfil"
+            className="flex h-11 w-11 items-center justify-center rounded-full ring-lavender transition hover:ring-2"
+            aria-label="Meu perfil"
+          >
+            <Avatar seed={profile?.avatar_seed} photo={profile?.avatar_path} name={profile?.full_name || 'você'} size={40} />
+          </Link>
+        </div>
       </header>
 
       <div>

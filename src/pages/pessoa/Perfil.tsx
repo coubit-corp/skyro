@@ -1,4 +1,5 @@
-import { CheckCircle2 } from 'lucide-react'
+import { CheckCircle2, ChevronRight } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { useId, useState, type FormEvent } from 'react'
 import { useAuth } from '../../auth/auth-context'
 import { AccountSection } from '../../components/AccountSection'
@@ -178,6 +179,12 @@ function PerfilForm({ profile, email, phone }: { profile: Profile; email: string
           </button>
         </div>
       </form>
+
+      <div className="mt-4">
+        <Link to="/configuracoes" className="tap gap-1 text-sm font-semibold text-primary">
+        Aparência e conta em Configurações <ChevronRight className="h-4 w-4" aria-hidden="true" />
+      </Link>
+      </div>
 
       <div className="mt-6 lg:hidden">
         <SignOutButton />

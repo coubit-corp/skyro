@@ -7,6 +7,7 @@ import {
   History,
   House,
   MessageSquare,
+  Settings,
   User,
   Users,
 } from 'lucide-react'
@@ -23,6 +24,7 @@ import type { NavItem } from './components/BottomNav'
 import { FullScreenLoader } from './components/FullScreenLoader'
 import { supabaseConfigured } from './lib/supabase'
 import { ComingSoon } from './pages/ComingSoon'
+import { Configuracoes } from './pages/Configuracoes'
 import { ConfigMissing } from './pages/ConfigMissing'
 import { Login } from './pages/Login'
 import { NotFound } from './pages/NotFound'
@@ -36,6 +38,8 @@ const PerfilProfissional = lazy(() =>
 const PertoDeVoce = lazy(() => import('./pages/pessoa/PertoDeVoce').then((m) => ({ default: m.PertoDeVoce })))
 const Perfil = lazy(() => import('./pages/pessoa/Perfil').then((m) => ({ default: m.Perfil })))
 const Plano = lazy(() => import('./pages/pessoa/Plano').then((m) => ({ default: m.Plano })))
+const Progresso = lazy(() => import('./pages/pessoa/Progresso').then((m) => ({ default: m.Progresso })))
+const ResumoSemana = lazy(() => import('./pages/pessoa/ResumoSemana').then((m) => ({ default: m.ResumoSemana })))
 const Rotina = lazy(() => import('./pages/pessoa/Rotina').then((m) => ({ default: m.Rotina })))
 const Saude = lazy(() => import('./pages/pessoa/Saude').then((m) => ({ default: m.Saude })))
 const Paciente = lazy(() => import('./pages/profissional/Paciente').then((m) => ({ default: m.Paciente })))
@@ -55,6 +59,8 @@ const PERSON_NAV: NavItem[] = [
   { to: '/progresso', label: 'Progresso', icon: ChartNoAxesColumn },
   // No celular, o perfil abre pelo avatar no topo do Início (como nos mockups, são 5 abas).
   { to: '/perfil', label: 'Meu perfil', icon: User, desktopOnly: true },
+  // No celular, as configurações abrem pela engrenagem no topo do Início.
+  { to: '/configuracoes', label: 'Configurações', icon: Settings, desktopOnly: true },
 ]
 
 const PRO_NAV: NavItem[] = [
@@ -62,12 +68,14 @@ const PRO_NAV: NavItem[] = [
   { to: '/pro/agenda', label: 'Agenda', icon: CalendarDays },
   { to: '/pro/mensagens', label: 'Mensagens', icon: MessageSquare },
   { to: '/pro/perfil', label: 'Perfil', icon: User },
+  { to: '/pro/configuracoes', label: 'Ajustes', icon: Settings },
 ]
 
 // Equipe Skyro: só quem tem papel admin (dado por SQL).
 const TEAM_NAV: NavItem[] = [
   { to: '/equipe', label: 'Pendentes', icon: BadgeCheck, end: true },
   { to: '/equipe/decididos', label: 'Decididos', icon: History },
+  { to: '/equipe/configuracoes', label: 'Configurações', icon: Settings },
 ]
 
 const queryClient = new QueryClient({
@@ -111,7 +119,9 @@ export default function App() {
                 <Route path="/rotina" element={<Rotina />} />
                 <Route path="/plano" element={<Plano />} />
                 <Route path="/perfil" element={<Perfil />} />
-                <Route path="/progresso" element={<ComingSoon title="Seu progresso" />} />
+                <Route path="/configuracoes" element={<Configuracoes />} />
+                <Route path="/progresso" element={<Progresso />} />
+                <Route path="/progresso/semana" element={<ResumoSemana />} />
               </Route>
 
               {/* App do profissional */}
@@ -129,6 +139,7 @@ export default function App() {
                 <Route path="/pro/agenda" element={<ComingSoon title="Agenda" />} />
                 <Route path="/pro/mensagens" element={<ComingSoon title="Mensagens" />} />
                 <Route path="/pro/perfil" element={<MeuPerfil />} />
+                <Route path="/pro/configuracoes" element={<Configuracoes />} />
               </Route>
 
               {/* Área da equipe: aprovar ou recusar registros de conselho */}
@@ -141,6 +152,7 @@ export default function App() {
               >
                 <Route path="/equipe" element={<Registros view="pendentes" />} />
                 <Route path="/equipe/decididos" element={<Registros view="decididos" />} />
+                <Route path="/equipe/configuracoes" element={<Configuracoes />} />
               </Route>
 
               {/* Fora do painel: quem ainda não tem perfil profissional completo */}

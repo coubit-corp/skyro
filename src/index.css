@@ -23,6 +23,44 @@
   --font-display: 'Poppins', 'Inter', system-ui, sans-serif;
 
   --radius-card: 1.25rem;
+
+  /* Marca da Skyro no logo */
+  --color-logo: #4c63b6;
+  /* barras do gráfico de sono abaixo da meta */
+  --color-bar-low: #8ea2e6;
+}
+
+/*
+ * Modo escuro (Meu perfil → Aparência). Troca só as variáveis da paleta:
+ * as telas usam as mesmas classes nos dois modos. Contraste conferido para
+ * WCAG AA: texto ≥ 4,5:1 sobre os fundos escuros.
+ */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --color-surface: #0e1424;
+  --color-card: #182035;
+  --color-line: #2a3450;
+  --color-chip: #232d47;
+  --color-ink: #e6ebf7;
+  --color-muted: #9aa6c2;
+  /* azul mais claro para ler bem como texto e link sobre o fundo escuro */
+  --color-primary: #9fb0ec;
+  --color-primary-dark: #b4c2f2;
+  --color-lavender: #7f93d8;
+  --color-lavender-soft: #26315a;
+  /* cartões de destaque (XP, strike, cabeçalhos) ficam um pouco acima do fundo */
+  --color-navy: #22305a;
+  --color-navy-soft: #2d3d6e;
+  --color-attention: #f0a07a;
+  --color-attention-soft: #4a2a1f;
+  --color-logo: #9fb0ec;
+  --color-bar-low: #3f4f86;
+}
+
+/* No escuro, o azul de fundo é claro: o texto em cima dele fica escuro. */
+:root[data-theme='dark'] .bg-primary,
+:root[data-theme='dark'] .btn-primary {
+  color: #0e1424;
 }
 
 @layer base {
