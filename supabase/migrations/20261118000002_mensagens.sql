@@ -13,10 +13,14 @@
 --   3. Contas demo são públicas: só conversam com contas demo (não mandam
 --      mensagem para pessoas ou profissionais de verdade).
 --
+-- Pode rodar mais de uma vez, e também por cima da tabela "messages" criada
+-- pelo chat do branch etapa-13-chat (mesmas colunas): a tabela e as mensagens
+-- ficam, e as regras de acesso são trocadas pelas daqui.
+--
 -- Rodar no Supabase: SQL Editor → colar → Run (depois das migrations anteriores).
 -- =============================================================================
 
-create table public.messages (
+create table if not exists public.messages (
   id               uuid primary key default gen_random_uuid(),
   person_id        uuid not null references public.profiles (id) on delete cascade,
   professional_id  uuid not null references public.professionals (id) on delete cascade,
@@ -24,14 +28,16 @@ create table public.messages (
   body             text not null check (length(trim(body)) between 1 and 2000),
   created_at       timestamptz not null default now(),
   read_at          timestamptz,
-  check (sender_id in (person_id, professional_id)),
-  check (person_id <> professional_id)
+  check (sender_id in (person_id, professional_id))
 );
+
+alter table public.messages drop constraint if exists messages_pessoa_diferente;
+alter table public.messages add constraint messages_pessoa_diferente check (person_id <> professional_id);
 
 comment on table public.messages is 'Mensagens entre a pessoa e um profissional com compartilhamento ativo.';
 
-create index messages_conversa_idx on public.messages (professional_id, person_id, created_at desc);
-create index messages_pessoa_idx on public.messages (person_id, created_at desc);
+create index if not exists messages_conversa_idx on public.messages (professional_id, person_id, created_at desc);
+create index if not exists messages_pessoa_idx on public.messages (person_id, created_at desc);
 
 -- Existe compartilhamento ativo entre esta pessoa e este profissional?
 create or replace function public.share_is_active(p_person uuid, p_professional uuid)
@@ -68,6 +74,12 @@ $$;
 
 alter table public.messages enable row level security;
 
+-- Tira as regras anteriores (desta migration ou do chat da etapa 13).
+drop policy if exists "messages: leitura" on public.messages;
+drop policy if exists "messages: envio" on public.messages;
+drop policy if exists "messages: enviar" on public.messages;
+drop policy if exists "messages: marcar como lida" on public.messages;
+
 -- A pessoa lê todo o histórico dela; o profissional, só enquanto ela compartilha.
 create policy "messages: leitura" on public.messages
   for select to authenticated
@@ -97,3 +109,16 @@ create policy "messages: marcar como lida" on public.messages
 revoke insert, update, delete on public.messages from authenticated, anon;
 grant insert (person_id, professional_id, sender_id, body) on public.messages to authenticated;
 grant update (read_at) on public.messages to authenticated;
+
+-- Tempo real do Supabase (o app atual busca de novo a cada 8 s; com isto, a
+-- publicação já fica pronta). As regras acima também valem para o tempo real.
+do $$
+begin
+  if exists (select 1 from pg_publication where pubname = 'supabase_realtime')
+     and not exists (
+       select 1 from pg_publication_tables
+       where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'messages'
+     ) then
+    execute 'alter publication supabase_realtime add table public.messages';
+  end if;
+end $$;
