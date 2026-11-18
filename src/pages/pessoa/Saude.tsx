@@ -1,12 +1,18 @@
+import { MessageSquare } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Avatar } from '../../components/Avatar'
 import { DemoBanner } from '../../components/DemoBanner'
 import { ErrorState, PageHeader, SectionTitle, Skeleton } from '../../components/ui'
+import { usePersonConversations } from '../../hooks/useMessages'
 import { useMyTeam } from '../../hooks/usePersonData'
+import { unreadLabel } from '../../lib/messages'
 import { SHARED_DATA, SPECIALTIES, specialtyLabel } from '../../lib/specialties'
 
 export function Saude() {
   const team = useMyTeam()
+  const conversations = usePersonConversations()
+  const unreadFrom = (proId: string) => conversations.data?.find((c) => c.otherId === proId)?.unread ?? 0
+  const unread = conversations.data?.reduce((n, c) => n + c.unread, 0) ?? 0
 
   return (
     <section>
@@ -36,7 +42,21 @@ export function Saude() {
         ))}
       </div>
 
-      <SectionTitle>Sua equipe</SectionTitle>
+      <SectionTitle
+        action={
+          <Link to="/saude/mensagens" className="tap gap-1.5 text-sm font-semibold text-primary">
+            <MessageSquare className="h-4 w-4" aria-hidden="true" /> Mensagens
+            {unread > 0 && (
+              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-xs font-bold text-white">
+                {unread}
+                <span className="sr-only"> ({unreadLabel(unread)})</span>
+              </span>
+            )}
+          </Link>
+        }
+      >
+        Sua equipe
+      </SectionTitle>
       {team.isLoading ? (
         <div className="space-y-3">
           <Skeleton className="h-28" />
@@ -65,6 +85,16 @@ export function Saude() {
                   Ver perfil
                 </Link>
               </div>
+              <Link to={`/saude/mensagens/${pro.id}`} className="btn-outline w-full gap-2 py-2.5">
+                <MessageSquare className="h-4 w-4" aria-hidden="true" />
+                Mensagem
+                {unreadFrom(pro.id) > 0 && (
+                  <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-xs font-bold text-white">
+                    {unreadFrom(pro.id)}
+                    <span className="sr-only"> ({unreadLabel(unreadFrom(pro.id))})</span>
+                  </span>
+                )}
+              </Link>
               <div className="flex flex-wrap gap-1.5">
                 {SHARED_DATA.map((d) => (
                   <span key={d} className="chip">

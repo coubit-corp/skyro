@@ -29,7 +29,7 @@ Pré-requisito: Node.js 20 ou mais novo.
 
 3. No **SQL Editor** do Supabase, rode **em ordem**:
    1. as migrations de `supabase/migrations/`
-   2. os seeds `supabase/seed/01_contas_demo.sql`, `02_catalogo_demo.sql`, `03_pacientes_demo.sql` e `04_vitrine_demo.sql`
+   2. os seeds `supabase/seed/01_contas_demo.sql`, `02_catalogo_demo.sql`, `03_pacientes_demo.sql`, `04_vitrine_demo.sql` e `05_mensagens_demo.sql`
 
 4. Suba o app:
 
@@ -79,6 +79,7 @@ docs/            especificação, pitch, análise de mercado, mockups e guias
 | `20261115000002_planos.sql` | "Meu plano": itens por especialidade (`plan_items`), recado (`plan_notes`), marcações (`plan_checks`) e dor do dia (`daily_logs.pain_level`) |
 | `20261116000001_perfil.sql` | Configurações de perfil: `profiles.bio` e `avatar_path`, telefone privado (`private_contacts`), horários (`professionals.availability`) e o bucket `avatars` |
 | `20261118000001_vitrine_profissional.sql` | Vitrine do profissional: formação, anos na área, ano de nascimento, experiências e redes sociais (`professionals`), galeria (`professional_media` e bucket `portfolio`) e avaliações (`professional_reviews`), com nota e total recalculados pelo banco |
+| `20261118000002_mensagens.sql` | Mensagens entre a pessoa e o profissional (`messages`), só com compartilhamento ativo |
 
 Regra central, garantida pelo banco (RLS) e não só pela tela: **o profissional só lê a rotina de quem compartilhou com ele, e perde o acesso na hora em que a pessoa revoga.**
 
@@ -92,6 +93,7 @@ Regra central, garantida pelo banco (RLS) e não só pela tela: **o profissional
 - **Galeria do profissional:** bucket `portfolio` (fotos reduzidas no aparelho e vídeos de até 50 MB). Mesma regra da pasta própria; no máximo 12 itens. Vídeos do YouTube, Google Drive e Vimeo guardam só o código do vídeo, e o app monta o endereço do player oficial.
 - **Redes sociais:** o banco só aceita links `https` do próprio site de cada rede (Instagram, Facebook, TikTok, YouTube, LinkedIn) e `https` para o site. Contas demo não colocam links.
 - **Avaliações:** só avalia quem já compartilhou a rotina com o profissional (mesmo que tenha parado), uma por pessoa. A avaliação mostra só o primeiro nome e a inicial do sobrenome, gravados pelo banco. Psicólogos não recebem avaliações públicas (regras do CFP). Conta demo só avalia profissional demo.
+- **Mensagens:** só conversa quem tem compartilhamento ativo. Quando a pessoa para de compartilhar, o profissional perde o acesso à conversa (inclusive ao histórico) e ninguém manda mensagem nova; a pessoa continua lendo o próprio histórico. Ninguém edita nem apaga mensagens, e só quem recebeu marca como lida. Contas demo só conversam com contas demo. Sem tempo real: a conversa aberta é buscada de novo a cada 8 s.
 - **Equipe (admin):** o papel só é dado por SQL; o cadastro pelo app nunca cria admin. O selo só muda pela função `review_professional()`, que confere o papel de quem chama. A conta demo da equipe só decide sobre perfis demo.
 
 ## Como a IA entra
@@ -113,11 +115,11 @@ createdb skyro_teste
 ```
 
 ```bash
-psql -d skyro_teste -f supabase/tests/00_stub_supabase.sql -f supabase/migrations/20261113000001_schema_inicial.sql -f supabase/migrations/20261114000001_resumos_ia.sql -f supabase/migrations/20261114000002_cadastro_profissional.sql -f supabase/migrations/20261115000001_aprovacao_registros.sql -f supabase/migrations/20261115000002_planos.sql -f supabase/migrations/20261116000001_perfil.sql -f supabase/migrations/20261118000001_vitrine_profissional.sql
+psql -d skyro_teste -f supabase/tests/00_stub_supabase.sql -f supabase/migrations/20261113000001_schema_inicial.sql -f supabase/migrations/20261114000001_resumos_ia.sql -f supabase/migrations/20261114000002_cadastro_profissional.sql -f supabase/migrations/20261115000001_aprovacao_registros.sql -f supabase/migrations/20261115000002_planos.sql -f supabase/migrations/20261116000001_perfil.sql -f supabase/migrations/20261118000001_vitrine_profissional.sql -f supabase/migrations/20261118000002_mensagens.sql
 ```
 
 ```bash
-psql -d skyro_teste -f supabase/seed/01_contas_demo.sql -f supabase/seed/02_catalogo_demo.sql -f supabase/seed/03_pacientes_demo.sql -f supabase/seed/04_vitrine_demo.sql
+psql -d skyro_teste -f supabase/seed/01_contas_demo.sql -f supabase/seed/02_catalogo_demo.sql -f supabase/seed/03_pacientes_demo.sql -f supabase/seed/04_vitrine_demo.sql -f supabase/seed/05_mensagens_demo.sql
 ```
 
 ```bash
@@ -142,6 +144,10 @@ psql -d skyro_teste -f supabase/tests/06_perfil.sql
 
 ```bash
 psql -d skyro_teste -f supabase/tests/07_vitrine.sql
+```
+
+```bash
+psql -d skyro_teste -f supabase/tests/08_mensagens.sql
 ```
 
 Rode um arquivo por comando: cada teste muda o papel da sessão, e o seguinte precisa começar do zero. O 04, o 05 e o 06 mudam dados, então rode cada um num banco recém-criado (com o stub, as migrations e os seeds).

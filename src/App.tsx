@@ -41,6 +41,8 @@ const ResumoSemana = lazy(() => import('./pages/pessoa/ResumoSemana').then((m) =
 const Rotina = lazy(() => import('./pages/pessoa/Rotina').then((m) => ({ default: m.Rotina })))
 const Saude = lazy(() => import('./pages/pessoa/Saude').then((m) => ({ default: m.Saude })))
 const Paciente = lazy(() => import('./pages/profissional/Paciente').then((m) => ({ default: m.Paciente })))
+const MensagensPro = lazy(() => import('./pages/profissional/Mensagens').then((m) => ({ default: m.Mensagens })))
+const MensagensPessoa = lazy(() => import('./pages/pessoa/Mensagens').then((m) => ({ default: m.Mensagens })))
 const CompletarPerfil = lazy(() =>
   import('./pages/profissional/CompletarPerfil').then((m) => ({ default: m.CompletarPerfil })),
 )
@@ -112,6 +114,8 @@ export default function App() {
                 <Route path="/saude" element={<Saude />} />
                 <Route path="/saude/perto" element={<PertoDeVoce />} />
                 <Route path="/saude/profissional/:id" element={<PerfilProfissional />} />
+                <Route path="/saude/mensagens" element={<MensagensPessoa />} />
+                <Route path="/saude/mensagens/:proId" element={<MensagensPessoa />} />
                 <Route path="/rotina" element={<Rotina />} />
                 <Route path="/plano" element={<Plano />} />
                 <Route path="/perfil" element={<Navigate to="/configuracoes" replace />} />
@@ -133,7 +137,8 @@ export default function App() {
                 <Route path="/pro" element={<Pacientes />} />
                 <Route path="/pro/pacientes/:id" element={<Paciente />} />
                 <Route path="/pro/agenda" element={<ComingSoon title="Agenda" />} />
-                <Route path="/pro/mensagens" element={<ComingSoon title="Mensagens" />} />
+                <Route path="/pro/mensagens" element={<MensagensPro />} />
+                <Route path="/pro/mensagens/:personId" element={<MensagensPro />} />
                 <Route path="/pro/perfil" element={<Navigate to="/pro/configuracoes" replace />} />
                 <Route path="/pro/perfil/galeria" element={<Navigate to="/pro/configuracoes/galeria" replace />} />
                 <Route path="/pro/configuracoes" element={<Configuracoes />} />
