@@ -119,6 +119,31 @@ Tudo está no código, com 40 testes automáticos, regras de acesso testadas no 
 - **Sem botão no login**, por decisão da equipe: a tela continua com os três botões de sempre. Para entrar, digite o e-mail (`demo.catalogo.3@skyro.app` para o personal, `.1` para o psicólogo e `.8` para a fisio) e a senha `skyro-demo-2026`
 - Corrigido o seed 02, que falhava quando era rodado de novo sozinho, sem o 01 antes
 
+### Etapa 13: aba Progresso
+- A aba **Progresso** saiu do "em construção", seguindo os mockups `mvp-progresso` e `mvp-relatorio-semanal`
+- **XP e nível** (Bronze, Prata, Ouro, Diamante), calculados com os registros dos últimos 60 dias: +10 por hábito marcado, +20 por dia registrado, +30 por treino, +10 pela meta de água e +10 por noite de 7h ou mais. A tela explica as regras em "Como ganhar XP"
+- **Skyro Score da semana** (0 a 100): média de sono, treinos, hidratação e constância dos últimos 7 dias, com seta comparando com os 7 dias anteriores. Sem registro do dia, não há Score
+- **Conquistas:** 7 dias seguidos, Sono em dia, 10 h de foco e 12 treinos, com o percentual das que faltam
+- **Sono na semana:** gráfico de barras dos 7 dias, com a média
+- **Resumo da semana** (`/progresso/semana`): Score com anel, "Você fez" (treinos, sono, foco, água e strike), o melhor resultado, uma sugestão do que melhorar e como o Score é calculado
+- **Sem tabela nova e sem IA:** tudo sai dos registros que a pessoa já faz, por regras fixas em `src/lib/progress.ts`, com testes
+- **Liga e Loja Skyro continuam fora** (roadmap): precisam de outros usuários e de uma loja de verdade
+
+### Etapa 14: modo escuro
+- **Aparência** (hoje em Configurações, veja a etapa 15), para a pessoa, o profissional e a equipe: **Claro**, **Escuro** ou **Automático** (segue o celular ou o computador). Troca na hora, sem precisar salvar
+- A escolha fica **só no aparelho** (não vai para o banco) e é aplicada antes de o app abrir, para a tela não piscar branco
+- O padrão continua sendo o **claro**, igual aos mockups
+- Todas as telas usam as mesmas classes nos dois modos: só a paleta muda (`src/index.css`). No escuro, o azul fica mais claro e o texto em cima dele fica escuro, para manter o contraste WCAG AA
+- Conferido no Início, Rotina, Plano, Saúde, Perto de você, Progresso, Meu perfil, login, lista de pacientes e ficha do paciente
+
+### Etapa 15: aba Configurações
+- Nova tela **Configurações**, com **Aparência** (claro, escuro ou automático), atalho para **Meu perfil** e **Sair**
+- **Como achar:**
+  - **Pessoa:** engrenagem no topo do Início (celular) ou "Configurações" na barra lateral (computador)
+  - **Profissional:** aba **Ajustes** no menu, embaixo no celular e na lateral no computador
+  - **Equipe:** "Configurações" no menu
+- A escolha do tema saiu de Meu perfil e foi para Configurações. O perfil ganhou um atalho para lá
+
 ### Qualidade
 | O quê | Situação |
 |---|---|
@@ -210,7 +235,7 @@ Seguir `docs/DEPLOY-VERCEL.md`. Precisa estar no ar **antes de gravar o vídeo**
 
 ### 7. Se sobrar tempo (roadmap)
 - **Avisos reais no WhatsApp** (lembrete de dormir, dica nova)
-- **Aba Progresso** dos mockups (Liga, Loja, XP). A aba Plano foi feita na etapa 10
+- **Liga e Loja Skyro** (a aba Progresso, com XP, Score e conquistas, foi feita na etapa 13)
 - **Chat** entre pessoa e profissional, inclusive direto do plano (o botão "Conversar com o fisio" do mockup)
 - **Agenda e consultas**
 

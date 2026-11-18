@@ -1,6 +1,6 @@
-import { BadgeCheck, CalendarClock, CircleX, Clock, Lock, MapPin, Pencil, Star } from 'lucide-react'
+import { BadgeCheck, CalendarClock, ChevronRight, CircleX, Clock, Lock, MapPin, Pencil, Star } from 'lucide-react'
 import { useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../../auth/auth-context'
 import { AccountSection } from '../../components/AccountSection'
 import { AvailabilityEditor } from '../../components/AvailabilityEditor'
@@ -275,6 +275,10 @@ export function MeuPerfil() {
           Privado: os pacientes não veem seu e-mail nem seu telefone.
         </p>
       </div>
+
+      <Link to="/pro/configuracoes" className="tap gap-1 text-sm font-semibold text-primary">
+        Aparência e conta em Configurações <ChevronRight className="h-4 w-4" aria-hidden="true" />
+      </Link>
 
       <div className="lg:hidden">
         <SignOutButton />
