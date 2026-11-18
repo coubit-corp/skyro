@@ -25,13 +25,28 @@ const meIcon = L.divIcon({
   iconAnchor: [11, 11],
 })
 
-export function ProMap({ center, pros }: { center: LatLng; pros: ProfessionalWithProfile[] }) {
+export function ProMap({
+  center,
+  pros,
+  preview = false,
+}: {
+  center: LatLng
+  pros: ProfessionalWithProfile[]
+  /** Pedacinho do mapa, parado e sem cliques (a tela Saúde leva ao mapa inteiro) */
+  preview?: boolean
+}) {
   return (
     <MapContainer
       center={[center.lat, center.lng]}
-      zoom={14}
+      zoom={preview ? 13 : 14}
       scrollWheelZoom={false}
-      className="h-56 w-full overflow-hidden rounded-card sm:h-72"
+      dragging={!preview}
+      zoomControl={!preview}
+      doubleClickZoom={!preview}
+      touchZoom={!preview}
+      boxZoom={!preview}
+      keyboard={!preview}
+      className={preview ? 'pointer-events-none h-full w-full' : 'h-56 w-full overflow-hidden rounded-card sm:h-72'}
       // O mapa fica abaixo do menu fixo e dos modais
       style={{ zIndex: 0 }}
     >
@@ -43,7 +58,13 @@ export function ProMap({ center, pros }: { center: LatLng; pros: ProfessionalWit
       {pros
         .filter((p) => p.lat != null && p.lng != null)
         .map((p) => (
-          <Marker key={p.id} position={[p.lat!, p.lng!]} icon={proIcon(specialtyLetter(p.specialty))}>
+          <Marker
+            key={p.id}
+            position={[p.lat!, p.lng!]}
+            icon={proIcon(specialtyLetter(p.specialty))}
+            interactive={!preview}
+            keyboard={!preview}
+          >
             <Popup>
               <strong>{p.profiles.full_name}</strong>
               <br />
