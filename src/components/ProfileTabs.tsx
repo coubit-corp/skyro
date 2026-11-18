@@ -1,11 +1,11 @@
 import { Link, useLocation } from 'react-router-dom'
 
 const TABS = [
-  { to: '/pro/perfil', label: 'Perfil' },
-  { to: '/pro/perfil/galeria', label: 'Fotos e vídeos' },
+  { to: '/pro/configuracoes', label: 'Perfil' },
+  { to: '/pro/configuracoes/galeria', label: 'Fotos e vídeos' },
 ]
 
-/** Abas do "Meu perfil" do profissional: dados do perfil e galeria. */
+/** Abas do perfil do profissional, em Configurações: dados do perfil e galeria. */
 export function ProfileTabs() {
   const { pathname } = useLocation()
   const path = pathname.replace(/\/+$/, '')

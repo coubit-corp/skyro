@@ -1,17 +1,14 @@
-import { BadgeCheck, CalendarClock, ChevronRight, CircleX, Clock, Lock, MapPin, Pencil } from 'lucide-react'
+import { BadgeCheck, CalendarClock, CircleX, Clock, Lock, MapPin, Pencil } from 'lucide-react'
 import { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { useAuth } from '../../auth/auth-context'
 import { AccountSection } from '../../components/AccountSection'
 import { AvailabilityEditor } from '../../components/AvailabilityEditor'
 import { Avatar } from '../../components/Avatar'
-import { DemoBanner } from '../../components/DemoBanner'
 import { ProfessionalForm } from '../../components/ProfessionalForm'
-import { ProfileTabs } from '../../components/ProfileTabs'
 import { ExperienceCard, ReviewItem, RatingSummary, SocialButtons } from '../../components/Showcase'
 import { ShowcaseEditor } from '../../components/ShowcaseEditor'
-import { SignOutButton } from '../../components/SignOutButton'
-import { ErrorState, PageHeader, Skeleton } from '../../components/ui'
+import { ErrorState, Skeleton } from '../../components/ui'
 import { useMyPhone, useSaveAccount } from '../../hooks/useAccount'
 import { useMyProfessional, useSaveProfessional } from '../../hooks/useProData'
 import { useProReviews } from '../../hooks/useShowcase'
@@ -37,6 +34,7 @@ import {
   type ShowcaseValues,
 } from '../../lib/vitrine'
 
+/** Perfil do profissional, na aba "Perfil" de Configurações. */
 export function MeuPerfil() {
   const { profile, session, refreshProfile } = useAuth()
   const me = useMyProfessional()
@@ -83,8 +81,11 @@ export function MeuPerfil() {
 
   if (editing) {
     return (
-      <section>
-        <PageHeader title="Editar perfil" subtitle="As mudanças aparecem para os pacientes assim que você salvar." />
+      <section className="space-y-4">
+        <div>
+          <h2 className="font-display text-xl font-bold">Editar perfil</h2>
+          <p className="text-sm text-muted">As mudanças aparecem para os pacientes assim que você salvar.</p>
+        </div>
         <ProfessionalForm
           initial={initialValues(name, p)}
           submitLabel="Salvar alterações"
@@ -188,17 +189,15 @@ export function MeuPerfil() {
 
   return (
     <section className="space-y-4">
-      <PageHeader
-        title="Meu perfil"
-        subtitle="É assim que os pacientes te encontram."
-        action={
-          <button className="btn-outline px-4 py-2" onClick={startEditing}>
-            <Pencil className="h-4 w-4" aria-hidden="true" /> Editar
-          </button>
-        }
-      />
-
-      <ProfileTabs />
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h2 className="font-display text-xl font-bold">Meu perfil</h2>
+          <p className="text-sm text-muted">É assim que os pacientes te encontram.</p>
+        </div>
+        <button className="btn-outline shrink-0 px-4 py-2" onClick={startEditing}>
+          <Pencil className="h-4 w-4" aria-hidden="true" /> Editar
+        </button>
+      </div>
 
       {savedMsg && (
         <p role="status" className="rounded-xl bg-lavender-soft px-3 py-2 text-sm text-primary">
@@ -328,15 +327,6 @@ export function MeuPerfil() {
           Privado: os pacientes não veem seu e-mail nem seu telefone.
         </p>
       </div>
-
-      <Link to="/pro/configuracoes" className="tap gap-1 text-sm font-semibold text-primary">
-        Aparência e conta em Configurações <ChevronRight className="h-4 w-4" aria-hidden="true" />
-      </Link>
-
-      <div className="lg:hidden">
-        <SignOutButton />
-      </div>
-      <DemoBanner />
     </section>
   )
 }

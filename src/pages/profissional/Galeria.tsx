@@ -1,17 +1,15 @@
 import { ImagePlus, Link2, Video } from 'lucide-react'
 import { useId, useRef, useState, type FormEvent } from 'react'
 import { useAuth } from '../../auth/auth-context'
-import { DemoBanner } from '../../components/DemoBanner'
-import { ProfileTabs } from '../../components/ProfileTabs'
 import { MediaGrid } from '../../components/Showcase'
-import { ErrorState, Modal, PageHeader, Skeleton } from '../../components/ui'
+import { ErrorState, Modal, Skeleton } from '../../components/ui'
 import { useAddMedia, useDeleteMedia, useProMedia, type NewMedia } from '../../hooks/useShowcase'
 import type { ProfessionalMedia } from '../../lib/database.types'
 import { CAPTION_MAX, MEDIA_MAX, parseVideoLink, PROVIDER_LABEL } from '../../lib/vitrine'
 
 type Draft = { kind: 'foto' | 'video'; file: File; preview: string } | { kind: 'link' }
 
-/** "Fotos e vídeos": o profissional mostra como atende. */
+/** "Fotos e vídeos", aba do perfil em Configurações: o profissional mostra como atende. */
 export function Galeria() {
   const { session, profile } = useAuth()
   const media = useProMedia(session?.user.id)
@@ -73,8 +71,10 @@ export function Galeria() {
 
   return (
     <section className="space-y-4">
-      <PageHeader title="Meu perfil" subtitle="Mostre seu trabalho: fotos e vídeos atendendo seus pacientes." />
-      <ProfileTabs />
+      <div>
+        <h2 className="font-display text-xl font-bold">Fotos e vídeos</h2>
+        <p className="text-sm text-muted">Mostre seu trabalho: fotos e vídeos atendendo seus pacientes.</p>
+      </div>
 
       {savedMsg && (
         <p role="status" className="rounded-xl bg-lavender-soft px-3 py-2 text-sm text-primary">
@@ -170,8 +170,6 @@ export function Galeria() {
           <MediaGrid items={items} onDelete={setToDelete} deletingId={remove.isPending ? remove.variables?.id : null} />
         </>
       )}
-
-      <DemoBanner />
 
       <Modal
         open={draft !== null}
