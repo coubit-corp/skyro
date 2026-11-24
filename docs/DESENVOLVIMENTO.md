@@ -1,6 +1,6 @@
 # Desenvolvimento
 
-Guia técnico para quem vai mexer no código. Para rodar do zero no Mac, veja [`SETUP-MAC.md`](SETUP-MAC.md); para publicar, [`DEPLOY-VERCEL.md`](DEPLOY-VERCEL.md).
+Guia técnico para quem vai mexer no código: como rodar, preparar o Supabase, ligar a IA e publicar.
 
 ## Stack
 
@@ -8,7 +8,7 @@ Guia técnico para quem vai mexer no código. Para rodar do zero no Mac, veja [`
 - **Banco, login e regras de acesso:** Supabase (Postgres + Auth + Row Level Security)
 - **App:** web responsivo e instalável (PWA), pensado primeiro para o celular
 - **Mapa:** OpenStreetMap + Leaflet. Busca de endereço pelo Nominatim, só ao tocar em "Buscar"
-- **IA:** resumo semanal escrito pelo Claude (Anthropic) numa Supabase Edge Function (Deno)
+- **IA:** resumo semanal escrito por um modelo de linguagem (via API) numa Supabase Edge Function (Deno)
 - **Testes:** Vitest (lógica) e SQL contra um Postgres local (regras de acesso)
 
 ## Como rodar
@@ -21,21 +21,76 @@ Pré-requisito: Node.js 20 ou mais novo.
    npm install
    ```
 
-2. Crie o `.env` a partir do modelo e preencha com a URL e a **publishable key** do Supabase:
+2. Crie o `.env` a partir do modelo e preencha com a URL e a **publishable key** do Supabase (Project Settings → API). Nunca coloque a secret key aqui:
 
    ```bash
    cp .env.example .env
    ```
 
-3. No **SQL Editor** do Supabase, rode **em ordem**:
-   1. as migrations de `supabase/migrations/`
+3. No **SQL Editor** do Supabase, rode **em ordem**, um arquivo por vez (New query → colar → Run):
+   1. as migrations de `supabase/migrations/`, na ordem do nome do arquivo
    2. os seeds `supabase/seed/01_contas_demo.sql`, `02_catalogo_demo.sql`, `03_pacientes_demo.sql`, `04_vitrine_demo.sql` e `05_mensagens_demo.sql`
 
-4. Suba o app:
+   As migrations só rodam uma vez (de novo, dão "already exists"). Os seeds podem ser rodados de novo quando os dados demo ficarem bagunçados: eles apagam e recriam tudo com as datas de hoje.
+
+4. Em **Authentication → Sign In / Providers → Email**, desligue **Confirm email** (para criar contas de teste sem clicar no link do e-mail). Em **Authentication → URL Configuration**, coloque `http://localhost:5173` em **Site URL**.
+
+5. Suba o app e abra http://localhost:5173:
 
    ```bash
    npm run dev
    ```
+
+### Contas demo
+
+Os botões "Entrar como … (demo)" da tela de login usam as três primeiras. A senha de todas é `skyro-demo-2026`.
+
+| Conta | E-mail |
+|---|---|
+| Cliente (Lucas Martins) | `demo.pessoa@skyro.app` |
+| Profissional (Ana Lima, nutricionista) | `demo.nutri@skyro.app` |
+| Equipe Skyro (aprova registros; só mexe em perfis demo) | `demo.equipe@skyro.app` |
+| Personal do Lucas (Pedro Alves) | `demo.catalogo.3@skyro.app` |
+| Psicólogo do Lucas (Carlos Souza) | `demo.catalogo.1@skyro.app` |
+| Fisio do Lucas (Fernanda Dias) | `demo.catalogo.8@skyro.app` |
+
+As três últimas vêm do seed `02` e não têm botão: para entrar, digite o e-mail e a senha na aba **Entrar**.
+
+### Ligar o resumo por IA (opcional)
+
+Sem isto o app funciona igual: a ficha do paciente mostra o resumo **montado por regras**. Com isto, o resumo passa a ser **escrito por um modelo de linguagem**. A chave fica guardada no Supabase e nunca vai para o navegador.
+
+1. Crie uma chave de API no console do provedor do modelo (a função usa a API da Anthropic).
+2. No painel do Supabase: **Edge Functions → Secrets** → adicione `ANTHROPIC_API_KEY` com a chave.
+3. Instale a [Supabase CLI](https://supabase.com/docs/guides/cli), entre na conta e publique a função:
+
+   ```bash
+   supabase login
+   ```
+
+   ```bash
+   supabase link --project-ref <ref-do-seu-projeto>
+   ```
+
+   ```bash
+   supabase functions deploy resumo-semanal
+   ```
+
+Pronto: ao abrir um paciente, o selo do resumo muda de **Automático** para **Escrito por IA**. O resumo é guardado e só é gerado de novo quando há registro novo ou o dia vira. Cada resumo novo é uma chamada paga à API; para desligar, apague o secret e o app volta para o resumo por regras.
+
+### Publicar na Vercel
+
+1. Em vercel.com, importe o repositório (**Add New → Project**). O `vercel.json` já define build, saída e as regras de rotas; o preset é **Vite**.
+2. Em **Environment Variables**, adicione `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY` (as mesmas do `.env`). Só a publishable key.
+3. Em **Settings → Deployment Protection**, desligue a proteção se o link precisa abrir para qualquer pessoa.
+4. No Supabase, em **Authentication → URL Configuration**, coloque o link da Vercel em **Site URL** e `https://seu-link.vercel.app/**` em **Redirect URLs**. Sem isso, links de confirmação e de recuperação de senha apontam para o lugar errado.
+5. Confira o que foi publicado (deve terminar com **Tudo certo.**):
+
+   ```bash
+   npm run smoke -- https://seu-link.vercel.app
+   ```
+
+Com o repositório ligado à Vercel, cada merge na `main` publica sozinho.
 
 ## Scripts
 
@@ -85,7 +140,7 @@ Regra central, garantida pelo banco (RLS) e não só pela tela: **o profissional
 
 ## Segurança
 
-- Só a **publishable key** vai para o navegador. A secret key do Supabase e a chave da Anthropic nunca entram no código nem no repositório.
+- Só a **publishable key** vai para o navegador. A secret key do Supabase e a chave da API de IA nunca entram no código nem no repositório.
 - O `.env` está no `.gitignore`.
 - Selo de verificado, nota e marcação de demo não podem ser alterados pelo próprio usuário (permissões por coluna).
 - **Telefone:** fica em `private_contacts`, que só o dono lê e escreve.
@@ -104,7 +159,7 @@ Regra central, garantida pelo banco (RLS) e não só pela tela: **o profissional
 - **Cache:** o resumo só é refeito quando há registro novo ou o dia vira.
 - **Reserva:** sem chave, ou se a IA falhar ou recusar, aparece o resumo por regras (`src/lib/weekSummary.ts`).
 
-Como ligar: passo 3.5 de [`SETUP-MAC.md`](SETUP-MAC.md).
+Como ligar: seção "Ligar o resumo por IA", acima.
 
 ## Testar as regras de acesso
 

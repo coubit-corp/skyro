@@ -75,7 +75,7 @@ Limites: a IA não diagnostica, não prescreve e não fala com o paciente direta
 
 - **Backend:** Python + Flask + SQLite (mesmo padrão do CS50).
 - **Frontend:** HTML, CSS e JavaScript com templates Jinja, layout mobile.
-- **IA:** API de um LLM (ex.: Claude) para o resumo semanal.
+- **IA:** API de um LLM para o resumo semanal.
 - **Avisos:** simulados na demo; WhatsApp real só se sobrar tempo (sandbox).
 - **Deploy:** um serviço gratuito (Render, Railway ou similar) para a demo pública.
 
