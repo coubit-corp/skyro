@@ -6,7 +6,7 @@
 
 Projeto do **Hack Brasil 2026**, trilha 04 (Saúde & bem-estar).
 
-> **Demo:** _link da Vercel aqui_ · **Vídeo:** _link do vídeo aqui_ · **Pitch:** [`docs/Skyro-Pitch-v2.pdf`](docs/Skyro-Pitch-v2.pdf)
+> **Demo:** [skyro-xi.vercel.app](https://skyro-xi.vercel.app/) · **Vídeo:** [youtu.be/tUGil2gNyvY](https://youtu.be/tUGil2gNyvY) · **Pitch:** [`docs/Skyro-Pitch-v2.pdf`](docs/Skyro-Pitch-v2.pdf)
 >
 > Para testar sem cadastro, use os botões **"Entrar como pessoa (demo)"**, **"Entrar como profissional (demo)"** e **"Entrar como equipe (demo)"** na tela de login.
 
@@ -25,7 +25,7 @@ A Skyro é a **ponte entre a rotina que a pessoa registra no dia a dia e os prof
 1. **A pessoa registra a rotina:** sono, água, foco, treino e hábitos, com strike para manter o ritmo.
 2. **Ela escolhe com quem compartilhar:** encontra profissionais perto dela, **dá consentimento explícito e pode revogar a qualquer momento**.
 3. **O profissional vê quem precisa de atenção hoje** e lê um resumo da semana escrito por IA.
-4. **Ele age antes da próxima consulta:** manda uma dica, que aparece no app da pessoa.
+4. **Ele age antes da próxima consulta:** manda uma dica ou conversa pelo chat, direto no app da pessoa.
 
 ## Como funciona
 
@@ -46,6 +46,14 @@ A Skyro é a **ponte entre a rotina que a pessoa registra no dia a dia e os prof
 | Quem precisa de atenção aparece primeiro, com o motivo | Semana, alertas e o resumo que cruza sono e treino | A dica chega no Início da pessoa | Perfil com local no mapa e registro do conselho |
 
 **Plano na ficha do paciente:** cada profissional monta a parte dele (treino, plano alimentar, respiração ou exercícios de fisio), com os dias da semana, e vê quanto foi feito nos últimos 7 dias.
+
+### Também no app
+
+- **Chat** entre a pessoa e cada profissional da equipe dela, com mensagens não lidas e confirmação de leitura. Só conversa quem tem compartilhamento ativo; ao revogar, o profissional perde a conversa.
+- **Vitrine do profissional:** formação, redes sociais, fotos e vídeos e avaliações de quem já foi acompanhado.
+- **Progresso:** XP e nível, Skyro Score da semana, conquistas e resumo semanal, calculados com os registros da própria pessoa.
+- **Perto de você:** mapa com os profissionais por perto, para presencial ou online.
+- **Configurações:** perfil, foto e **modo escuro** (claro, escuro ou automático).
 
 ## O que nos diferencia
 
@@ -88,7 +96,7 @@ flowchart LR
   PRO[Painel do profissional<br/>React · PWA] -- lê só quem compartilhou --> DB
   PRO -- pede resumo --> FN[Edge Function<br/>resumo-semanal]
   FN -- confere o compartilhamento --> DB
-  FN -- primeiro nome + números --> AI[Claude · Anthropic]
+  FN -- primeiro nome + números --> AI[Modelo de linguagem<br/>via API]
   FN -- cache do resumo --> DB
 ```
 
@@ -97,15 +105,15 @@ flowchart LR
 | App (pessoa e profissional) | React 19, TypeScript, Vite, Tailwind CSS, PWA instalável |
 | Banco, login e regras de acesso | Supabase: Postgres, Auth e Row Level Security |
 | Mapa e endereços | OpenStreetMap, Leaflet e Nominatim |
-| IA | Claude (Anthropic) numa Supabase Edge Function |
+| IA | Modelo de linguagem via API, chamado por uma Supabase Edge Function |
 | Publicação | Vercel |
 
 ## Qualidade
 
-- **56 testes automáticos** cobrem as regras de alerta, o strike, as datas, o resumo, o formulário e o prompt da IA.
-- **Regras de acesso do banco** testadas: quem pode ver, gravar e revogar o quê.
-- **Acessibilidade WCAG 2.1 AA:** as 13 telas passam na auditoria automática, com contraste, rótulos e áreas de toque de 44 px.
-- **Testado em 5 tamanhos de tela**, do iPhone SE ao iPad.
+- **154 testes automáticos** cobrem as regras de alerta, o strike, as datas, o resumo, o progresso, o chat, a vitrine, o formulário e o prompt da IA.
+- **Regras de acesso do banco** testadas num Postgres local: quem pode ver, gravar e revogar o quê.
+- **Acessibilidade (WCAG 2.1 AA):** contraste, rótulos e áreas de toque de 44 px, conferidos com auditoria automática no polimento do app.
+- **Testado em vários tamanhos de tela**, do iPhone SE ao iPad.
 
 ## Rodar localmente
 
@@ -123,7 +131,7 @@ Preencha o `.env` com a URL e a publishable key do Supabase, rode as migrations 
 npm run dev
 ```
 
-Passo a passo completo: [`docs/SETUP-MAC.md`](docs/SETUP-MAC.md). Guia técnico: [`docs/DESENVOLVIMENTO.md`](docs/DESENVOLVIMENTO.md).
+Passo a passo (Supabase, contas demo, IA e publicação): [`docs/DESENVOLVIMENTO.md`](docs/DESENVOLVIMENTO.md).
 
 ## Próximos passos
 
