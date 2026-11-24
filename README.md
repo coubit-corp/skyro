@@ -149,7 +149,8 @@ _Valores e preços serão testados com os profissionais entrevistados._
 
 ## Equipe
 
-_Nomes e papéis da equipe aqui._
+- Marcelo Molino Falvo
+- Guilherme Carvalho de Oliveira
 
 ---
 
