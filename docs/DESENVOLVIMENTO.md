@@ -31,7 +31,7 @@ Pré-requisito: Node.js 20 ou mais novo.
    1. as migrations de `supabase/migrations/`, na ordem do nome do arquivo
    2. os seeds `supabase/seed/01_contas_demo.sql`, `02_catalogo_demo.sql`, `03_pacientes_demo.sql`, `04_vitrine_demo.sql` e `05_mensagens_demo.sql`
 
-   As migrations só rodam uma vez (de novo, dão "already exists"). Os seeds podem ser rodados de novo quando os dados demo ficarem bagunçados: eles apagam e recriam tudo com as datas de hoje.
+   Rode cada migration uma vez só: rodar de novo dá erro "already exists" (só a `20261118000002_mensagens.sql` pode ser repetida). Se uma parar no meio, o banco fica pela metade; em projeto de teste, o mais simples é recriar o projeto ou apagar as tabelas e começar de novo. Os seeds podem ser rodados de novo quando os dados demo ficarem bagunçados: eles apagam e recriam tudo com as datas de hoje.
 
 4. Em **Authentication → Sign In / Providers → Email**, desligue **Confirm email** (para criar contas de teste sem clicar no link do e-mail). Em **Authentication → URL Configuration**, coloque `http://localhost:5173` em **Site URL**.
 
