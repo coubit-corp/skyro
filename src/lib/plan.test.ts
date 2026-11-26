@@ -9,6 +9,7 @@ import {
   itemDetail,
   itemsForDay,
   kindForSpecialty,
+  plannedFirst,
   lastWeekDays,
   toPlanItemRow,
   validatePlanItem,
@@ -119,5 +120,17 @@ describe('formulário do item', () => {
     const row = toPlanItemRow('refeicao', v)
     expect(row).toMatchObject({ title: 'Almoço', meal_time: '12:30', foods: 'Arroz', sets: null, load: null, weekdays: [1, 3] })
     expect(toPlanItemRow('fisio', { ...v, sets: '3', reps: '15' })).toMatchObject({ sets: 3, reps: '15', load: null, foods: null })
+  })
+})
+
+describe('plannedFirst', () => {
+  it('põe quem tem plano antes de quem ainda não montou, mantendo a ordem de cada grupo', () => {
+    const comPlano = new Set(['pedro', 'ana'])
+    expect(plannedFirst(['bruno', 'pedro', 'carla', 'ana'], (id) => comPlano.has(id))).toEqual(['pedro', 'ana', 'bruno', 'carla'])
+  })
+
+  it('não muda nada quando todos têm plano ou ninguém tem', () => {
+    expect(plannedFirst(['a', 'b'], () => true)).toEqual(['a', 'b'])
+    expect(plannedFirst(['a', 'b'], () => false)).toEqual(['a', 'b'])
   })
 })

@@ -13,6 +13,7 @@ import {
   PAIN_LEVELS,
   PLAN_TABS,
   weekdaysLabel,
+  plannedFirst,
 } from '../../lib/plan'
 import { SPECIALTIES } from '../../lib/specialties'
 
@@ -71,7 +72,8 @@ function prosOfTab(tab: TabInfo, plan: MyPlan) {
     if (s.professionals.specialty === tab.specialty && !s.revoked_at) ids.add(proId)
   }
   for (const i of plan.items) if (i.kind === tab.kind) ids.add(i.professional_id)
-  return [...ids]
+  // Quem já montou plano aparece antes de quem ainda não montou
+  return plannedFirst([...ids], (id) => plan.items.some((i) => i.professional_id === id && i.kind === tab.kind))
 }
 
 function TabContent({ tab, plan }: { tab: TabInfo; plan: MyPlan }) {
