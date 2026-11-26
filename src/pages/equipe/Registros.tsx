@@ -88,7 +88,7 @@ export function Registros({ view }: { view: View }) {
 
       {demoTeam && (
         <p className="rounded-xl bg-lavender-soft px-3 py-2 text-sm text-primary">
-          Conta demo da equipe: você só decide sobre perfis de demonstração. Para voltar ao começo, rode os seeds de novo.
+          Conta de demonstração da equipe: você só decide sobre perfis de demonstração.
         </p>
       )}
 
