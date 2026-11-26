@@ -1,4 +1,4 @@
-import { Droplet, Dumbbell, Minus, MessageCircle, Moon, Plus, Timer, Trash2 } from 'lucide-react'
+import { Droplet, Dumbbell, Minus, Moon, Plus, Timer, Trash2 } from 'lucide-react'
 import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from 'react'
 import { DemoBanner } from '../../components/DemoBanner'
 import { CheckButton, ErrorState, Modal, PageHeader, Skeleton } from '../../components/ui'
@@ -61,13 +61,6 @@ export function Rotina() {
             </button>
           )
         })}
-      </div>
-
-      {/* Avisos no WhatsApp: simulado no MVP */}
-      <div className="flex items-center gap-3 rounded-card border border-line bg-card px-4 py-3">
-        <MessageCircle className="h-5 w-5 text-primary" aria-hidden="true" />
-        <span className="flex-1 text-sm">Avisos no WhatsApp</span>
-        <span className="chip">Em breve</span>
       </div>
 
       {/* Hábitos do dia */}
