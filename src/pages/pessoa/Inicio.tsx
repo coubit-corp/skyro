@@ -6,6 +6,7 @@ import { Avatar } from '../../components/Avatar'
 import { DemoBanner } from '../../components/DemoBanner'
 import { PersonUnreadBadge } from '../../components/UnreadBadge'
 import { useGreeting } from '../../hooks/useAccount'
+import { useNowMinutes } from '../../hooks/useNowMinutes'
 import { Logo } from '../../components/Logo'
 import { CheckButton, ErrorState, Modal, Skeleton } from '../../components/ui'
 import {
@@ -18,6 +19,7 @@ import {
 } from '../../hooks/usePersonData'
 import { addDays, formatHours, formatMinutes, formatTime, today } from '../../lib/dates'
 import { specialtyLabel } from '../../lib/specialties'
+import { nextStep } from '../../lib/nextStep'
 import { bestStreak, currentStreak } from '../../lib/streak'
 
 export function Inicio() {
@@ -44,6 +46,8 @@ export function Inicio() {
   const last7 = Array.from({ length: 7 }, (_, i) => addDays(todayIso, i - 6))
   const todayLog = logs.data?.find((l) => l.log_date === todayIso)
   const remaining = (habits.data ?? []).filter((h) => !doneToday.has(h.id)).length
+  const nowMinutes = useNowMinutes()
+  const next = useMemo(() => nextStep(habits.data ?? [], doneToday, nowMinutes), [habits.data, doneToday, nowMinutes])
 
   if (habits.error || checks.error) {
     return <ErrorState message={(habits.error ?? checks.error)?.message} onRetry={() => { habits.refetch(); checks.refetch() }} />
@@ -92,19 +96,42 @@ export function Inicio() {
         </p>
       </div>
 
+      {/* Próximo passo: a ação mais útil agora vem antes da sequência */}
+      {next && (
+        <div className="card flex items-center gap-4 border border-line">
+          <div className="min-w-0 flex-1">
+            <p className="eyebrow">Seu próximo passo</p>
+            <p className="mt-1 text-lg leading-snug font-semibold">{next.habit.name}</p>
+            <p className="text-sm text-muted">
+              {next.status === 'proximo' && `Hoje às ${formatTime(next.habit.scheduled_time)}`}
+              {next.status === 'dia_todo' && 'Pode fazer a qualquer hora hoje'}
+              {next.status === 'atrasado' && `Estava marcado para ${formatTime(next.habit.scheduled_time)}`}
+            </p>
+          </div>
+          <button
+            className="btn-primary shrink-0 px-5 py-2.5"
+            disabled={toggle.isPending}
+            onClick={() => toggle.mutate({ habitId: next.habit.id, date: todayIso, done: true })}
+            aria-label={`Marcar como feito: ${next.habit.name}`}
+          >
+            Feito
+          </button>
+        </div>
+      )}
+
       {/* Strike */}
       {checks.isLoading ? (
-        <Skeleton className="h-32" />
+        <Skeleton className="h-24" />
       ) : (
-        <div className="rounded-card bg-navy p-5 text-white">
+        <div className="rounded-card bg-navy p-4 text-white">
           <div className="flex items-center justify-between text-xs">
             <span className="font-semibold tracking-[0.12em] text-lavender uppercase">Strike</span>
             <span className="text-white/70">Recorde: {record} dias</span>
           </div>
-          <p className="mt-2 font-display text-4xl font-extrabold">
-            {streak} {streak === 1 ? 'dia seguido' : 'dias seguidos'}
+          <p className="mt-1 font-display text-2xl font-extrabold">
+            {streak === 0 ? 'Sua sequência começa hoje' : `${streak} ${streak === 1 ? 'dia seguido' : 'dias seguidos'}`}
           </p>
-          <div className="mt-4 flex gap-2" aria-label="Últimos 7 dias">
+          <div className="mt-3 flex gap-2" aria-label="Últimos 7 dias">
             {last7.map((d) => (
               <span
                 key={d}
