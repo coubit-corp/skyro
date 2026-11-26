@@ -88,13 +88,16 @@ export function Paciente() {
         <ChevronLeft className="h-4 w-4" aria-hidden="true" /> Pacientes
       </Link>
 
-      <div className="flex items-center gap-4">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
         <Avatar seed={share.profiles.avatar_seed} photo={share.profiles.avatar_path} name={name} size={72} />
-        <div className="min-w-0 flex-1">
-          <h1 className="text-2xl font-bold">{name}</h1>
+        <div className="min-w-0 flex-1 basis-44">
+          <h1 className="text-2xl font-bold break-words">{name}</h1>
           <p className="text-sm text-muted">Compartilha com você {monthsSince(share.created_at)}</p>
         </div>
-        <Link to={`/pro/mensagens/${share.person_id}`} className="btn-outline shrink-0 gap-2 px-4 py-2">
+        <Link
+          to={`/pro/mensagens/${share.person_id}`}
+          className="btn-outline w-full justify-center gap-2 px-4 py-2 sm:ml-auto sm:w-auto sm:shrink-0"
+        >
           <MessageSquare className="h-4 w-4" aria-hidden="true" /> Mensagem
         </Link>
       </div>
