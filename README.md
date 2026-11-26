@@ -110,7 +110,7 @@ flowchart LR
 
 ## Qualidade
 
-- **154 testes automáticos** cobrem as regras de alerta, o strike, as datas, o resumo, o progresso, o chat, a vitrine, o formulário e o prompt da IA.
+- **178 testes automáticos** cobrem as regras de alerta, o strike, as datas, o resumo, o progresso, o chat, a vitrine, o formulário e o prompt da IA.
 - **Regras de acesso do banco** testadas num Postgres local: quem pode ver, gravar e revogar o quê.
 - **Acessibilidade (WCAG 2.1 AA):** contraste, rótulos e áreas de toque de 44 px, conferidos com auditoria automática no polimento do app.
 - **Testado em vários tamanhos de tela**, do iPhone SE ao iPad.
