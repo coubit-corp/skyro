@@ -13,6 +13,7 @@ import {
 } from '../../hooks/usePersonData'
 import type { HabitKind } from '../../lib/database.types'
 import { dayOfMonth, formatHours, formatTime, longDate, today, weekdayShort, weekOf } from '../../lib/dates'
+import { stepValue } from '../../lib/stepper'
 
 export function Rotina() {
   const todayIso = today()
@@ -138,7 +139,7 @@ function DayLogForm({ date }: { date: string }) {
   const save = useSaveDailyLog()
   const existing = logs.data?.find((l) => l.log_date === date)
 
-  const [sleep, setSleep] = useState(7)
+  const [sleep, setSleep] = useState<number | null>(null)
   const [water, setWater] = useState(0)
   const [focus, setFocus] = useState(0)
   const [workoutPlanned, setWorkoutPlanned] = useState(false)
@@ -148,7 +149,7 @@ function DayLogForm({ date }: { date: string }) {
   // Carrega o registro salvo quando troca de dia ou quando ele muda no banco.
   // Depende de updated_at (e não do objeto) para um refetch não apagar o que a pessoa está editando.
   useEffect(() => {
-    setSleep(existing?.sleep_hours ?? 7)
+    setSleep(existing?.sleep_hours ?? null)
     setWater(existing?.water_liters ?? 0)
     setFocus(existing?.focus_minutes ?? 0)
     setWorkoutPlanned(existing?.workout_planned ?? false)
@@ -187,6 +188,8 @@ function DayLogForm({ date }: { date: string }) {
         step={0.5}
         min={0}
         max={14}
+        suggested={7}
+        hint="Não informado: toque em + ou − para informar"
       />
       <Stepper
         icon={<Droplet className="h-5 w-5" />}
@@ -239,28 +242,37 @@ function Stepper({
   step,
   min,
   max,
+  suggested,
+  hint,
 }: {
   icon: ReactNode
   label: string
-  value: number
+  value: number | null
   display: string
   onChange: (v: number) => void
   step: number
   min: number
   max: number
+  /** ponto de partida quando ainda não há valor (a pessoa confirma tocando em + ou −) */
+  suggested?: number
+  /** aviso mostrado enquanto não há valor */
+  hint?: string
 }) {
-  const clamp = (v: number) => Math.min(max, Math.max(min, Math.round(v * 100) / 100))
+  const options = { step, min, max, suggested }
   return (
     <div className="flex items-center gap-3">
       <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-lavender-soft text-primary" aria-hidden="true">
         {icon}
       </span>
-      <span className="flex-1 text-sm">{label}</span>
+      <span className="flex-1 text-sm">
+        {label}
+        {value === null && hint && <span className="block text-xs text-muted">{hint}</span>}
+      </span>
       <div className="flex items-center gap-2">
         <button
           type="button"
           aria-label={`Diminuir ${label}`}
-          onClick={() => onChange(clamp(value - step))}
+          onClick={() => onChange(stepValue(value, -1, options))}
           className="flex h-8 w-8 items-center justify-center rounded-full border border-line"
         >
           <Minus className="h-4 w-4" />
@@ -271,7 +283,7 @@ function Stepper({
         <button
           type="button"
           aria-label={`Aumentar ${label}`}
-          onClick={() => onChange(clamp(value + step))}
+          onClick={() => onChange(stepValue(value, 1, options))}
           className="flex h-8 w-8 items-center justify-center rounded-full border border-line"
         >
           <Plus className="h-4 w-4" />
