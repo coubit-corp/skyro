@@ -227,3 +227,8 @@ export function toPlanItemRow(kind: PlanKind, v: PlanItemValues) {
     video_url: opt(v.videoUrl),
   }
 }
+
+/** Põe antes quem já montou plano nesta área e deixa para o fim os que ainda não montaram (estável). */
+export function plannedFirst<T>(ids: T[], hasPlan: (id: T) => boolean): T[] {
+  return [...ids.filter(hasPlan), ...ids.filter((id) => !hasPlan(id))]
+}
