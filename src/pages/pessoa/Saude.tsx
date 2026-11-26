@@ -90,41 +90,45 @@ export function Saude() {
           <strong className="text-ink">Compartilhar minha rotina</strong> no perfil dele.
         </div>
       ) : (
-        <ul className="space-y-3">
-          {team.data!.map(({ id, professionals: pro }) => (
-            <li key={id} className="card space-y-3">
-              <div className="flex items-center gap-3">
-                <Avatar seed={pro.profiles.avatar_seed} photo={pro.profiles.avatar_path} name={pro.profiles.full_name} size={48} />
-                <div className="min-w-0 flex-1">
-                  <p className="font-semibold">
-                    {pro.profiles.full_name.split(' ')[0]} · {specialtyLabel(pro.specialty)}
-                  </p>
-                  <p className="text-xs text-muted">Acompanha sua rotina</p>
+        <>
+          <p className="text-sm text-muted">
+            Quem acompanha você vê: {SHARED_DATA.map((d) => d.toLowerCase()).join(', ')}. Você pode parar de
+            compartilhar a qualquer momento, no perfil de cada profissional.
+          </p>
+          <ul className="space-y-3">
+            {team.data!.map(({ id, professionals: pro }) => (
+              <li key={id} className="card space-y-3">
+                <div className="flex items-center gap-3">
+                  <Avatar
+                    seed={pro.profiles.avatar_seed}
+                    photo={pro.profiles.avatar_path}
+                    name={pro.profiles.full_name}
+                    size={48}
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold">
+                      {pro.profiles.full_name.split(' ')[0]} · {specialtyLabel(pro.specialty)}
+                    </p>
+                    <p className="text-xs text-muted">Acompanha sua rotina</p>
+                  </div>
+                  <Link to={`/saude/profissional/${pro.id}`} className="btn-outline px-4 py-2">
+                    Ver perfil
+                  </Link>
                 </div>
-                <Link to={`/saude/profissional/${pro.id}`} className="btn-outline px-4 py-2">
-                  Ver perfil
+                <Link to={`/mensagens/${pro.id}`} className="btn-outline w-full gap-2 py-2.5">
+                  <MessageSquare className="h-4 w-4" aria-hidden="true" />
+                  Mensagem
+                  {unreadFrom(pro.id) > 0 && (
+                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-xs font-bold text-white">
+                      {unreadFrom(pro.id)}
+                      <span className="sr-only"> ({unreadLabel(unreadFrom(pro.id))})</span>
+                    </span>
+                  )}
                 </Link>
-              </div>
-              <Link to={`/mensagens/${pro.id}`} className="btn-outline w-full gap-2 py-2.5">
-                <MessageSquare className="h-4 w-4" aria-hidden="true" />
-                Mensagem
-                {unreadFrom(pro.id) > 0 && (
-                  <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-xs font-bold text-white">
-                    {unreadFrom(pro.id)}
-                    <span className="sr-only"> ({unreadLabel(unreadFrom(pro.id))})</span>
-                  </span>
-                )}
-              </Link>
-              <div className="flex flex-wrap gap-1.5">
-                {SHARED_DATA.map((d) => (
-                  <span key={d} className="chip">
-                    Vê: {d.toLowerCase()}
-                  </span>
-                ))}
-              </div>
-            </li>
-          ))}
-        </ul>
+              </li>
+            ))}
+          </ul>
+        </>
       )}
 
       <DemoBanner />
