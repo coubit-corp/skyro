@@ -22,7 +22,6 @@ import { AppLayout } from './components/AppLayout'
 import type { NavItem } from './components/BottomNav'
 import { FullScreenLoader } from './components/FullScreenLoader'
 import { supabaseConfigured } from './lib/supabase'
-import { ComingSoon } from './pages/ComingSoon'
 import { Configuracoes } from './pages/Configuracoes'
 import { ConfigMissing } from './pages/ConfigMissing'
 import { Login } from './pages/Login'
@@ -64,7 +63,6 @@ const PERSON_NAV: NavItem[] = [
 
 const PRO_NAV: NavItem[] = [
   { to: '/pro', label: 'Pacientes', icon: Users, end: true, alsoActiveOn: ['/pro/pacientes'] },
-  { to: '/pro/agenda', label: 'Agenda', icon: CalendarDays },
   { to: '/pro/mensagens', label: 'Mensagens', icon: MessageSquare, unreadFor: 'professional' },
   // O perfil (dados, fotos e vídeos, avaliações) fica dentro de Configurações.
   { to: '/pro/configuracoes', label: 'Ajustes', icon: Settings },
@@ -138,7 +136,7 @@ export default function App() {
               >
                 <Route path="/pro" element={<Pacientes />} />
                 <Route path="/pro/pacientes/:id" element={<Paciente />} />
-                <Route path="/pro/agenda" element={<ComingSoon title="Agenda" />} />
+                <Route path="/pro/agenda" element={<Navigate to="/pro" replace />} />
                 <Route path="/pro/mensagens" element={<MensagensPro />} />
                 <Route path="/pro/mensagens/:personId" element={<MensagensPro />} />
                 <Route path="/pro/perfil" element={<Navigate to="/pro/configuracoes" replace />} />
