@@ -149,8 +149,12 @@ _Valores e preços serão testados com os profissionais entrevistados._
 
 ## Equipe
 
-- Marcelo Molino Falvo
-- Guilherme Carvalho de Oliveira
+Projeto da **Coubit**, feito por quatro pessoas:
+
+- Paulo Henrique de Andrade Colugnati
+- Marcelo Molina Falvo
+- João Carlos de Oliveira
+- Guilherme de Oliveira Carvalho
 
 ---
 
